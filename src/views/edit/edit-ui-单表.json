@@ -1,0 +1,1520 @@
+{
+  "commandViewId": null,
+  "commandViewModel": null,
+  "detailViewId": "com.epower.dsp.dspthirdsupply.DspThirdSupplyDetail",
+  "detailViewModel": {
+    "actionUrl": "dspThirdSupplyDetailAction",
+    "datasetInfo": {
+      "datasets": [
+        {
+          "actionMethod": "dataPackage",
+          "bizClassName": "com.epower.dsp.pojo.DspThirdSupply",
+          "columns": [
+            {
+              "name": "bstatus",
+              "type": "Integer"
+            },
+            {
+              "name": "class",
+              "type": "Class"
+            },
+            {
+              "name": "createBy",
+              "type": "String"
+            },
+            {
+              "name": "createOn",
+              "type": "Date"
+            },
+            {
+              "name": "datacenterId",
+              "type": "Integer"
+            },
+            {
+              "name": "deleted",
+              "type": "boolean"
+            },
+            {
+              "name": "dspAccessIpCheck",
+              "type": "Integer"
+            },
+            {
+              "name": "dspAccessIps",
+              "type": "String"
+            },
+            {
+              "name": "dspAccessToken",
+              "type": "String"
+            },
+            {
+              "name": "dspAppKey",
+              "type": "String"
+            },
+            {
+              "name": "dspAppSecret",
+              "type": "String"
+            },
+            {
+              "name": "dspRefreshToken",
+              "type": "String"
+            },
+            {
+              "name": "dspTokenDisableTime",
+              "type": "Date"
+            },
+            {
+              "name": "dspTokenEnableTime",
+              "type": "Date"
+            },
+            {
+              "name": "dspUserId",
+              "type": "String"
+            },
+            {
+              "name": "entityStatus",
+              "type": "String"
+            },
+            {
+              "name": "id",
+              "type": "String"
+            },
+            {
+              "name": "inserted",
+              "type": "boolean"
+            },
+            {
+              "name": "lastUpdateBy",
+              "type": "String"
+            },
+            {
+              "name": "lastUpdateOn",
+              "type": "Date"
+            },
+            {
+              "name": "load",
+              "type": "boolean"
+            },
+            {
+              "name": "redirectUri",
+              "type": "String"
+            },
+            {
+              "name": "rowstatus",
+              "type": "Integer"
+            },
+            {
+              "name": "rstatus",
+              "type": "Integer"
+            },
+            {
+              "name": "sourceId",
+              "type": "String"
+            },
+            {
+              "name": "stockSyncTimes",
+              "type": "String"
+            },
+            {
+              "name": "supplyChannelName",
+              "type": "String"
+            },
+            {
+              "name": "sys",
+              "type": "Integer"
+            },
+            {
+              "name": "thirdApiUrl",
+              "type": "String"
+            },
+            {
+              "name": "thirdAppKey",
+              "type": "String"
+            },
+            {
+              "name": "thirdAppSecret",
+              "type": "String"
+            },
+            {
+              "name": "thirdPassword",
+              "type": "String"
+            },
+            {
+              "name": "thirdPayPassword",
+              "type": "String"
+            },
+            {
+              "name": "thirdRefreshToken",
+              "type": "String"
+            },
+            {
+              "name": "thirdUserId",
+              "type": "String"
+            },
+            {
+              "name": "txnCoreDetailId",
+              "type": "String"
+            },
+            {
+              "name": "txnCoreDetailSeq",
+              "type": "Integer"
+            },
+            {
+              "name": "txnCoreId",
+              "type": "String"
+            },
+            {
+              "name": "txnCoreNo",
+              "type": "String"
+            },
+            {
+              "name": "txnCoreType",
+              "type": "String"
+            },
+            {
+              "name": "txnSourceDetailId",
+              "type": "String"
+            },
+            {
+              "name": "txnSourceDetailSeq",
+              "type": "Integer"
+            },
+            {
+              "name": "txnSourceId",
+              "type": "String"
+            },
+            {
+              "name": "txnSourceNo",
+              "type": "String"
+            },
+            {
+              "name": "txnSourceType",
+              "type": "String"
+            },
+            {
+              "name": "txnThirdId",
+              "type": "String"
+            },
+            {
+              "name": "txnThirdNo",
+              "type": "String"
+            },
+            {
+              "name": "updated",
+              "type": "boolean"
+            },
+            {
+              "name": "user",
+              "type": "AmUserRef"
+            },
+            {
+              "name": "version",
+              "type": "Integer"
+            }
+          ],
+          "datasource": "dataPackage",
+          "isMaster": "true",
+          "masterIdField": "",
+          "name": "dspThirdSupply",
+          "parentDataset": "",
+          "parentIdField": ""
+        }
+      ]
+    },
+    "detailPages": [
+      {
+        "componentSetModel": {
+          "aggregationId": null,
+          "components": [
+            {
+              "allowBlank": "false",
+              "ctype": "textfield",
+              "editable": "true",
+              "enumModel": null,
+              "fName": null,
+              "field": "supplyChannelName",
+              "format": null,
+              "ftype": null,
+              "height": -1,
+              "hidden": null,
+              "inputType": null,
+              "label": "第三方名称",
+              "labelwidth": 120,
+              "languageId": -1,
+              "maxLength": 20,
+              "name": "SupplyChannelName",
+              "object": null,
+              "precision": 2,
+              "readOnly": "false",
+              "refId": null,
+              "remoteComboBoxModel": null,
+              "rows": -1,
+              "valueListModel": null,
+              "width": 0.49
+            },
+            {
+              "allowBlank": "true",
+              "ctype": "textfield",
+              "editable": "true",
+              "enumModel": null,
+              "fName": null,
+              "field": "thirdRefreshToken",
+              "format": null,
+              "ftype": null,
+              "height": -1,
+              "hidden": null,
+              "inputType": null,
+              "label": "第三方TOKEN",
+              "labelwidth": 120,
+              "languageId": -1,
+              "maxLength": 300,
+              "name": "ThirdRefreshToken",
+              "object": null,
+              "precision": 2,
+              "readOnly": "false",
+              "refId": null,
+              "remoteComboBoxModel": null,
+              "rows": -1,
+              "valueListModel": null,
+              "width": 0.49
+            },
+            {
+              "allowBlank": "true",
+              "ctype": "textfield",
+              "editable": "true",
+              "enumModel": null,
+              "fName": null,
+              "field": "thirdAppSecret",
+              "format": null,
+              "ftype": null,
+              "height": -1,
+              "hidden": null,
+              "inputType": null,
+              "label": "第三方SECRET",
+              "labelwidth": 120,
+              "languageId": -1,
+              "maxLength": 300,
+              "name": "ThirdAppSecret",
+              "object": null,
+              "precision": 2,
+              "readOnly": "false",
+              "refId": null,
+              "remoteComboBoxModel": null,
+              "rows": -1,
+              "valueListModel": null,
+              "width": 0.49
+            },
+            {
+              "allowBlank": "true",
+              "ctype": "textfield",
+              "editable": "true",
+              "enumModel": null,
+              "fName": null,
+              "field": "thirdAppKey",
+              "format": null,
+              "ftype": null,
+              "height": -1,
+              "hidden": null,
+              "inputType": null,
+              "label": "第三方KEY",
+              "labelwidth": 120,
+              "languageId": -1,
+              "maxLength": 300,
+              "name": "ThirdAppKey",
+              "object": null,
+              "precision": 2,
+              "readOnly": "false",
+              "refId": null,
+              "remoteComboBoxModel": null,
+              "rows": -1,
+              "valueListModel": null,
+              "width": 0.49
+            },
+            {
+              "allowBlank": "true",
+              "ctype": "textfield",
+              "editable": "true",
+              "enumModel": null,
+              "fName": null,
+              "field": "thirdApiUrl",
+              "format": null,
+              "ftype": null,
+              "height": -1,
+              "hidden": null,
+              "inputType": null,
+              "label": "第三方API",
+              "labelwidth": 120,
+              "languageId": -1,
+              "maxLength": 300,
+              "name": "ThirdApiUrl",
+              "object": null,
+              "precision": 2,
+              "readOnly": "false",
+              "refId": null,
+              "remoteComboBoxModel": null,
+              "rows": -1,
+              "valueListModel": null,
+              "width": 0.49
+            },
+            {
+              "allowBlank": "true",
+              "ctype": "textfield",
+              "editable": "true",
+              "enumModel": null,
+              "fName": null,
+              "field": "thirdUserId",
+              "format": null,
+              "ftype": null,
+              "height": -1,
+              "hidden": null,
+              "inputType": null,
+              "label": "访问用户名",
+              "labelwidth": 120,
+              "languageId": -1,
+              "maxLength": 20,
+              "name": "ThirdUserId",
+              "object": null,
+              "precision": 2,
+              "readOnly": "false",
+              "refId": null,
+              "remoteComboBoxModel": null,
+              "rows": -1,
+              "valueListModel": null,
+              "width": 0.49
+            },
+            {
+              "allowBlank": "true",
+              "ctype": "textfield",
+              "editable": "true",
+              "enumModel": null,
+              "fName": null,
+              "field": "thirdPassword",
+              "format": null,
+              "ftype": null,
+              "height": -1,
+              "hidden": null,
+              "inputType": "password",
+              "label": "访问密码",
+              "labelwidth": 120,
+              "languageId": -1,
+              "maxLength": 20,
+              "name": "Password",
+              "object": null,
+              "precision": 2,
+              "readOnly": "false",
+              "refId": null,
+              "remoteComboBoxModel": null,
+              "rows": -1,
+              "valueListModel": null,
+              "width": 0.49
+            },
+            {
+              "allowBlank": "true",
+              "ctype": "textfield",
+              "editable": "true",
+              "enumModel": null,
+              "fName": null,
+              "field": "thirdPayPassword",
+              "format": null,
+              "ftype": null,
+              "height": -1,
+              "hidden": null,
+              "inputType": "password",
+              "label": "支付密码",
+              "labelwidth": 120,
+              "languageId": -1,
+              "maxLength": 20,
+              "name": "thirdPayPassword",
+              "object": null,
+              "precision": 2,
+              "readOnly": "false",
+              "refId": null,
+              "remoteComboBoxModel": null,
+              "rows": -1,
+              "valueListModel": null,
+              "width": 0.49
+            },
+            {
+              "allowBlank": "true",
+              "ctype": "comboBox",
+              "editable": "true",
+              "enumModel": {
+                "id": "com.epower.abd.rstatus2",
+                "items": [
+                  {
+                    "label": "所有",
+                    "name": "All",
+                    "value": "9"
+                  },
+                  {
+                    "label": "新增",
+                    "name": "com.epower.abd.rstatus.new",
+                    "value": "2"
+                  },
+                  {
+                    "label": "启用",
+                    "name": "com.epower.abd.rstatus.enable",
+                    "value": "1"
+                  },
+                  {
+                    "label": "禁用",
+                    "name": "com.epower.abd.rstatus.disable",
+                    "value": "0"
+                  }
+                ],
+                "resources": [
+                  {
+                    "locale": "en",
+                    "name": "All",
+                    "value": "All"
+                  },
+                  {
+                    "locale": "zh_CN",
+                    "name": "All",
+                    "value": "所有"
+                  },
+                  {
+                    "locale": "zh_TW",
+                    "name": "All",
+                    "value": "所有"
+                  },
+                  {
+                    "locale": "en",
+                    "name": "com.epower.abd.rstatus.new",
+                    "value": "new"
+                  },
+                  {
+                    "locale": "zh_CN",
+                    "name": "com.epower.abd.rstatus.new",
+                    "value": "新增"
+                  },
+                  {
+                    "locale": "zh_TW",
+                    "name": "com.epower.abd.rstatus.new",
+                    "value": "新增"
+                  },
+                  {
+                    "locale": "en",
+                    "name": "com.epower.abd.rstatus.enable",
+                    "value": "enable"
+                  },
+                  {
+                    "locale": "zh_CN",
+                    "name": "com.epower.abd.rstatus.enable",
+                    "value": "启用"
+                  },
+                  {
+                    "locale": "zh_TW",
+                    "name": "com.epower.abd.rstatus.enable",
+                    "value": "启用"
+                  },
+                  {
+                    "locale": "en",
+                    "name": "com.epower.abd.rstatus.disable",
+                    "value": "disable"
+                  },
+                  {
+                    "locale": "zh_CN",
+                    "name": "com.epower.abd.rstatus.disable",
+                    "value": "禁用"
+                  },
+                  {
+                    "locale": "zh_TW",
+                    "name": "com.epower.abd.rstatus.disable",
+                    "value": "禁用"
+                  }
+                ],
+                "type": "int"
+              },
+              "fName": null,
+              "field": "rstatus",
+              "format": null,
+              "ftype": null,
+              "height": -1,
+              "hidden": null,
+              "inputType": null,
+              "label": "状态",
+              "labelwidth": 120,
+              "languageId": -1,
+              "maxLength": 20,
+              "name": "rStatus",
+              "object": null,
+              "precision": 2,
+              "readOnly": null,
+              "refId": "com.epower.abd.rstatus2",
+              "remoteComboBoxModel": null,
+              "rows": -1,
+              "valueListModel": null,
+              "width": 0.49
+            },
+            {
+              "allowBlank": "false",
+              "ctype": "textfield",
+              "editable": "true",
+              "enumModel": null,
+              "fName": null,
+              "field": "stockSyncTimes",
+              "format": null,
+              "ftype": null,
+              "height": -1,
+              "hidden": null,
+              "inputType": null,
+              "label": "库存同步时间，多个时间点以;分开",
+              "labelwidth": 220,
+              "languageId": -1,
+              "maxLength": 20,
+              "name": "stockSyncTimes",
+              "object": null,
+              "precision": 2,
+              "readOnly": "false",
+              "refId": null,
+              "remoteComboBoxModel": null,
+              "rows": -1,
+              "valueListModel": null,
+              "width": 0.98
+            }
+          ],
+          "dataset": "dspThirdSupply",
+          "detailJs": null,
+          "label": "thirdSupplyMain",
+          "name": "thirdSupplyMain",
+          "style": "column",
+          "treeParentField": ""
+        },
+        "iconcls": null,
+        "label": "第三方对接设置",
+        "name": "mp_thirdSupply_main",
+        "toolbarModel": {
+          "buttons": [],
+          "name": "toolbar"
+        },
+        "treeModel": null
+      }
+    ],
+    "height": 0.65,
+    "iconcls": "psmgr",
+    "id": "com.epower.dsp.dspthirdsupply.DspThirdSupplyDetail",
+    "label": "第三方对接平台明细",
+    "masterPage": {
+      "componentSetModel": {
+        "aggregationId": null,
+        "components": [
+          {
+            "allowBlank": "true",
+            "ctype": "valuelistField",
+            "editable": "true",
+            "enumModel": null,
+            "fName": null,
+            "field": "user",
+            "format": null,
+            "ftype": null,
+            "height": -1,
+            "hidden": null,
+            "inputType": null,
+            "label": "平台用户",
+            "labelwidth": 120,
+            "languageId": -1,
+            "maxLength": 20,
+            "name": "dspUserId",
+            "object": null,
+            "precision": 2,
+            "readOnly": "false",
+            "refId": null,
+            "remoteComboBoxModel": null,
+            "rows": -1,
+            "valueListModel": {
+              "displayField": "userName",
+              "fromAction": "amUserListAction",
+              "fromJsclass": "com.epower.am.user.AmUserList",
+              "id": "dspUserId",
+              "inputField": "userNo",
+              "maps": [],
+              "saveField": "id",
+              "targetField": "dspUserId"
+            },
+            "width": 0.49
+          },
+          {
+            "allowBlank": "true",
+            "ctype": "textfield",
+            "editable": "true",
+            "enumModel": null,
+            "fName": null,
+            "field": "dspRefreshToken",
+            "format": null,
+            "ftype": null,
+            "height": -1,
+            "hidden": null,
+            "inputType": null,
+            "label": "平台刷新token",
+            "labelwidth": 120,
+            "languageId": -1,
+            "maxLength": 300,
+            "name": "dspRefreshToken",
+            "object": null,
+            "precision": 2,
+            "readOnly": "false",
+            "refId": null,
+            "remoteComboBoxModel": null,
+            "rows": -1,
+            "valueListModel": null,
+            "width": 0.49
+          },
+          {
+            "allowBlank": "false",
+            "ctype": "textfield",
+            "editable": "true",
+            "enumModel": null,
+            "fName": null,
+            "field": "dspAccessToken",
+            "format": null,
+            "ftype": null,
+            "height": -1,
+            "hidden": null,
+            "inputType": null,
+            "label": "平台访问token",
+            "labelwidth": 120,
+            "languageId": -1,
+            "maxLength": 300,
+            "name": "dspAccessToken",
+            "object": null,
+            "precision": 2,
+            "readOnly": "false",
+            "refId": null,
+            "remoteComboBoxModel": null,
+            "rows": -1,
+            "valueListModel": null,
+            "width": 0.49
+          },
+          {
+            "allowBlank": "false",
+            "ctype": "textfield",
+            "editable": "true",
+            "enumModel": null,
+            "fName": null,
+            "field": "dspAppSecret",
+            "format": null,
+            "ftype": null,
+            "height": -1,
+            "hidden": null,
+            "inputType": null,
+            "label": "平台secret",
+            "labelwidth": 120,
+            "languageId": -1,
+            "maxLength": 300,
+            "name": "dspAppSecret",
+            "object": null,
+            "precision": 2,
+            "readOnly": "false",
+            "refId": null,
+            "remoteComboBoxModel": null,
+            "rows": -1,
+            "valueListModel": null,
+            "width": 0.49
+          },
+          {
+            "allowBlank": "false",
+            "ctype": "textfield",
+            "editable": "true",
+            "enumModel": null,
+            "fName": null,
+            "field": "dspAppKey",
+            "format": null,
+            "ftype": null,
+            "height": -1,
+            "hidden": null,
+            "inputType": null,
+            "label": "平台key",
+            "labelwidth": 120,
+            "languageId": -1,
+            "maxLength": 300,
+            "name": "dspAppKey",
+            "object": null,
+            "precision": 2,
+            "readOnly": "false",
+            "refId": null,
+            "remoteComboBoxModel": null,
+            "rows": -1,
+            "valueListModel": null,
+            "width": 0.49
+          },
+          {
+            "allowBlank": "true",
+            "ctype": "textfield",
+            "editable": "true",
+            "enumModel": null,
+            "fName": null,
+            "field": "dspAccessIps",
+            "format": null,
+            "ftype": null,
+            "height": -1,
+            "hidden": null,
+            "inputType": null,
+            "label": "平台访问IP限制",
+            "labelwidth": 120,
+            "languageId": -1,
+            "maxLength": 300,
+            "name": "dspAccessIps",
+            "object": null,
+            "precision": 2,
+            "readOnly": "false",
+            "refId": null,
+            "remoteComboBoxModel": null,
+            "rows": -1,
+            "valueListModel": null,
+            "width": 0.79
+          },
+          {
+            "allowBlank": "true",
+            "ctype": "checkboxfield",
+            "editable": "true",
+            "enumModel": null,
+            "fName": null,
+            "field": "dspAccessIpCheck",
+            "format": null,
+            "ftype": null,
+            "height": -1,
+            "hidden": null,
+            "inputType": null,
+            "label": "平台访问IP限制开关",
+            "labelwidth": 120,
+            "languageId": -1,
+            "maxLength": 20,
+            "name": "dspAccessIpCheck",
+            "object": null,
+            "precision": 2,
+            "readOnly": "false",
+            "refId": null,
+            "remoteComboBoxModel": null,
+            "rows": -1,
+            "valueListModel": null,
+            "width": 0.19
+          },
+          {
+            "allowBlank": "true",
+            "ctype": "dateTimeField",
+            "editable": "true",
+            "enumModel": null,
+            "fName": null,
+            "field": "dspTokenEnableTime",
+            "format": "Y-m-d",
+            "ftype": null,
+            "height": -1,
+            "hidden": null,
+            "inputType": null,
+            "label": "平台token生效时间",
+            "labelwidth": 120,
+            "languageId": -1,
+            "maxLength": 20,
+            "name": "dspTokenEnableTime",
+            "object": null,
+            "precision": 2,
+            "readOnly": "false",
+            "refId": null,
+            "remoteComboBoxModel": null,
+            "rows": -1,
+            "valueListModel": null,
+            "width": 0.49
+          },
+          {
+            "allowBlank": "true",
+            "ctype": "dateTimeField",
+            "editable": "true",
+            "enumModel": null,
+            "fName": null,
+            "field": "dspTokenDisableTime",
+            "format": "Y-m-d",
+            "ftype": null,
+            "height": -1,
+            "hidden": null,
+            "inputType": null,
+            "label": "平台token失效时间",
+            "labelwidth": 120,
+            "languageId": -1,
+            "maxLength": 20,
+            "name": "dspTokenDisableTime",
+            "object": null,
+            "precision": 2,
+            "readOnly": "false",
+            "refId": null,
+            "remoteComboBoxModel": null,
+            "rows": -1,
+            "valueListModel": null,
+            "width": 0.49
+          }
+        ],
+        "dataset": "dspThirdSupply",
+        "detailJs": null,
+        "label": "componentset",
+        "name": "componentset",
+        "style": "column",
+        "treeParentField": ""
+      },
+      "iconcls": null,
+      "label": "mainPage",
+      "name": "mainPage",
+      "toolbarModel": {
+        "buttons": [
+          {
+            "fun": "new",
+            "iconcls": "table_add",
+            "label": "新增",
+            "name": "btnNew",
+            "panelType": null
+          },
+          {
+            "fun": "delete",
+            "iconcls": "table_delete",
+            "label": "删除",
+            "name": "btnDelete",
+            "panelType": null
+          },
+          {
+            "fun": "modify",
+            "iconcls": "table_edit",
+            "label": "修改",
+            "name": "btnModify",
+            "panelType": null
+          },
+          {
+            "fun": "save",
+            "iconcls": "table_save",
+            "label": "保存",
+            "name": "btnsave",
+            "panelType": null
+          },
+          {
+            "fun": "refresh",
+            "iconcls": "refresh",
+            "label": "刷新",
+            "name": "btnRefresh",
+            "panelType": null
+          }
+        ],
+        "name": "toolbar"
+      },
+      "treeModel": null
+    },
+    "remoteComboBoxLists": null,
+    "resources": [
+      {
+        "locale": "en",
+        "name": "com.epower.dsp.dspthirdsupply.DspThirdSupplyDetail",
+        "value": "THIRD SUPPLYDetail"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "com.epower.dsp.dspthirdsupply.DspThirdSupplyDetail",
+        "value": "第三方对接平台明细"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "com.epower.dsp.dspthirdsupply.DspThirdSupplyDetail",
+        "value": "第三方对接平台明細"
+      },
+      {
+        "locale": "en",
+        "name": "spmi_new",
+        "value": "New"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "spmi_new",
+        "value": "新增"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "spmi_new",
+        "value": "新增"
+      },
+      {
+        "locale": "en",
+        "name": "spmi_delete",
+        "value": "Delete"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "spmi_delete",
+        "value": "删除"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "spmi_delete",
+        "value": "刪除"
+      },
+      {
+        "locale": "en",
+        "name": "btnNew",
+        "value": "New"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "btnNew",
+        "value": "新增"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "btnNew",
+        "value": "新增"
+      },
+      {
+        "locale": "en",
+        "name": "btnModify",
+        "value": "Modify"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "btnModify",
+        "value": "修改"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "btnModify",
+        "value": "修改"
+      },
+      {
+        "locale": "en",
+        "name": "btnSave",
+        "value": "Save"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "btnSave",
+        "value": "保存"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "btnSave",
+        "value": "保存"
+      },
+      {
+        "locale": "en",
+        "name": "btnDelete",
+        "value": "Delete"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "btnDelete",
+        "value": "删除"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "btnDelete",
+        "value": "删除"
+      },
+      {
+        "locale": "en",
+        "name": "btnRefresh",
+        "value": "Refresh"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "btnRefresh",
+        "value": "刷新"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "btnRefresh",
+        "value": "刷新"
+      },
+      {
+        "locale": "en",
+        "name": "remarks",
+        "value": "remarks"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "remarks",
+        "value": "备注"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "remarks",
+        "value": "備注"
+      },
+      {
+        "locale": "en",
+        "name": "rstatus",
+        "value": "Status"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "rstatus",
+        "value": "状态"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "rstatus",
+        "value": "状态"
+      },
+      {
+        "locale": "en",
+        "name": "srd_seqNo",
+        "value": "seq"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "srd_seqNo",
+        "value": "序号"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "srd_seqNo",
+        "value": "序号"
+      },
+      {
+        "locale": "en",
+        "name": "btnApprove",
+        "value": "Approve"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "btnApprove",
+        "value": "审批"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "btnApprove",
+        "value": "审批"
+      },
+      {
+        "locale": "en",
+        "name": "btnUnApprove",
+        "value": "UnApprove"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "btnUnApprove",
+        "value": "反审批"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "btnUnApprove",
+        "value": "反审批"
+      },
+      {
+        "locale": "en",
+        "name": "btnCancel",
+        "value": "Cancel"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "btnCancel",
+        "value": "作废"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "btnCancel",
+        "value": "作废"
+      },
+      {
+        "locale": "en",
+        "name": "btnUnCacnel",
+        "value": "UnCacnel"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "btnUnCacnel",
+        "value": "反作废"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "btnUnCacnel",
+        "value": "反作废"
+      },
+      {
+        "locale": "en",
+        "name": "btnClose",
+        "value": "Close"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "btnClose",
+        "value": "关闭"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "btnClose",
+        "value": "关闭"
+      },
+      {
+        "locale": "en",
+        "name": "btnUnClose",
+        "value": "UnClose"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "btnUnClose",
+        "value": "反关闭"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "btnUnClose",
+        "value": "反关闭"
+      },
+      {
+        "locale": "en",
+        "name": "btnSuspend",
+        "value": "Suspend"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "btnSuspend",
+        "value": "冻结"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "btnSuspend",
+        "value": "冻结"
+      },
+      {
+        "locale": "en",
+        "name": "btnUnSuspend",
+        "value": "UnSuspend"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "btnUnSuspend",
+        "value": "反冻结"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "btnUnSuspend",
+        "value": "反冻结"
+      },
+      {
+        "locale": "en",
+        "name": "btnUploadAttachment",
+        "value": "Upload Attachment"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "btnUploadAttachment",
+        "value": "附件"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "btnUploadAttachment",
+        "value": "附件"
+      },
+      {
+        "locale": "en",
+        "name": "rStatus",
+        "value": "Status"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "rStatus",
+        "value": "记录状态"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "rStatus",
+        "value": "记录状态"
+      },
+      {
+        "locale": "en",
+        "name": "SupplyChannelName",
+        "value": "SUPPLY_CHANNEL_NAME"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "SupplyChannelName",
+        "value": "第三方名称"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "SupplyChannelName",
+        "value": "第三方名稱"
+      },
+      {
+        "locale": "en",
+        "name": "ThirdRefreshToken",
+        "value": "THIRD_REFRESH_TOKEN"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "ThirdRefreshToken",
+        "value": "第三方TOKEN"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "ThirdRefreshToken",
+        "value": "第三方TOKEN"
+      },
+      {
+        "locale": "en",
+        "name": "ThirdAppSecret",
+        "value": "THIRD_APP_SECRET"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "ThirdAppSecret",
+        "value": "第三方SECRET"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "ThirdAppSecret",
+        "value": "第三方SECRET"
+      },
+      {
+        "locale": "en",
+        "name": "ThirdAppKey",
+        "value": "THIRD_APP_KEY"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "ThirdAppKey",
+        "value": "第三方KEY"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "ThirdAppKey",
+        "value": "第三方KEY"
+      },
+      {
+        "locale": "en",
+        "name": "ThirdApiUrl",
+        "value": "THIRD_API_URL"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "ThirdApiUrl",
+        "value": "第三方API"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "ThirdApiUrl",
+        "value": "第三方API"
+      },
+      {
+        "locale": "en",
+        "name": "ThirdUserId",
+        "value": "THIRD_USER_ID"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "ThirdUserId",
+        "value": "访问用户名"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "ThirdUserId",
+        "value": "訪問用戶名"
+      },
+      {
+        "locale": "en",
+        "name": "Password",
+        "value": "PASSWORD"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "Password",
+        "value": "访问密码"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "Password",
+        "value": "訪問密碼"
+      },
+      {
+        "locale": "en",
+        "name": "thirdPayPassword",
+        "value": "thirdPayPassword"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "thirdPayPassword",
+        "value": "支付密码"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "thirdPayPassword",
+        "value": "支付密碼"
+      },
+      {
+        "locale": "en",
+        "name": "stockSyncTimes",
+        "value": "stockSyncTimes"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "stockSyncTimes",
+        "value": "库存同步时间，多个时间点以;分开"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "stockSyncTimes",
+        "value": "库存同步时间，多个时间点以;分开"
+      },
+      {
+        "locale": "en",
+        "name": "dspUserId",
+        "value": "dspUserId"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "dspUserId",
+        "value": "平台用户"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "dspUserId",
+        "value": "平台用戶"
+      },
+      {
+        "locale": "en",
+        "name": "dspRefreshToken",
+        "value": "dspRefreshToken"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "dspRefreshToken",
+        "value": "平台刷新token"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "dspRefreshToken",
+        "value": "平台刷新token"
+      },
+      {
+        "locale": "en",
+        "name": "dspAccessToken",
+        "value": "dspAccessToken"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "dspAccessToken",
+        "value": "平台访问token"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "dspAccessToken",
+        "value": "平台訪問token"
+      },
+      {
+        "locale": "en",
+        "name": "dspAppSecret",
+        "value": "dspAppSecret"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "dspAppSecret",
+        "value": "平台secret"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "dspAppSecret",
+        "value": "平台secret"
+      },
+      {
+        "locale": "en",
+        "name": "dspAppKey",
+        "value": "dspAppKey"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "dspAppKey",
+        "value": "平台key"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "dspAppKey",
+        "value": "平台key"
+      },
+      {
+        "locale": "en",
+        "name": "dspAccessIps",
+        "value": "dspAccessIps"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "dspAccessIps",
+        "value": "平台访问IP限制"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "dspAccessIps",
+        "value": "平台訪問IP限制"
+      },
+      {
+        "locale": "en",
+        "name": "dspAccessIpCheck",
+        "value": "dspAccessIpCheck"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "dspAccessIpCheck",
+        "value": "平台访问IP限制开关"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "dspAccessIpCheck",
+        "value": "平台訪問IP限制開關"
+      },
+      {
+        "locale": "en",
+        "name": "dspTokenEnableTime",
+        "value": "dspTokenEnableTime"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "dspTokenEnableTime",
+        "value": "平台token生效时间"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "dspTokenEnableTime",
+        "value": "平台token生效時間"
+      },
+      {
+        "locale": "en",
+        "name": "dspTokenDisableTime",
+        "value": "dspTokenDisableTime"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "dspTokenDisableTime",
+        "value": "平台token失效时间"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "dspTokenDisableTime",
+        "value": "平台token失效時間"
+      },
+      {
+        "locale": "en",
+        "name": "mp_thirdSupply_main",
+        "value": "thirdSupply_main"
+      },
+      {
+        "locale": "zh_CN",
+        "name": "mp_thirdSupply_main",
+        "value": "第三方对接设置"
+      },
+      {
+        "locale": "zh_TW",
+        "name": "mp_thirdSupply_main",
+        "value": "第三方對接設置"
+      }
+    ],
+    "valueLists": {
+      "dspUserId": {
+        "displayField": "userName",
+        "fromAction": "amUserListAction",
+        "fromJsclass": "com.epower.am.user.AmUserList",
+        "id": "dspUserId",
+        "inputField": "userNo",
+        "maps": [],
+        "saveField": "id",
+        "targetField": "dspUserId"
+      }
+    },
+    "version": "1.00",
+    "width": 0.7
+  },
+  "language": "zh_CN",
+  "listViewId": null,
+  "listViewModel": null,
+  "reportViewId": null,
+  "reportViewModel": null
+}

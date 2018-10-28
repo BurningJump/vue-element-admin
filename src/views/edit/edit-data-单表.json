@@ -1,0 +1,334 @@
+{
+  "SVars": "{\"operationCode\":\"'DSP27-DELETE','DSP27-MODIFY','DSP27-NEW','DSP27-VIEW'\"}",
+  "actionErrors": [],
+  "actionMessages": [],
+  "bizException": null,
+  "count": 0,
+  "dataId": "C77B4779-0980-0001-9AF5-1790350D5D70",
+  "dataIdEntityType": null,
+  "dataPackage": {
+    "dataSets": [
+      {
+        "bizClassName": "com.epower.dsp.pojo.DspThirdSupply",
+        "currentTable": [
+          {
+            "bstatus": 0,
+            "createBy": "B9B81BCAC78240ADA30D0EAD34EA9017",
+            "createOn": "2017-04-08T00:19:42",
+            "datacenterId": 1,
+            "deleted": false,
+            "dspAccessIpCheck": 0,
+            "dspAccessIps": "14.217.201.42",
+            "dspAccessToken": "3DAA77FE8D124C56BEE553BFDF1BC78C",
+            "dspAppKey": "834DAB44823A48B89010A27795EF1CD9",
+            "dspAppSecret": "3E5042FAC24C4BC1820502E4E4A1E453",
+            "dspRefreshToken": null,
+            "dspTokenDisableTime": "2020-01-23T10:11:01",
+            "dspTokenEnableTime": "2017-04-27T10:10:31",
+            "dspUserId": "C767AE9A-59A0-0001-A9BF-1940FD54148D",
+            "entityStatus": "L",
+            "id": "C77B4779-0980-0001-9AF5-1790350D5D70",
+            "inserted": false,
+            "lastUpdateBy": "B9B81BCAC78240ADA30D0EAD34EA9017",
+            "lastUpdateOn": "2017-11-11T16:57:31",
+            "load": true,
+            "redirectUri": null,
+            "rowstatus": 0,
+            "rstatus": 1,
+            "sourceId": null,
+            "stockSyncTimes": "23:30:00,17:00:00",
+            "supplyChannelName": "天马",
+            "sys": 0,
+            "thirdApiUrl": null,
+            "thirdAppKey": null,
+            "thirdAppSecret": null,
+            "thirdPassword": "zx@123",
+            "thirdPayPassword": "zx@123",
+            "thirdRefreshToken": "2caf432c4a0812854d64ac9ce5a84952",
+            "thirdUserId": "显臣网络",
+            "txnCoreDetailId": null,
+            "txnCoreDetailSeq": 0,
+            "txnCoreId": null,
+            "txnCoreNo": null,
+            "txnCoreType": null,
+            "txnSourceDetailId": null,
+            "txnSourceDetailSeq": 0,
+            "txnSourceId": null,
+            "txnSourceNo": null,
+            "txnSourceType": null,
+            "txnThirdId": null,
+            "txnThirdNo": null,
+            "updated": false,
+            "user": {
+              "address": null,
+              "avidate": null,
+              "createBy": "C709F86B-BC00-0001-2FD3-2BFFB7801CDF",
+              "createOn": "2017-02-06T15:01:53",
+              "datacenterId": 1,
+              "defaultOrganizationId": null,
+              "deleted": false,
+              "email": null,
+              "entityStatus": "L",
+              "familyTel": null,
+              "gender": null,
+              "id": "C767AE9A-59A0-0001-A9BF-1940FD54148D",
+              "inserted": false,
+              "lastUpdateBy": "C709F86B-BC00-0001-2FD3-2BFFB7801CDF",
+              "lastUpdateOn": "2018-08-25T17:50:20",
+              "load": true,
+              "memo": null,
+              "mobile": null,
+              "msn": null,
+              "officeTel": null,
+              "password": "CDE8E3E58AB6E2D16CBE1A0EE19FE3A3",
+              "photoUrl": null,
+              "qq": null,
+              "rstatus": 1,
+              "sourceId": null,
+              "updated": false,
+              "userName": "天马",
+              "userNo": "1003",
+              "userType": 0
+            },
+            "version": 0
+          }
+        ],
+        "name": "dspThirdSupply",
+        "originalTable": [
+          {
+            "bstatus": 0,
+            "createBy": "B9B81BCAC78240ADA30D0EAD34EA9017",
+            "createOn": "2017-04-08T00:19:42",
+            "datacenterId": 1,
+            "deleted": false,
+            "dspAccessIpCheck": 0,
+            "dspAccessIps": "14.217.201.42",
+            "dspAccessToken": "3DAA77FE8D124C56BEE553BFDF1BC78C",
+            "dspAppKey": "834DAB44823A48B89010A27795EF1CD9",
+            "dspAppSecret": "3E5042FAC24C4BC1820502E4E4A1E453",
+            "dspRefreshToken": null,
+            "dspTokenDisableTime": "2020-01-23T10:11:01",
+            "dspTokenEnableTime": "2017-04-27T10:10:31",
+            "dspUserId": "C767AE9A-59A0-0001-A9BF-1940FD54148D",
+            "entityStatus": "L",
+            "id": "C77B4779-0980-0001-9AF5-1790350D5D70",
+            "inserted": false,
+            "lastUpdateBy": "B9B81BCAC78240ADA30D0EAD34EA9017",
+            "lastUpdateOn": "2017-11-11T16:57:31",
+            "load": true,
+            "redirectUri": null,
+            "rowstatus": 0,
+            "rstatus": 1,
+            "sourceId": null,
+            "stockSyncTimes": "23:30:00,17:00:00",
+            "supplyChannelName": "天马",
+            "sys": 0,
+            "thirdApiUrl": null,
+            "thirdAppKey": null,
+            "thirdAppSecret": null,
+            "thirdPassword": "zx@123",
+            "thirdPayPassword": "zx@123",
+            "thirdRefreshToken": "2caf432c4a0812854d64ac9ce5a84952",
+            "thirdUserId": "显臣网络",
+            "txnCoreDetailId": null,
+            "txnCoreDetailSeq": 0,
+            "txnCoreId": null,
+            "txnCoreNo": null,
+            "txnCoreType": null,
+            "txnSourceDetailId": null,
+            "txnSourceDetailSeq": 0,
+            "txnSourceId": null,
+            "txnSourceNo": null,
+            "txnSourceType": null,
+            "txnThirdId": null,
+            "txnThirdNo": null,
+            "updated": false,
+            "user": {
+              "address": null,
+              "avidate": null,
+              "createBy": "C709F86B-BC00-0001-2FD3-2BFFB7801CDF",
+              "createOn": "2017-02-06T15:01:53",
+              "datacenterId": 1,
+              "defaultOrganizationId": null,
+              "deleted": false,
+              "email": null,
+              "entityStatus": "L",
+              "familyTel": null,
+              "gender": null,
+              "id": "C767AE9A-59A0-0001-A9BF-1940FD54148D",
+              "inserted": false,
+              "lastUpdateBy": "C709F86B-BC00-0001-2FD3-2BFFB7801CDF",
+              "lastUpdateOn": "2018-08-25T17:50:20",
+              "load": true,
+              "memo": null,
+              "mobile": null,
+              "msn": null,
+              "officeTel": null,
+              "password": "CDE8E3E58AB6E2D16CBE1A0EE19FE3A3",
+              "photoUrl": null,
+              "qq": null,
+              "rstatus": 1,
+              "sourceId": null,
+              "updated": false,
+              "userName": "天马",
+              "userNo": "1003",
+              "userType": 0
+            },
+            "version": 0
+          }
+        ],
+        "updatedLog": null
+      }
+    ]
+  },
+  "dataPackageJsonString": null,
+  "errorMessages": [],
+  "errors": {},
+  "fieldErrors": {},
+  "limit": 20,
+  "locale": "zh_CN",
+  "log": {
+    "additivity": true,
+    "allAppenders": {},
+    "chainedPriority": {
+      "syslogEquivalent": 6
+    },
+    "debugEnabled": false,
+    "effectiveLevel": {
+      "syslogEquivalent": 6
+    },
+    "hierarchy": {
+      "currentCategories": {},
+      "currentLoggers": {},
+      "rendererMap": {
+        "defaultRenderer": {}
+      },
+      "rootLogger": {
+        "additivity": true,
+        "allAppenders": {},
+        "chainedLevel": {
+          "syslogEquivalent": 6
+        },
+        "chainedPriority": {
+          "syslogEquivalent": 6
+        },
+        "debugEnabled": false,
+        "effectiveLevel": {
+          "syslogEquivalent": 6
+        },
+        "hierarchy": null,
+        "infoEnabled": true,
+        "level": {
+          "syslogEquivalent": 6
+        },
+        "loggerRepository": null,
+        "name": "root",
+        "parent": null,
+        "priority": {
+          "syslogEquivalent": 6
+        },
+        "resourceBundle": null,
+        "traceEnabled": false
+      },
+      "threshold": {
+        "syslogEquivalent": 7
+      }
+    },
+    "infoEnabled": true,
+    "level": null,
+    "loggerRepository": {
+      "currentCategories": {},
+      "currentLoggers": {},
+      "rendererMap": {
+        "defaultRenderer": {}
+      },
+      "rootLogger": {
+        "additivity": true,
+        "allAppenders": {},
+        "chainedLevel": {
+          "syslogEquivalent": 6
+        },
+        "chainedPriority": {
+          "syslogEquivalent": 6
+        },
+        "debugEnabled": false,
+        "effectiveLevel": {
+          "syslogEquivalent": 6
+        },
+        "hierarchy": null,
+        "infoEnabled": true,
+        "level": {
+          "syslogEquivalent": 6
+        },
+        "loggerRepository": null,
+        "name": "root",
+        "parent": null,
+        "priority": {
+          "syslogEquivalent": 6
+        },
+        "resourceBundle": null,
+        "traceEnabled": false
+      },
+      "threshold": {
+        "syslogEquivalent": 7
+      }
+    },
+    "name": "com.epower.dsp.dspthirdsupply.DspThirdSupplyDetailAction",
+    "parent": {
+      "additivity": true,
+      "allAppenders": {},
+      "chainedLevel": {
+        "syslogEquivalent": 6
+      },
+      "chainedPriority": {
+        "syslogEquivalent": 6
+      },
+      "debugEnabled": false,
+      "effectiveLevel": {
+        "syslogEquivalent": 6
+      },
+      "hierarchy": {
+        "currentCategories": {},
+        "currentLoggers": {},
+        "rendererMap": {
+          "defaultRenderer": {}
+        },
+        "rootLogger": null,
+        "threshold": {
+          "syslogEquivalent": 7
+        }
+      },
+      "infoEnabled": true,
+      "level": {
+        "syslogEquivalent": 6
+      },
+      "loggerRepository": {
+        "currentCategories": {},
+        "currentLoggers": {},
+        "rendererMap": {
+          "defaultRenderer": {}
+        },
+        "rootLogger": null,
+        "threshold": {
+          "syslogEquivalent": 7
+        }
+      },
+      "name": "root",
+      "parent": null,
+      "priority": {
+        "syslogEquivalent": 6
+      },
+      "resourceBundle": null,
+      "traceEnabled": false
+    },
+    "priority": null,
+    "resourceBundle": null,
+    "traceEnabled": false
+  },
+  "resultList": null,
+  "serverVars": {
+    "operationCode": "DSP27-DELETE','DSP27-MODIFY','DSP27-NEW','DSP27-VIEW"
+  },
+  "start": 0,
+  "texts": null
+}
