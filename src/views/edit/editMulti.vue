@@ -25,8 +25,8 @@
     <el-tabs v-model="activeTab" type="card" @tab-click="handleClick">
       <el-tab-pane v-for="tab in detailPagesTabs" :key="tab.name" :label="tab.label" :name="tab.name">
         <el-container>
-          <el-header v-for="btn in tab.toolbarModel.buttons" v-if="tab.toolbarModel.buttons.length > 0" :key="btn.label" height="auto">
-            <el-button size="small">{{ btn.label }}</el-button>
+          <el-header height="auto">
+            <el-button v-for="btn in tab.toolbarModel.buttons" v-if="tab.toolbarModel.buttons.length > 0" :key="btn.label" size="small">{{ btn.label }}</el-button>
           </el-header>
           <el-main>
             <el-table v-if="tab.componentSetModel.style === 'grid'" ref="multipleTable" :data="firstTabData" element-loading-text="拼命加载中" border fit highlight-current-row>

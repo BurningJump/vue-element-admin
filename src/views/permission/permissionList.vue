@@ -90,3 +90,10 @@ export default{
   }
 }
 </script>
+
+<style lang="scss">
+.toolbar {
+  margin-bottom: 10px;
+}
+</style>
+
