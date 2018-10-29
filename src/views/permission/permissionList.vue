@@ -8,25 +8,36 @@
             <el-input/>
           </el-form-item>
         </el-form>
-        <el-button type="primary">查询</el-button>
+        <el-button type="primary" icon="el-icon-search">查询</el-button>
         <el-button type="primary">重置</el-button>
       </el-main>
     </el-container>
     <div class="toolbar">
-      <el-button v-for="btn in buttons" :key="btn.label">{{ btn.label }}</el-button>
+      <el-button v-for="btn in buttons" :key="btn.label">
+        <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
+        <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
+        <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
+        <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
+        {{ btn.label }}
+      </el-button>
     </div>
-    <div class="grid">
-      <el-table ref="multipleTable" :data="list" element-loading-text="拼命加载中" border fit highlight-current-row>
-        <el-table-column type="selection" align="center"/>
-        <el-table-column label="行号" align="center">
-          <template slot-scope="scope">
-            {{ scope.$index }}
-          </template>
-        </el-table-column>
-        <el-table-column v-for="header in grid" :key="header.label" :prop="header.prop" :label="header.label" align="center"/>
-      </el-table>
-      <pagination v-show="list.length>0" :total="list.length" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList"/>
-    </div>
+    <el-container>
+      <el-aside width="200px">
+        <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
+      </el-aside>
+      <el-main>
+        <el-table ref="multipleTable" :data="list" element-loading-text="拼命加载中" border fit highlight-current-row>
+          <el-table-column type="selection" align="center"/>
+          <el-table-column label="行号" align="center">
+            <template slot-scope="scope">
+              {{ scope.$index }}
+            </template>
+          </el-table-column>
+          <el-table-column v-for="header in grid" :key="header.label" :prop="header.prop" :label="header.label" align="center"/>
+        </el-table>
+        <pagination v-show="list.length>0" :total="list.length" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList"/>
+      </el-main>
+    </el-container>
   </div>
 </template>
 
@@ -50,7 +61,46 @@ export default{
         page: 1,
         limit: 20
       },
-      multipleSelection: []
+      multipleSelection: [],
+      data: [{
+        label: '一级 1',
+        children: [{
+          label: '二级 1-1',
+          children: [{
+            label: '三级 1-1-1'
+          }]
+        }]
+      }, {
+        label: '一级 2',
+        children: [{
+          label: '二级 2-1',
+          children: [{
+            label: '三级 2-1-1'
+          }]
+        }, {
+          label: '二级 2-2',
+          children: [{
+            label: '三级 2-2-1'
+          }]
+        }]
+      }, {
+        label: '一级 3',
+        children: [{
+          label: '二级 3-1',
+          children: [{
+            label: '三级 3-1-1'
+          }]
+        }, {
+          label: '二级 3-2',
+          children: [{
+            label: '三级 3-2-1'
+          }]
+        }]
+      }],
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      }
     }
   },
   mounted() {
@@ -86,6 +136,9 @@ export default{
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
+    },
+    handleNodeClick(data) {
+      console.log(data)
     }
   }
 }

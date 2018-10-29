@@ -3,7 +3,14 @@
     <el-container>
       <el-header height="auto">
         <div class="toolbar">
-          <el-button v-for="btn in buttons" :key="btn.label">{{ btn.label }}</el-button>
+          <el-button v-for="btn in buttons" :key="btn.label">
+            <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
+            <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
+            <i v-else-if="btn.iconcls === 'table_save'" class="el-icon-document"/>
+            <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
+            <i v-else-if="btn.iconcls === 'refresh'" class="el-icon-refresh"/>
+            {{ btn.label }}
+          </el-button>
         </div>
       </el-header>
       <el-main>

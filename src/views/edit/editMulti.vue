@@ -3,7 +3,16 @@
     <el-container>
       <el-header height="auto">
         <div class="toolbar">
-          <el-button v-for="btn in buttons" :key="btn.label" size="small">{{ btn.label }}</el-button>
+          <el-button v-for="btn in buttons" :key="btn.label" size="small">
+            <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
+            <i v-else-if="btn.iconcls === 'table_view'" class="el-icon-view"/>
+            <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
+            <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
+            <i v-else-if="btn.iconcls === 'table_close'" class="el-icon-close"/>
+            <i v-else-if="btn.iconcls === 'table_save'" class="el-icon-document"/>
+            <i v-else-if="btn.iconcls === 'refresh'" class="el-icon-refresh"/>
+            {{ btn.label }}
+          </el-button>
         </div>
       </el-header>
       <el-main>
@@ -26,7 +35,11 @@
       <el-tab-pane v-for="tab in detailPagesTabs" :key="tab.name" :label="tab.label" :name="tab.name">
         <el-container>
           <el-header height="auto">
-            <el-button v-for="btn in tab.toolbarModel.buttons" v-if="tab.toolbarModel.buttons.length > 0" :key="btn.label" size="small">{{ btn.label }}</el-button>
+            <el-button v-for="btn in tab.toolbarModel.buttons" v-if="tab.toolbarModel.buttons.length > 0" :key="btn.label" size="small">
+              <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
+              <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
+              {{ btn.label }}
+            </el-button>
           </el-header>
           <el-main>
             <el-table v-if="tab.componentSetModel.style === 'grid'" ref="multipleTable" :data="firstTabData" element-loading-text="拼命加载中" border fit highlight-current-row>
