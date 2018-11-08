@@ -168,12 +168,12 @@ export default{
         if (node.level === 1) {
           this.treeChild.forEach((child) => {
             if (!child.leaf) {
-              this.tree[0].children.push({
+              data.children.push({
                 label: child.text,
                 children: []
               })
             } else {
-              this.tree.children.push({
+              data.children.push({
                 label: child.text
               })
             }
@@ -181,12 +181,12 @@ export default{
         } else if (node.level === 2) {
           this.treeGrandchild.forEach((grandchild) => {
             if (!grandchild.leaf) {
-              this.tree[0].children[0].children.push({
+              data.children.push({
                 label: grandchild.text,
                 children: []
               })
             } else {
-              this.tree[0].children[0].children.push({
+              data.children.push({
                 label: grandchild.text
               })
             }
