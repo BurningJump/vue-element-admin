@@ -36,7 +36,12 @@
                 {{ scope.$index }}
               </template>
             </el-table-column>
-            <el-table-column v-for="header in grid" :key="header.label" :prop="header.prop" :label="header.label" align="center"/>
+            <!-- <el-table-column v-for="header in grid" :key="header.label" :prop="header.prop" :label="header.label" align="center"/> -->
+            <el-table-column v-for="header in grid" :key="header.label" :label="header.label" align="center">
+              <template slot-scope="scope">
+                <div v-html="scope.row[header.prop]"></div>
+              </template>
+            </el-table-column>
           </el-table>
         </el-main>
         <el-footer>

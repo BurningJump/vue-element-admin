@@ -47,14 +47,14 @@
               <el-table-column v-for="header in tab.componentSetModel.components" :key="header.label" :prop="header.field" :label="header.label" align="center">
                 <template slot-scope="scope">
                   <img v-if="header.ctype === 'image'" :src="scope.row[header.field]" :width="header.width">
-                  <span v-else-if="header.ctype === 'valuelistField'">{{ scope.row[header.field][header.valueListModel.displayField] }}</span>
-                  <span v-else>{{ scope.row[header.field] }}</span>
+                  <div v-else-if="header.ctype === 'valuelistField'" v-html="scope.row[header.field][header.valueListModel.displayField]"></div>
+                  <div v-else v-html="scope.row[header.field]"></div>
                 </template>
               </el-table-column>
             </el-table>
             <el-table v-else-if="tab.componentSetModel.style === 'aGrid'" ref="multipleTable" element-loading-text="拼命加载中" border fit highlight-current-row>
               <el-table-column type="selection" align="center"/>
-              <el-table-column v-for="header in tab.componentSetModel.components" :key="header.label" :prop="header.prop" :label="header.label" align="center"/>>
+              <el-table-column v-for="header in tab.componentSetModel.components" :key="header.label" :prop="header.prop" :label="header.label" align="center"/>
             </el-table>
             <div v-else-if="tab.componentSetModel.style === 'column'" class="column">
               <el-main>
