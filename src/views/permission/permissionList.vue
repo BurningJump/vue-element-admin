@@ -27,18 +27,22 @@
       <el-aside width="200px">
         <el-tree :data="tree" :props="defaultProps" @node-expand="handleNodeExpand" @node-click="handleNodeClick"></el-tree>
       </el-aside>
-      <el-main>
-        <el-table ref="multipleTable" expand-on-click-node :data="list" element-loading-text="拼命加载中" border fit highlight-current-row>
-          <el-table-column type="selection" align="center"/>
-          <el-table-column label="行号" align="center">
-            <template slot-scope="scope">
-              {{ scope.$index }}
-            </template>
-          </el-table-column>
-          <el-table-column v-for="header in grid" :key="header.label" :prop="header.prop" :label="header.label" align="center"/>
-        </el-table>
-        <pagination v-show="list.length>0" :total="list.length" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList"/>
-      </el-main>
+      <el-container>
+        <el-main>
+          <el-table ref="multipleTable" expand-on-click-node :data="list" element-loading-text="拼命加载中" border fit highlight-current-row>
+            <el-table-column type="selection" align="center"/>
+            <el-table-column label="行号" align="center">
+              <template slot-scope="scope">
+                {{ scope.$index }}
+              </template>
+            </el-table-column>
+            <el-table-column v-for="header in grid" :key="header.label" :prop="header.prop" :label="header.label" align="center"/>
+          </el-table>
+        </el-main>
+        <el-footer>
+          <pagination v-show="list.length>0" :total="list.length" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList"/>
+        </el-footer>
+      </el-container>
     </el-container>
   </div>
 </template>
@@ -115,6 +119,8 @@ export default{
   mounted() {
     this.getUIdata()
     this.getListData()
+    this.renderTree()
+    // console.log(this.$.getJSON('http://112.93.248.117:3001/treeRoot.json'))
   },
   methods: {
     getUIdata() {
@@ -129,9 +135,54 @@ export default{
           label: item.label
         })
       })
-      this.tree.push({
-        label: this.treeRoot.treeRoot.text,
-        children: []
+      this.$http.get('/api/treeRoot.json').then((res) => {
+        console.log(res, 'json-----')
+      })
+      
+    },
+    // 生成目录树
+    renderTree() {
+      if (!this.treeRoot.treeRoot.leaf) {
+        this.tree.push({
+          label: this.treeRoot.treeRoot.text,
+          children: []
+        })
+      } else {
+        this.tree.push({
+          label: this.treeRoot.treeRoot.text
+        })
+      }
+      this.treeChild.forEach((child) => {
+        if (!child.leaf && this.tree[0].children) {
+          this.tree[0].children.push({
+            label: child.text,
+            children: []
+          })
+        } else {
+          this.tree[0].children.push({
+            label: child.text
+          })
+        }
+      })
+      this.treeGrandchild.forEach((grandchild) => {
+        if (!grandchild.leaf) {
+          this.tree[0].children.forEach((treeChild) => {
+            if (treeChild.children) {
+              treeChild.children.push({
+                label: grandchild.text,
+                children: []
+              })
+            }
+          })
+        } else {
+          this.tree[0].children.forEach((treeChild) => {
+            if (treeChild.children) {
+              treeChild.children.push({
+                label: grandchild.text
+              })
+            }
+          })
+        }
       })
     },
     getListData() {
@@ -157,45 +208,46 @@ export default{
       // console.log(data,node,ref)
     },
     handleNodeClick(data, node, ref) {
-      // 点击节点时获取子节点及表数据
-      console.log(data, node, ref)
-      if (data.children && data.children.length > 0) {
-        // 已加载过节点
-        return
-      }
-      if (data.children && data.children.length === 0) {
-        // 获取子节点
-        if (node.level === 1) {
-          this.treeChild.forEach((child) => {
-            if (!child.leaf) {
-              data.children.push({
-                label: child.text,
-                children: []
-              })
-            } else {
-              data.children.push({
-                label: child.text
-              })
-            }
-          })
-        } else if (node.level === 2) {
-          this.treeGrandchild.forEach((grandchild) => {
-            if (!grandchild.leaf) {
-              data.children.push({
-                label: grandchild.text,
-                children: []
-              })
-            } else {
-              data.children.push({
-                label: grandchild.text
-              })
-            }
-          })
-        }
-      }
-      if (node.isLeaf) {
-        // 叶节点，加载表数据
-      }
+    //   // 点击节点时获取子节点及表数据
+    //   console.log(data, node, ref)
+    //   if (data.children && data.children.length > 0) {
+    //     // 已加载过节点
+    //     return
+    //   }
+    //   if (data.children && data.children.length === 0) {
+    //     // 获取子节点
+    //     if (node.level === 1) {
+    //       this.treeChild.forEach((child) => {
+    //         if (!child.leaf) {
+    //           data.children.push({
+    //             label: child.text,
+    //             children: []
+    //           })
+    //         } else {
+    //           data.children.push({
+    //             label: child.text
+    //           })
+    //         }
+    //       })
+    //     } else if (node.level === 2) {
+    //       this.treeGrandchild.forEach((grandchild) => {
+    //         if (!grandchild.leaf) {
+    //           data.children.push({
+    //             label: grandchild.text,
+    //             children: []
+    //           })
+    //         } else {
+    //           data.children.push({
+    //             label: grandchild.text
+    //           })
+    //         }
+    //       })
+    //     }
+    //   }
+    //   if (node.isLeaf) {
+    //     // 叶节点，加载表数据
+    //     console.log('加载叶节点数据')
+    //   }
     },
     resetForm() {
       Object.keys(this.conditionForm).forEach(key => obj[key] = '');
@@ -207,6 +259,10 @@ export default{
 <style lang="scss">
 .toolbar {
   margin-bottom: 10px;
+}
+.el-form {
+  display: flex;
+  width: 100%;
 }
 </style>
 
