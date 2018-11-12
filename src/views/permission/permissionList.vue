@@ -63,9 +63,9 @@ export default{
     return {
       listUI: require('./list-ui.json'),
       listData: require('./list-data.json'),
-      treeRoot: require('./root.json'),
-      treeChild: require('./child.json'),
-      treeGrandchild: require('./grandchild.json'),
+      treeRoot: {},
+      treeChild: {},
+      treeGrandchild: {},
       qCondition: [],
       buttons: [],
       tree: [],
@@ -125,7 +125,6 @@ export default{
     this.getUIdata()
     this.getListData()
     this.renderTree()
-    // console.log(this.$.getJSON('http://112.93.248.117:3001/treeRoot.json'))
   },
   methods: {
     getUIdata() {
@@ -140,8 +139,20 @@ export default{
           label: item.label
         })
       })
-      this.$http.get('/api/treeRoot.json').then((res) => {
-        console.log(res, 'json-----')
+      this.$http.get('http://112.93.248.117:3001/openapi/treeRoot').then((res) => {
+        this.treeRoot = JSON.parse(JSON.stringify(res.data));
+      }).catch((err) => {
+        console.log(err)
+      })
+      this.$http.get('http://112.93.248.117:3001/openapi/treeChild').then((res) => {
+        this.treeChild = JSON.parse(JSON.stringify(res.data));
+      }).catch((err) => {
+        console.log(err)
+      })
+      this.$http.get('http://112.93.248.117:3001/openapi/treeGrandChild').then((res) => {
+        this.treeGrandchild = JSON.parse(JSON.stringify(res.data));
+      }).catch((err) => {
+        console.log(err)
       })
       
     },
