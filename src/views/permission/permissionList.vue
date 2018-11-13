@@ -122,39 +122,38 @@ export default{
     }
   },
   mounted() {
-    this.getUIdata()
+    this.getUIdata().then(() => {
+      this.renderTree()
+    })
     this.getListData()
-    this.renderTree()
   },
   methods: {
     getUIdata() {
-      this.qCondition = [].concat(this.listUI.listViewModel.qCondition.components)
-      this.qCondition.forEach((condition) => {
-        this.conditionForm[condition.findField] = ''
-      })
-      this.buttons = [].concat(this.listUI.listViewModel.toolbar.buttons)
-      this.listUI.listViewModel.grid.components.forEach((item) => {
-        this.grid.push({
-          prop: item.name,
-          label: item.label
+      return new Promise((resolve,reject) => {
+        this.qCondition = [].concat(this.listUI.listViewModel.qCondition.components)
+        this.qCondition.forEach((condition) => {
+          this.conditionForm[condition.findField] = ''
+        })
+        this.buttons = [].concat(this.listUI.listViewModel.toolbar.buttons)
+        this.listUI.listViewModel.grid.components.forEach((item) => {
+          this.grid.push({
+            prop: item.name,
+            label: item.label
+          })
+        })
+        this.$http.get('http://112.93.248.117:3001/openapi/treeRoot').then((res) => {
+          this.treeRoot = JSON.parse(JSON.stringify(res.data));
+          this.$http.get('http://112.93.248.117:3001/openapi/treeChild').then((res) => {
+            this.treeChild = JSON.parse(JSON.stringify(res.data));
+            this.$http.get('http://112.93.248.117:3001/openapi/treeGrandChild').then((res) => {
+              this.treeGrandchild = JSON.parse(JSON.stringify(res.data));
+              resolve(true);
+            }).catch((err) => {
+              reject(err)
+            })
+          })
         })
       })
-      this.$http.get('http://112.93.248.117:3001/openapi/treeRoot').then((res) => {
-        this.treeRoot = JSON.parse(JSON.stringify(res.data));
-      }).catch((err) => {
-        console.log(err)
-      })
-      this.$http.get('http://112.93.248.117:3001/openapi/treeChild').then((res) => {
-        this.treeChild = JSON.parse(JSON.stringify(res.data));
-      }).catch((err) => {
-        console.log(err)
-      })
-      this.$http.get('http://112.93.248.117:3001/openapi/treeGrandChild').then((res) => {
-        this.treeGrandchild = JSON.parse(JSON.stringify(res.data));
-      }).catch((err) => {
-        console.log(err)
-      })
-      
     },
     // 生成目录树
     renderTree() {
