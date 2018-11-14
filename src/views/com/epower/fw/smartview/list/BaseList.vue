@@ -61,8 +61,8 @@ export default{
   },
   data() {
     return {
-      listUI: require('./list-ui.json'),
-      listData: require('./list-data.json'),
+      listUI: require('../../../am/operation/list-ui.json'),
+      listData: require('../../../am/operation/list-data.json'),
       treeRoot: {},
       treeChild: {},
       treeGrandchild: {},

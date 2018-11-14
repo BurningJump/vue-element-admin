@@ -53,22 +53,22 @@ export default new Router({
 
 export const asyncRouterMap = [
   {
-    path: '/permission',
+    path: '/com/epower/am/operation',
     component: Layout,
-    redirect: '/permission/index',
+    redirect: '/com/epower/am/operation/operationList',
     alwaysShow: true, // will always show the root menu
     meta: {
-      title: 'permission',
+      title: 'operation',
       icon: 'lock',
       roles: ['admin', 'editor'] // you can set roles in root nav
     },
     children: [
       {
-        path: 'permissionList',
-        component: () => import('@/views/permission/permissionList'),
-        name: 'PermissionList',
+        path: 'operationList',
+        component: () => import('@/views/com/epower/am/operation/operationList'),
+        name: 'OperationList',
         meta: {
-          title: 'permissionList',
+          title: 'operationList',
           roles: ['admin'] // or you can only set roles in sub nav
         }
       }
