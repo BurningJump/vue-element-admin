@@ -1,7 +1,7 @@
 <script>
 import BaseList from '@/views/com/epower/fw/smartview/list/BaseList'
 export default{
-  name: 'OperationList',
+  name: 'com.epower.am.operation.OperationList',
   extends: BaseList,
   components: {},
   data() {

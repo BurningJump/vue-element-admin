@@ -55,7 +55,7 @@
 <script>
 import Pagination from '@/components/Pagination'
 export default{
-  name: 'PermissionList',
+  name: 'com.epower.fw.smartview.list.BaseList',
   components: {
     Pagination
   },
