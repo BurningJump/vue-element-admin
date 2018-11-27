@@ -23,11 +23,21 @@
               <el-tooltip class="item" effect="dark" v-for="btn in treeToolbar" :content="btn.label" placement="top-start">
                 <el-button v-if="btn.fun === 'new'" size="mini" icon="el-icon-document"></el-button>
                 <el-button v-else-if="btn.fun === 'view'" size="mini" icon="el-icon-view"></el-button>
-                <el-popover v-if="btn.isMore" placement="bottom" trigger="hover">
+                <!-- <el-popover v-if="btn.isMore" placement="bottom" trigger="hover">
                   <p>批量导入</p>
                   <p>下载导入模板</p>
                   <el-button slot="reference" v-if="btn.fun === 'delete'" size="mini" icon="el-icon-delete"></el-button>
-                </el-popover>
+                </el-popover> -->
+              </el-tooltip>
+              <el-tooltip class="item" effect="dark" v-for="btn in treeToolbar" content="更多" placement="top-start">
+                <el-dropdown trigger="click" placement="bottom" szie="mini" v-if="btn.isMore">
+                  <el-button size="mini">
+                    <i class="el-icon-arrow-down el-icon--right"></i>
+                  </el-button>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item v-for="btn in treeToolbar" v-if="btn.isMore">{{btn.label}}</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
               </el-tooltip>
             </el-button-group>
           </div>
@@ -56,50 +66,60 @@
               </span>
               <el-main>
                 <div class="topToolbar">
-                  <div v-if="tab.viewName === gridLists[0].name || tab.view_name === gridLists[0].name" v-for="btn in gridLists[0].topToolbar.components">
-                    <el-button v-if="!btn.isMore">
-                      <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
-                      <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
-                      <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
-                      <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
-                      {{btn.label}}
-                    </el-button>
-                    <el-popover v-if="btn.isMore" placement="bottom" trigger="hover">
-                      <p>批量导入</p>
-                      <p>下载导入模板</p>
-                      <el-button slot="reference">
+                  <div v-if="tab.viewName === gridLists[0].name || tab.view_name === gridLists[0].name">
+                    <el-button-group>
+                      <el-button v-for="btn in gridLists[0].topToolbar.components" v-if="!btn.isMore">
                         <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
                         <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
                         <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
                         <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
                         {{btn.label}}
                       </el-button>
-                    </el-popover>
+                      <el-dropdown trigger="click" placement="bottom" szie="mini">
+                        <el-button>
+                          更多操作<i class="el-icon-arrow-down el-icon--right"></i>
+                        </el-button>
+                        <el-dropdown-menu slot="dropdown">
+                          <el-dropdown-item v-for="btn in gridLists[0].topToolbar.components" v-if="btn.isMore">
+                            <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
+                            <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
+                            <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
+                            <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
+                            {{btn.label}}
+                          </el-dropdown-item>
+                        </el-dropdown-menu>
+                      </el-dropdown>
+                    </el-button-group>
                   </div>
-                  <div v-if="tab.viewName === gridLists[1].name || tab.view_name === gridLists[1].name" v-for="btn in gridLists[1].topToolbar.components">
-                    <el-button v-if="!btn.isMore">
-                      <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
-                      <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
-                      <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
-                      <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
-                      {{btn.label}}
-                    </el-button>
-                    <el-popover v-if="btn.isMore" placement="bottom" trigger="hover">
-                      <p>批量导入</p>
-                      <p>下载导入模板</p>
-                      <el-button slot="reference">
+                  <div v-if="tab.viewName === gridLists[1].name || tab.view_name === gridLists[1].name">
+                    <el-button-group>
+                      <el-button v-for="btn in gridLists[1].topToolbar.components" v-if="!btn.isMore">
                         <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
                         <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
                         <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
                         <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
                         {{btn.label}}
                       </el-button>
-                    </el-popover>
+                      <el-dropdown trigger="click" placement="bottom" szie="mini">
+                        <el-button>
+                          更多操作<i class="el-icon-arrow-down el-icon--right"></i>
+                        </el-button>
+                        <el-dropdown-menu slot="dropdown">
+                          <el-dropdown-item v-for="btn in gridLists[1].topToolbar.components" v-if="btn.isMore">
+                            <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
+                            <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
+                            <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
+                            <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
+                            {{btn.label}}
+                          </el-dropdown-item>
+                        </el-dropdown-menu>
+                      </el-dropdown>
+                    </el-button-group>
                   </div>
                 </div>
-                <el-table v-if="tab.viewName === gridLists[0].name || tab.view_name === gridLists[0].name" ref="multipleTable" :data="gridLists[0].queryName" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#ccc6'}">
+                <el-table v-if="tab.viewName === gridLists[0].name || tab.view_name === gridLists[0].name" ref="multipleTable" :data="gridLists[0].queryName" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#ccc6'}" :height="thHeight">
                   <!-- <el-table-column type="selection" align="center"/> -->
-                  <el-table-column v-for="(header, index) in gridLists[0].components" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="gridLists[0].gridFixColumn === index+1" width="header.width">
+                  <el-table-column v-for="(header, index) in gridLists[0].components" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="gridLists[0].gridFixColumn > index" width="header.width">
                     <template slot-scope="scope">
                       <img v-if="header.ctype === 'image'" :src="scope.row[header.field]" :width="header.width">
                       <div v-else-if="header.ctype === 'valuelistField'" v-html="scope.row[header.field][header.valueListModel.displayField]"></div>
@@ -118,9 +138,9 @@
                     </template>
                   </el-table-column>
                 </el-table>
-                <el-table v-else-if="tab.viewName === gridLists[1].name || tab.view_name === gridLists[1].name" ref="multipleTable" :data="gridLists[1].queryName" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#ccc6'}">
+                <el-table v-else-if="tab.viewName === gridLists[1].name || tab.view_name === gridLists[1].name" ref="multipleTable" :data="gridLists[1].queryName" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#ccc6'}" :height="thHeight">
                   <!-- <el-table-column type="selection" align="center"/> -->
-                  <el-table-column v-for="header in gridLists[1].components" :key="header.label" :prop="header.field" :label="header.label" align="center">
+                  <el-table-column v-for="header in gridLists[1].components" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="gridLists[1].gridFixColumn > index">
                     <template slot-scope="scope">
                       <img v-if="header.ctype === 'image'" :src="scope.row[header.field]" :width="header.width">
                       <div v-else-if="header.ctype === 'valuelistField'" v-html="scope.row[header.field][header.valueListModel.displayField]"></div>
@@ -142,45 +162,55 @@
               </el-main>
               <el-footer>
                 <div class="footerToolbar">
-                  <div v-if="tab.viewName === gridLists[0].name || tab.view_name === gridLists[0].name" v-for="btn in gridLists[0].topToolbar.components">
-                    <el-button v-if="!btn.isMore">
-                      <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
-                      <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
-                      <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
-                      <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
-                      {{btn.label}}
-                    </el-button>
-                    <el-popover v-if="btn.isMore" placement="bottom" trigger="hover">
-                      <p>批量导入</p>
-                      <p>下载导入模板</p>
-                      <el-button slot="reference">
+                  <div v-if="tab.viewName === gridLists[0].name || tab.view_name === gridLists[0].name">
+                    <el-button-group>
+                      <el-button v-for="btn in gridLists[0].footerToolbar.components" v-if="!btn.isMore">
                         <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
                         <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
                         <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
                         <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
                         {{btn.label}}
                       </el-button>
-                    </el-popover>
+                      <el-dropdown trigger="click" placement="bottom" szie="mini">
+                        <el-button>
+                          更多操作<i class="el-icon-arrow-down el-icon--right"></i>
+                        </el-button>
+                        <el-dropdown-menu slot="dropdown">
+                          <el-dropdown-item v-for="btn in gridLists[0].footerToolbar.components" v-if="btn.isMore">
+                            <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
+                            <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
+                            <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
+                            <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
+                            {{btn.label}}
+                          </el-dropdown-item>
+                        </el-dropdown-menu>
+                      </el-dropdown>
+                    </el-button-group>
                   </div>
-                  <div v-if="tab.viewName === gridLists[1].name || tab.view_name === gridLists[1].name" v-for="btn in gridLists[1].topToolbar.components">
-                    <el-button v-if="!btn.isMore">
-                      <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
-                      <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
-                      <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
-                      <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
-                      {{btn.label}}
-                    </el-button>
-                    <el-popover v-if="btn.isMore" placement="bottom" trigger="hover">
-                      <p>批量导入</p>
-                      <p>下载导入模板</p>
-                      <el-button slot="reference">
+                  <div v-if="tab.viewName === gridLists[1].name || tab.view_name === gridLists[1].name">
+                    <el-button-group>
+                      <el-button v-for="btn in gridLists[1].footerToolbar.components" v-if="!btn.isMore">
                         <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
                         <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
                         <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
                         <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
                         {{btn.label}}
                       </el-button>
-                    </el-popover>
+                      <el-dropdown trigger="click" placement="bottom" szie="mini">
+                        <el-button>
+                          更多操作<i class="el-icon-arrow-down el-icon--right"></i>
+                        </el-button>
+                        <el-dropdown-menu slot="dropdown">
+                          <el-dropdown-item v-for="btn in gridLists[1].footerToolbar.components" v-if="btn.isMore">
+                            <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
+                            <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
+                            <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
+                            <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
+                            {{btn.label}}
+                          </el-dropdown-item>
+                        </el-dropdown-menu>
+                      </el-dropdown>
+                    </el-button-group>
                   </div>
                 </div>
                 <pagination v-show="list.length>0" :total="list.length" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList"/>
@@ -209,6 +239,7 @@ export default{
   },
   data() {
     return {
+      thHeight: 600, // 表头高度
       dialogVisible: false,
       activeTab: '',
       tabs: [],
