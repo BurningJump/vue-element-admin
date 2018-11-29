@@ -112,13 +112,13 @@
                     </el-button-group>
                   </div>
                 </div>
-                <el-table v-if="tab.viewName === gridLists[0].name || tab.view_name === gridLists[0].name" ref="multipleTable" :data="gridLists[0].queryName" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#ccc6'}" :height="tableHeight">
+                <el-table v-if="tab.viewName === gridLists[0].name || tab.view_name === gridLists[0].name" ref="multipleTable" :data="list" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#ccc6'}" :height="tableHeight">
                   <!-- <el-table-column type="selection" align="center"/> -->
-                  <el-table-column v-for="(header, index) in gridLists[0].components" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="gridLists[0].gridFixColumn > index" :width="header.width > 0 ? header.width + 'px' : ''">
+                  <el-table-column v-for="(header, index) in grid[0]" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="gridLists[0].gridFixColumn > index" :width="header.width > 0 ? header.width + 'px' : ''">
                     <template slot-scope="scope">
-                      <img v-if="header.ctype === 'image'" :src="scope.row[header.field]" :width="header.width">
-                      <div v-else-if="header.ctype === 'valuelistField'" v-html="scope.row[header.field][header.valueListModel.displayField]"></div>
-                      <div v-else v-html="scope.row[header.field]"></div>
+                      <img v-if="header.ctype === 'image'" :src="scope.row[header.prop]" :width="header.width">
+                      <div v-else-if="header.ctype === 'valuelistField'" v-html="scope.row[header.prop][header.valueListModel.displayField]"></div>
+                      <div v-else v-html="scope.row[header.prop]"></div>
                     </template>
                   </el-table-column>
                   <el-table-column fixed="right" label="操作" width="120px">
@@ -147,13 +147,13 @@
                     </template>
                   </el-table-column>
                 </el-table>
-                <el-table v-else-if="tab.viewName === gridLists[1].name || tab.view_name === gridLists[1].name" ref="multipleTable" :data="gridLists[1].queryName" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#ccc6'}" :height="tableHeight">
+                <el-table v-else-if="tab.viewName === gridLists[1].name || tab.view_name === gridLists[1].name" ref="multipleTable" :data="list" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#ccc6'}" :height="tableHeight">
                   <!-- <el-table-column type="selection" align="center"/> -->
-                  <el-table-column v-for="header in gridLists[1].components" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="gridLists[1].gridFixColumn > index" :width="header.width > 0 ? header.width + 'px' : ''">
+                  <el-table-column v-for="header in grid[1]" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="gridLists[1].gridFixColumn > index" :width="header.width > 0 ? header.width + 'px' : ''">
                     <template slot-scope="scope">
-                      <img v-if="header.ctype === 'image'" :src="scope.row[header.field]" :width="header.width">
-                      <div v-else-if="header.ctype === 'valuelistField'" v-html="scope.row[header.field][header.valueListModel.displayField]"></div>
-                      <div v-else v-html="scope.row[header.field]"></div>
+                      <img v-if="header.ctype === 'image'" :src="scope.row[header.prop]" :width="header.width">
+                      <div v-else-if="header.ctype === 'valuelistField'" v-html="scope.row[header.prop][header.valueListModel.displayField]"></div>
+                      <div v-else v-html="scope.row[header.prop]"></div>
                     </template>
                   </el-table-column>
                   <el-table-column fixed="right" label="操作" width="120px">
@@ -390,8 +390,18 @@ export default{
           this.treeToolbar = [...this.listUI.listViewModel.tree.toolbar.components]
           this.tabs = [...this.listUI.listViewModel.dataType.types]
           this.activeTab = this.listUI.listViewModel.dataType.default
-          this.gridLists = [...this.listUI.listViewModel.dataView.views]
           this.qCondition = [...this.listUI.listViewModel.qCondition.components]
+          this.gridLists = [...this.listUI.listViewModel.dataView.views]
+
+          this.gridLists.forEach((item, index) => {
+            this.grid.push([])
+            item.components.forEach((thead) => {
+              this.grid[index].push({
+                prop: thead.name,
+                label: thead.label
+              })
+            })
+          })
         })
         this.$http.get('http://root.yiuser.com:3001/openapi/treeRoot').then((res) => {
           this.treeRoot = JSON.parse(JSON.stringify(res.data));
@@ -459,14 +469,18 @@ export default{
       })
     },
     getListData() {
-      this.listData.resultList.forEach((item) => {
-        this.list.push({
-          l_operationNo: item.operationNo,
-          l_operationName: item.operationName,
-          l_operationType: item.type ? item.type : 0,
-          l_parentOperationNumber: item.parentOperationRef ? item.parentOperationRef.operationNo : '',
-          l_parentOperationName: item.parentOperationRef ? item.parentOperationRef.operationName : '',
-          l_appType: item.appType
+      this.$http.get('http://root.yiuser.com:3001/openapi/listGridData').then((res) => {
+        console.log(res.data, 'listdata')
+        this.listGridData = res.data
+        this.listGridData.resultList.forEach((item) => {
+          this.list.push({
+            l_operationNo: item.operationNo,
+            l_operationName: item.operationName,
+            l_operationType: item.type ? item.type : 0,
+            l_parentOperationNumber: item.parentOperationRef ? item.parentOperationRef.operationNo : '',
+            l_parentOperationName: item.parentOperationRef ? item.parentOperationRef.operationName : '',
+            l_appType: item.appType
+          })
         })
       })
     },
