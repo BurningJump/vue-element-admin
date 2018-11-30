@@ -17,7 +17,7 @@
         </el-form>
       </el-header>
       <el-container>
-        <el-aside width="200px">
+        <el-aside width="200px" :style="{'height': treeHeight, 'overflow': 'auto'}">
           <div class="tree-toolbar">
             <el-button-group>
               <el-tooltip class="item" effect="dark" v-for="btn in treeToolbar" :content="btn.label" placement="top-start">
@@ -262,6 +262,7 @@ export default{
   },
   data() {
     return {
+      treeHeight: '600px',
       tableHeight: 600, // 表头高度
       dialogVisible: false,
       activeTab: '',
@@ -345,6 +346,7 @@ export default{
     this.getListData()
     this.$nextTick(() => {
       this.tableHeight = document.body.clientHeight - 360
+      this.treeHeight = (document.body.clientHeight - 145) + 'px'
     })
   },
   methods: {
@@ -599,6 +601,9 @@ export default{
 }
 thead tr {
   background-color: #fafafa;
+}
+.el-main {
+  padding: 0;
 }
 </style>
 
