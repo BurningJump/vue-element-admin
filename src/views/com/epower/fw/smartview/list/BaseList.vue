@@ -3,16 +3,20 @@
     <el-container>
       <el-header height="auto">
         <el-form :model="conditionForm" ref="conditionForm" class="demo-ruleForm" label-width="100px" size="mini">
-          <el-form-item v-for="condition in qCondition" :key="condition.label" :style="{width: condition.width*100 + '%'}" :label="condition.label" :prop="conditionForm[condition.findField]">
+          <el-form-item v-for="condition in qCondition" v-if="!condition.isMore" :key="condition.label" :style="{width: condition.width*100 + '%'}" :label="condition.label" :prop="conditionForm[condition.findField]">
+            <el-input v-model="conditionForm[condition.findField]"/>
+          </el-form-item>
+          <el-form-item v-for="condition in qCondition" v-if="condition.isMore && showMoreCondition" :key="condition.label" :style="{width: condition.width*100 + '%'}" :label="condition.label" :prop="conditionForm[condition.findField]">
             <el-input v-model="conditionForm[condition.findField]"/>
           </el-form-item>
           <el-form-item>
             <el-button icon="el-icon-search">查询</el-button>
             <el-button @click="resetForm()" icon="el-icon-close">重置</el-button>
-            <el-select v-model="showMore" placeholder="请选择" size="mini">
-              <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-              </el-option>
-            </el-select>
+            <el-button @click="showMoreCondition=!showMoreCondition">
+              更多
+              <i v-if="!showMoreCondition" class="el-icon-arrow-down"></i>
+              <i v-if="showMoreCondition" class="el-icon-arrow-up"></i>
+            </el-button>
           </el-form-item>
         </el-form>
       </el-header>
@@ -72,7 +76,7 @@
                       </el-button>
                       <el-dropdown v-if="gridLists[0].topToolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
                         <el-button>
-                          更多操作<i class="el-icon-arrow-down el-icon--right"></i>
+                          更多<i class="el-icon-arrow-down el-icon--right"></i>
                         </el-button>
                         <el-dropdown-menu slot="dropdown">
                           <el-dropdown-item v-for="btn in gridLists[0].topToolbar.components" v-if="btn.isMore">
@@ -112,7 +116,7 @@
                     </el-button-group>
                   </div>
                 </div>
-                <el-table v-if="tab.viewName === gridLists[0].name || tab.view_name === gridLists[0].name" ref="multipleTable" :data="list" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#ccc6'}" :height="tableHeight">
+                <el-table v-if="tab.viewName === gridLists[0].name || tab.view_name === gridLists[0].name" ref="multipleTable" :data="list" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight">
                   <!-- <el-table-column type="selection" align="center"/> -->
                   <el-table-column v-for="(header, index) in grid[0]" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="gridLists[0].gridFixColumn > index" :width="header.width > 0 ? header.width + 'px' : ''">
                     <template slot-scope="scope">
@@ -147,7 +151,7 @@
                     </template>
                   </el-table-column>
                 </el-table>
-                <el-table v-else-if="tab.viewName === gridLists[1].name || tab.view_name === gridLists[1].name" ref="multipleTable" :data="list" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#ccc6'}" :height="tableHeight">
+                <el-table v-else-if="tab.viewName === gridLists[1].name || tab.view_name === gridLists[1].name" ref="multipleTable" :data="list" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight">
                   <!-- <el-table-column type="selection" align="center"/> -->
                   <el-table-column v-for="header in grid[1]" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="gridLists[1].gridFixColumn > index" :width="header.width > 0 ? header.width + 'px' : ''">
                     <template slot-scope="scope">
@@ -196,7 +200,7 @@
                       </el-button>
                       <el-dropdown v-if="gridLists[0].footerToolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
                         <el-button>
-                          更多操作<i class="el-icon-arrow-down el-icon--right"></i>
+                          更多<i class="el-icon-arrow-down el-icon--right"></i>
                         </el-button>
                         <el-dropdown-menu slot="dropdown">
                           <el-dropdown-item v-for="btn in gridLists[0].footerToolbar.components" v-if="btn.isMore">
@@ -221,7 +225,7 @@
                       </el-button>
                       <el-dropdown v-if="gridLists[1].footerToolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
                         <el-button>
-                          更多操作<i class="el-icon-arrow-down el-icon--right"></i>
+                          更多<i class="el-icon-arrow-down el-icon--right"></i>
                         </el-button>
                         <el-dropdown-menu slot="dropdown">
                           <el-dropdown-item v-for="btn in gridLists[1].footerToolbar.components" v-if="btn.isMore">
@@ -262,6 +266,7 @@ export default{
   },
   data() {
     return {
+      showMoreCondition: false,
       treeHeight: '600px',
       tableHeight: 600, // 表头高度
       dialogVisible: false,
@@ -269,7 +274,6 @@ export default{
       tabs: [],
       listUI: '',
       treeToolbar: [],
-      showMore: 'less',
       options: [
         {
           value: 'more',
