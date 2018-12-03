@@ -34,7 +34,13 @@
                     <i class="el-icon-arrow-down el-icon--right"></i>
                   </el-button>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item v-for="btn in treeToolbar" v-if="btn.isMore">{{btn.label}}</el-dropdown-item>
+                    <el-dropdown-item v-for="btn in treeToolbar" v-if="btn.isMore">
+                      <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
+                      <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
+                      <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
+                      <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
+                      {{btn.label}}
+                    </el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-tooltip>
@@ -142,12 +148,13 @@
                           </el-button>
                           <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item v-for="btn in gridLists[1].rowToolbar.components" v-if="btn.isMore">
-                              <el-tooltip class="item" effect="dark" :content="btn.label" placement="top">
+                              <!-- <el-tooltip class="item" effect="dark" :content="btn.label" placement="top"> -->
                                 <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
                                 <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
                                 <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
                                 <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
-                              </el-tooltip>
+                                {{btn.label}}
+                              <!-- </el-tooltip> -->
                             </el-dropdown-item>
                           </el-dropdown-menu>
                         </el-dropdown>
@@ -181,12 +188,13 @@
                           </el-button>
                           <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item v-for="btn in gridLists[1].rowToolbar.components" v-if="btn.isMore">
-                              <el-tooltip class="item" effect="dark" :content="btn.label" placement="top">
+                              <!-- <el-tooltip class="item" effect="dark" :content="btn.label" placement="top"> -->
                                 <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
                                 <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
                                 <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
                                 <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
-                              </el-tooltip>
+                                {{btn.label}}
+                              <!-- </el-tooltip> -->
                             </el-dropdown-item>
                           </el-dropdown-menu>
                         </el-dropdown>
@@ -597,6 +605,9 @@ body .el-table colgroup.gutter{
 }
 .el-form-item--mini.el-form-item, .el-form-item--small.el-form-item {
   margin-bottom: 2px;
+}
+.el-tabs {
+  width: 100%;
 }
 .el-tabs__active-bar {
   background-color: red;
