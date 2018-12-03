@@ -125,31 +125,33 @@
                       <div v-else v-html="scope.row[header.prop]"></div>
                     </template>
                   </el-table-column>
-                  <el-table-column fixed="right" label="操作" width="120px">
+                  <el-table-column fixed="right" label="操作" width="auto" align="center">
                     <template slot-scope="scope">
-                      <el-tooltip v-for="btn in gridLists[0].rowToolbar.components" v-if="!btn.isMore" class="item" effect="dark" :content="btn.label" placement="top">
-                        <el-button @click="handleClick(scope.$index, scope.row, btn.fun)" type="text" size="mini">
-                          <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
-                          <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
-                          <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
-                          <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
-                        </el-button>
-                      </el-tooltip>
-                      <el-dropdown v-if="gridLists[1].rowToolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
-                        <el-button size="mini">
-                          <i class="el-icon-arrow-down el-icon--right"></i>
-                        </el-button>
-                        <el-dropdown-menu slot="dropdown">
-                          <el-dropdown-item v-for="btn in gridLists[1].rowToolbar.components" v-if="btn.isMore">
-                            <el-tooltip class="item" effect="dark" :content="btn.label" placement="top">
-                              <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
-                              <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
-                              <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
-                              <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
-                            </el-tooltip>
-                          </el-dropdown-item>
-                        </el-dropdown-menu>
-                      </el-dropdown>
+                      <el-button-group>
+                        <el-tooltip v-for="btn in gridLists[0].rowToolbar.components" v-if="!btn.isMore" class="item" effect="dark" :content="btn.label" placement="top">
+                          <el-button @click="handleClick(scope.$index, scope.row, btn.fun)" size="mini">
+                            <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
+                            <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
+                            <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
+                            <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
+                          </el-button>
+                        </el-tooltip>
+                        <el-dropdown v-if="gridLists[1].rowToolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
+                          <el-button size="mini">
+                            <i class="el-icon-arrow-down el-icon--right"></i>
+                          </el-button>
+                          <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item v-for="btn in gridLists[1].rowToolbar.components" v-if="btn.isMore">
+                              <el-tooltip class="item" effect="dark" :content="btn.label" placement="top">
+                                <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
+                                <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
+                                <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
+                                <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
+                              </el-tooltip>
+                            </el-dropdown-item>
+                          </el-dropdown-menu>
+                        </el-dropdown>
+                      </el-button-group>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -162,31 +164,33 @@
                       <div v-else v-html="scope.row[header.prop]"></div>
                     </template>
                   </el-table-column>
-                  <el-table-column fixed="right" label="操作" width="120px">
+                  <el-table-column fixed="right" label="操作" width="auto" align="center">
                     <template slot-scope="scope">
-                      <el-tooltip v-for="btn in gridLists[1].rowToolbar.components" v-if="!btn.isMore" class="item" effect="dark" :content="btn.label" placement="top">
-                        <el-button @click="handleClick(scope.$index, scope.row, btn.fun)" type="text" size="mini">
-                          <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
-                          <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
-                          <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
-                          <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
-                        </el-button>
-                      </el-tooltip>
-                      <el-dropdown v-if="gridLists[1].rowToolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
-                        <el-button size="mini">
-                          <i class="el-icon-arrow-down el-icon--right"></i>
-                        </el-button>
-                        <el-dropdown-menu slot="dropdown">
-                          <el-dropdown-item v-for="btn in gridLists[1].rowToolbar.components" v-if="btn.isMore">
-                            <el-tooltip class="item" effect="dark" :content="btn.label" placement="top">
-                              <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
-                              <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
-                              <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
-                              <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
-                            </el-tooltip>
-                          </el-dropdown-item>
-                        </el-dropdown-menu>
-                      </el-dropdown>
+                      <el-button-group>
+                        <el-tooltip v-for="btn in gridLists[1].rowToolbar.components" v-if="!btn.isMore" class="item" effect="dark" :content="btn.label" placement="top">
+                          <el-button @click="handleClick(scope.$index, scope.row, btn.fun)" size="mini">
+                            <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
+                            <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
+                            <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
+                            <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
+                          </el-button>
+                        </el-tooltip>
+                        <el-dropdown v-if="gridLists[1].rowToolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
+                          <el-button size="mini">
+                            <i class="el-icon-arrow-down el-icon--right"></i>
+                          </el-button>
+                          <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item v-for="btn in gridLists[1].rowToolbar.components" v-if="btn.isMore">
+                              <el-tooltip class="item" effect="dark" :content="btn.label" placement="top">
+                                <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
+                                <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
+                                <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
+                                <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
+                              </el-tooltip>
+                            </el-dropdown-item>
+                          </el-dropdown-menu>
+                        </el-dropdown>
+                      </el-button-group>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -574,6 +578,12 @@ export default{
 </script>
 
 <style lang="scss">
+body .el-table th.gutter{
+  display: table-cell!important;
+}
+body .el-table colgroup.gutter{
+  display: table-cell!important;
+}
 .toolbar {
   margin-bottom: 10px;
 }
@@ -620,15 +630,19 @@ export default{
   border-bottom: 1px solid #e4e7ed;
 }
 .el-tree {
-  border-top: 1px solid #e4e7ed;
+  top: 40px;
   .el-tree-node__label {
     font-size: 12px;
   }
 }
 .tree-toolbar {
+  position: absolute;
+  z-index: 99;
   display: flex;
   justify-content: flex-end;
-  padding: 6px 2px 2px 0;
+  padding: 6px 2px 2px 38px;
+  border-bottom: 1px solid #e4e7ed;
+  background-color: #fff;
 }
 .pagination-container {
   display: inline-block;
