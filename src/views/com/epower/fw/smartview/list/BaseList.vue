@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-container>
-      <el-header height="auto">
+      <el-header height="auto" id="qconHeader">
         <el-form :model="conditionForm" ref="conditionForm" class="demo-ruleForm" label-width="100px" size="mini">
           <el-form-item v-for="condition in qCondition" v-if="!condition.isMore" :key="condition.label" :style="{width: condition.width*100 + '%'}" :label="condition.label" :prop="conditionForm[condition.findField]">
             <el-input v-model="conditionForm[condition.findField]"/>
@@ -10,9 +10,9 @@
             <el-input v-model="conditionForm[condition.findField]"/>
           </el-form-item>
           <el-form-item>
-            <el-button icon="el-icon-search">查询</el-button>
-            <el-button @click="resetForm()" icon="el-icon-close">重置</el-button>
-            <el-button @click="showMoreCondition=!showMoreCondition">
+            <el-button size="mini" icon="el-icon-search">查询</el-button>
+            <el-button size="mini" @click="resetForm()" icon="el-icon-close">重置</el-button>
+            <el-button size="mini" @click="showMoreCondition=!showMoreCondition">
               更多
               <i v-if="!showMoreCondition" class="el-icon-arrow-down"></i>
               <i v-if="showMoreCondition" class="el-icon-arrow-up"></i>
@@ -21,7 +21,7 @@
         </el-form>
       </el-header>
       <el-container>
-        <el-aside width="200px" :style="{'height': treeHeight, 'overflow': 'auto'}">
+        <el-aside width="200px" :style="{'height': treeHeight, 'overflow': 'auto', 'padding': '0 5px'}">
           <div class="tree-toolbar">
             <el-button-group>
               <el-tooltip class="item" effect="dark" v-for="btn in treeToolbar" :content="btn.label" placement="top-start">
@@ -63,11 +63,11 @@
                 <i v-else-if="tab.iconcls === 'table_edit'" class="el-icon-edit"/>
                 {{tab.label}}
               </span>
-              <el-main>
+              <el-main style="padding:0;">
                 <div class="topToolbar">
                   <div v-if="tab.viewName === gridLists[0].name || tab.view_name === gridLists[0].name">
                     <el-button-group>
-                      <el-button v-for="btn in gridLists[0].topToolbar.components" v-if="!btn.isMore">
+                      <el-button v-for="btn in gridLists[0].topToolbar.components" v-if="!btn.isMore" size="mini">
                         <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
                         <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
                         <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
@@ -75,7 +75,7 @@
                         {{btn.label}}
                       </el-button>
                       <el-dropdown v-if="gridLists[0].topToolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
-                        <el-button>
+                        <el-button size="mini">
                           更多<i class="el-icon-arrow-down el-icon--right"></i>
                         </el-button>
                         <el-dropdown-menu slot="dropdown">
@@ -92,7 +92,7 @@
                   </div>
                   <div v-if="tab.viewName === gridLists[1].name || tab.view_name === gridLists[1].name">
                     <el-button-group>
-                      <el-button v-for="btn in gridLists[1].topToolbar.components" v-if="!btn.isMore">
+                      <el-button v-for="btn in gridLists[1].topToolbar.components" v-if="!btn.isMore" size="mini">
                         <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
                         <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
                         <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
@@ -100,8 +100,8 @@
                         {{btn.label}}
                       </el-button>
                       <el-dropdown v-if="gridLists[1].topToolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
-                        <el-button>
-                          更多操作<i class="el-icon-arrow-down el-icon--right"></i>
+                        <el-button size="mini">
+                          更多<i class="el-icon-arrow-down el-icon--right"></i>
                         </el-button>
                         <el-dropdown-menu slot="dropdown">
                           <el-dropdown-item v-for="btn in gridLists[1].topToolbar.components" v-if="btn.isMore">
@@ -116,7 +116,7 @@
                     </el-button-group>
                   </div>
                 </div>
-                <el-table v-if="tab.viewName === gridLists[0].name || tab.view_name === gridLists[0].name" ref="multipleTable" :data="list" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight">
+                <el-table v-if="tab.viewName === gridLists[0].name || tab.view_name === gridLists[0].name" ref="multipleTable" :data="list" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight" :cell-style="cellStyle" :row-style="rowStyle">
                   <!-- <el-table-column type="selection" align="center"/> -->
                   <el-table-column v-for="(header, index) in grid[0]" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="gridLists[0].gridFixColumn > index" :width="header.width > 0 ? header.width + 'px' : ''">
                     <template slot-scope="scope">
@@ -127,31 +127,33 @@
                   </el-table-column>
                   <el-table-column fixed="right" label="操作" width="120px">
                     <template slot-scope="scope">
-                      <el-button v-for="btn in gridLists[0].rowToolbar.components" @click="handleClick(scope.$index, scope.row, btn.fun)" type="text" size="small" v-if="!btn.isMore">
-                        <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
-                        <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
-                        <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
-                        <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
-                        {{btn.label}}
-                      </el-button>
+                      <el-tooltip v-for="btn in gridLists[0].rowToolbar.components" v-if="!btn.isMore" class="item" effect="dark" :content="btn.label" placement="top-start">
+                        <el-button @click="handleClick(scope.$index, scope.row, btn.fun)" type="text" size="mini">
+                          <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
+                          <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
+                          <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
+                          <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
+                        </el-button>
+                      </el-tooltip>
                       <el-dropdown v-if="gridLists[1].rowToolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
                         <el-button size="mini">
                           <i class="el-icon-arrow-down el-icon--right"></i>
                         </el-button>
                         <el-dropdown-menu slot="dropdown">
                           <el-dropdown-item v-for="btn in gridLists[1].rowToolbar.components" v-if="btn.isMore">
-                            <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
-                            <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
-                            <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
-                            <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
-                            {{btn.label}}
+                            <el-tooltip class="item" effect="dark" :content="btn.label" placement="top-start">
+                              <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
+                              <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
+                              <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
+                              <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
+                            </el-tooltip>
                           </el-dropdown-item>
                         </el-dropdown-menu>
                       </el-dropdown>
                     </template>
                   </el-table-column>
                 </el-table>
-                <el-table v-else-if="tab.viewName === gridLists[1].name || tab.view_name === gridLists[1].name" ref="multipleTable" :data="list" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight">
+                <el-table v-else-if="tab.viewName === gridLists[1].name || tab.view_name === gridLists[1].name" ref="multipleTable" :data="list" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight" :cell-style="cellStyle" :row-style="rowStyle">
                   <!-- <el-table-column type="selection" align="center"/> -->
                   <el-table-column v-for="header in grid[1]" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="gridLists[1].gridFixColumn > index" :width="header.width > 0 ? header.width + 'px' : ''">
                     <template slot-scope="scope">
@@ -162,24 +164,26 @@
                   </el-table-column>
                   <el-table-column fixed="right" label="操作" width="120px">
                     <template slot-scope="scope">
-                      <el-button v-for="btn in gridLists[1].rowToolbar.components" @click="handleClick(scope.$index, scope.row, btn.fun)" type="text" size="small" v-if="!btn.isMore">
-                        <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
-                        <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
-                        <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
-                        <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
-                        {{btn.label}}
-                      </el-button>
+                      <el-tooltip v-for="btn in gridLists[1].rowToolbar.components" v-if="!btn.isMore" class="item" effect="dark" :content="btn.label" placement="top-start">
+                        <el-button @click="handleClick(scope.$index, scope.row, btn.fun)" type="text" size="mini">
+                          <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
+                          <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
+                          <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
+                          <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
+                        </el-button>
+                      </el-tooltip>
                       <el-dropdown v-if="gridLists[1].rowToolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
                         <el-button size="mini">
                           <i class="el-icon-arrow-down el-icon--right"></i>
                         </el-button>
                         <el-dropdown-menu slot="dropdown">
                           <el-dropdown-item v-for="btn in gridLists[1].rowToolbar.components" v-if="btn.isMore">
-                            <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
-                            <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
-                            <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
-                            <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
-                            {{btn.label}}
+                            <el-tooltip class="item" effect="dark" :content="btn.label" placement="top-start">
+                              <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
+                              <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
+                              <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
+                              <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
+                            </el-tooltip>
                           </el-dropdown-item>
                         </el-dropdown-menu>
                       </el-dropdown>
@@ -187,11 +191,11 @@
                   </el-table-column>
                 </el-table>
               </el-main>
-              <el-footer>
+              <el-footer style="height:auto;">
                 <div class="footerToolbar">
                   <div v-if="tab.viewName === gridLists[0].name || tab.view_name === gridLists[0].name">
                     <el-button-group>
-                      <el-button v-for="btn in gridLists[0].footerToolbar.components" v-if="!btn.isMore">
+                      <el-button v-for="btn in gridLists[0].footerToolbar.components" v-if="!btn.isMore" size="mini">
                         <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
                         <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
                         <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
@@ -199,7 +203,7 @@
                         {{btn.label}}
                       </el-button>
                       <el-dropdown v-if="gridLists[0].footerToolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
-                        <el-button>
+                        <el-button size="mini">
                           更多<i class="el-icon-arrow-down el-icon--right"></i>
                         </el-button>
                         <el-dropdown-menu slot="dropdown">
@@ -216,7 +220,7 @@
                   </div>
                   <div v-if="tab.viewName === gridLists[1].name || tab.view_name === gridLists[1].name">
                     <el-button-group>
-                      <el-button v-for="btn in gridLists[1].footerToolbar.components" v-if="!btn.isMore">
+                      <el-button v-for="btn in gridLists[1].footerToolbar.components" v-if="!btn.isMore" size="mini">
                         <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
                         <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
                         <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
@@ -224,7 +228,7 @@
                         {{btn.label}}
                       </el-button>
                       <el-dropdown v-if="gridLists[1].footerToolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
-                        <el-button>
+                        <el-button size="mini">
                           更多<i class="el-icon-arrow-down el-icon--right"></i>
                         </el-button>
                         <el-dropdown-menu slot="dropdown">
@@ -250,8 +254,8 @@
     <el-dialog :visible.sync="dialogVisible" width="30%">
       <span>这是一段信息</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">详细</el-button>
-        <el-button type="primary" @click="dialogVisible = false">更多</el-button>
+        <el-button @click="dialogVisible = false" size="mini">详细</el-button>
+        <el-button type="primary" @click="dialogVisible = false" size="mini">更多</el-button>
       </span>
     </el-dialog>
   </div>
@@ -343,15 +347,35 @@ export default{
       conditionForm: {}
     }
   },
+  computed: {
+    cellStyle() {
+      return {
+        'padding-left': '6px',
+        'padding-right': '6px'
+      }
+    },
+    rowStyle({ row, rowIndex}) {
+      console.log(rowIndex)
+      if (rowIndex%2 === 0) {
+        return {
+          'fontSize': '12px',
+          'backgroundColor': '#fafafa'
+        }
+      } else {
+        return {
+          'fontSize': '12px',
+          'backgroundColor': '#fff'
+        }
+      }
+    }
+  },
   mounted() {
     this.getUIdata().then(() => {
       this.renderTree()
+      this.tableHeight = document.body.clientHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 186
+      this.treeHeight = (document.body.clientHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 96) + 'px'
     })
     this.getListData()
-    this.$nextTick(() => {
-      this.tableHeight = document.body.clientHeight - 360
-      this.treeHeight = (document.body.clientHeight - 145) + 'px'
-    })
   },
   methods: {
     renderContent(h, { node, data, store }) {
@@ -476,7 +500,6 @@ export default{
     },
     getListData() {
       this.$http.get('http://root.yiuser.com:3001/openapi/listGridData').then((res) => {
-        console.log(res.data, 'listdata')
         this.listGridData = res.data
         this.listGridData.resultList.forEach((item) => {
           this.list.push({
@@ -558,6 +581,13 @@ export default{
   display: flex;
   width: 100%;
 }
+.el-form-item__label {
+  font-size: 12px;
+  font-weight: normal;
+}
+.el-form-item--mini.el-form-item, .el-form-item--small.el-form-item {
+  margin-bottom: 2px;
+}
 .el-tabs__active-bar {
   background-color: red;
 }
@@ -570,44 +600,54 @@ export default{
 .el-tabs__content {
   overflow: visible;
 }
+.el-tabs__nav-wrap::after {
+  height: 1px;
+}
+.el-tabs__header {
+  margin: 0 0 6px;
+}
 .topToolbar {
   display: inline-flex;
   position: absolute;
-  top: -53px;
-  right: 0;
+  top: -40px;
+  right: 0px;
 }
 .footerToolbar {
   display: inline-flex;
-  padding: 32px 16px;
+  // padding: 32px 16px;
 }
 .el-header {
-  border-bottom: 5px solid #e4e7ed;
+  border-bottom: 1px solid #e4e7ed;
 }
 .el-tree {
-  border-top: 2px solid #e4e7ed;
+  border-top: 1px solid #e4e7ed;
+  .el-tree-node__label {
+    font-size: 12px;
+  }
 }
 .tree-toolbar {
   display: flex;
   justify-content: flex-end;
-  margin: 5px auto;
+  padding: 6px 2px 2px 0;
 }
 .pagination-container {
   display: inline-block;
   margin-top: 0;
 }
 .el-footer {
+  padding: 6px 0;
   display: flex;
   justify-content: space-between;
-  border-top: 5px solid #e4e7ed;
+  border-top: 1px solid #e4e7ed;
 }
 .el-aside {
-  border-right: 5px solid #e4e7ed;
+  border-right: 1px solid #e4e7ed;
 }
 thead tr {
   background-color: #fafafa;
 }
 .el-main {
-  padding: 0;
+  padding: 0 6px;
 }
 </style>
 
