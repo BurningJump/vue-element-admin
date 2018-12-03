@@ -24,11 +24,11 @@
         <el-aside width="200px" :style="{'height': treeHeight, 'overflow': 'auto', 'padding': '0 5px'}">
           <div class="tree-toolbar">
             <el-button-group>
-              <el-tooltip class="item" effect="dark" v-for="btn in treeToolbar" :content="btn.label" placement="top-start">
+              <el-tooltip class="item" effect="dark" v-for="btn in treeToolbar" :content="btn.label" placement="top">
                 <el-button v-if="btn.fun === 'new'" size="mini" icon="el-icon-document"></el-button>
                 <el-button v-else-if="btn.fun === 'view'" size="mini" icon="el-icon-view"></el-button>
               </el-tooltip>
-              <el-tooltip class="item" effect="dark" content="更多" placement="top-start">
+              <el-tooltip class="item" effect="dark" content="更多" placement="top">
                 <el-dropdown v-if="listUI.listViewModel.tree.toolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
                   <el-button size="mini">
                     <i class="el-icon-arrow-down el-icon--right"></i>
@@ -127,7 +127,7 @@
                   </el-table-column>
                   <el-table-column fixed="right" label="操作" width="120px">
                     <template slot-scope="scope">
-                      <el-tooltip v-for="btn in gridLists[0].rowToolbar.components" v-if="!btn.isMore" class="item" effect="dark" :content="btn.label" placement="top-start">
+                      <el-tooltip v-for="btn in gridLists[0].rowToolbar.components" v-if="!btn.isMore" class="item" effect="dark" :content="btn.label" placement="top">
                         <el-button @click="handleClick(scope.$index, scope.row, btn.fun)" type="text" size="mini">
                           <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
                           <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
@@ -141,7 +141,7 @@
                         </el-button>
                         <el-dropdown-menu slot="dropdown">
                           <el-dropdown-item v-for="btn in gridLists[1].rowToolbar.components" v-if="btn.isMore">
-                            <el-tooltip class="item" effect="dark" :content="btn.label" placement="top-start">
+                            <el-tooltip class="item" effect="dark" :content="btn.label" placement="top">
                               <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
                               <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
                               <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
@@ -164,7 +164,7 @@
                   </el-table-column>
                   <el-table-column fixed="right" label="操作" width="120px">
                     <template slot-scope="scope">
-                      <el-tooltip v-for="btn in gridLists[1].rowToolbar.components" v-if="!btn.isMore" class="item" effect="dark" :content="btn.label" placement="top-start">
+                      <el-tooltip v-for="btn in gridLists[1].rowToolbar.components" v-if="!btn.isMore" class="item" effect="dark" :content="btn.label" placement="top">
                         <el-button @click="handleClick(scope.$index, scope.row, btn.fun)" type="text" size="mini">
                           <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
                           <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
@@ -178,7 +178,7 @@
                         </el-button>
                         <el-dropdown-menu slot="dropdown">
                           <el-dropdown-item v-for="btn in gridLists[1].rowToolbar.components" v-if="btn.isMore">
-                            <el-tooltip class="item" effect="dark" :content="btn.label" placement="top-start">
+                            <el-tooltip class="item" effect="dark" :content="btn.label" placement="top">
                               <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
                               <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
                               <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
