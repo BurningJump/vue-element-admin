@@ -21,7 +21,7 @@
         </el-form>
       </el-header>
       <el-container>
-        <el-aside width="200px" :style="{'height': treeHeight, 'overflow': 'auto', 'padding': '0 5px'}">
+        <el-aside width="200px" :style="{'height': treeHeight, 'padding': '0 5px'}">
           <div class="tree-toolbar">
             <el-button-group>
               <el-tooltip class="item" effect="dark" v-for="btn in treeToolbar" :content="btn.label" placement="top">
@@ -31,7 +31,7 @@
               <el-tooltip class="item" effect="dark" content="更多" placement="top">
                 <el-dropdown v-if="listUI.listViewModel.tree.toolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
                   <el-button size="mini">
-                    <i class="el-icon-arrow-down el-icon--right"></i>
+                    <i class="el-icon-arrow-down el-icon--right" style="margin-left:0;"></i>
                   </el-button>
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item v-for="btn in treeToolbar" v-if="btn.isMore">
@@ -46,19 +46,21 @@
               </el-tooltip>
             </el-button-group>
           </div>
-          <el-tree :data="tree" :props="defaultProps" @node-expand="handleNodeExpand" @node-click="handleNodeClick">
-            <!-- <span class="custom-tree-node" slot-scope="{ node, data }">
-              <span v-if="node.isLeaf">
-                <i v-if="data.iconcls === 'table_add'" class="el-icon-plus"/>
-                <i v-else-if="data.iconcls === 'table_delete'" class="el-icon-delete"/>
-                <i v-else-if="data.iconcls === 'table_edit'" class="el-icon-edit"/>
-                {{ node.label }}
-              </span>
-              <span v-if="!node.isLeaf">
-                {{ node.label }}
-              </span>
-            </span> -->
-          </el-tree>
+          <div class="tree-container">
+            <el-tree :data="tree" :props="defaultProps" @node-expand="handleNodeExpand" @node-click="handleNodeClick">
+              <!-- <span class="custom-tree-node" slot-scope="{ node, data }">
+                <span v-if="node.isLeaf">
+                  <i v-if="data.iconcls === 'table_add'" class="el-icon-plus"/>
+                  <i v-else-if="data.iconcls === 'table_delete'" class="el-icon-delete"/>
+                  <i v-else-if="data.iconcls === 'table_edit'" class="el-icon-edit"/>
+                  {{ node.label }}
+                </span>
+                <span v-if="!node.isLeaf">
+                  {{ node.label }}
+                </span>
+              </span> -->
+            </el-tree>
+          </div>
         </el-aside>
         <el-main>
           <el-tabs v-model="activeTab" @tab-click="handleTabClick">
@@ -144,7 +146,7 @@
                         </el-tooltip>
                         <el-dropdown v-if="gridLists[1].rowToolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
                           <el-button size="mini">
-                            <i class="el-icon-arrow-down el-icon--right"></i>
+                            <i class="el-icon-arrow-down el-icon--right" style="margin-left:0;"></i>
                           </el-button>
                           <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item v-for="btn in gridLists[1].rowToolbar.components" v-if="btn.isMore">
@@ -184,7 +186,7 @@
                         </el-tooltip>
                         <el-dropdown v-if="gridLists[1].rowToolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
                           <el-button size="mini">
-                            <i class="el-icon-arrow-down el-icon--right"></i>
+                            <i class="el-icon-arrow-down el-icon--right" style="margin-left:0;"></i>
                           </el-button>
                           <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item v-for="btn in gridLists[1].rowToolbar.components" v-if="btn.isMore">
@@ -597,6 +599,7 @@ body .el-table colgroup.gutter{
 }
 .el-form {
   display: flex;
+  flex-wrap: wrap;
   width: 100%;
 }
 .el-form-item__label {
@@ -635,25 +638,25 @@ body .el-table colgroup.gutter{
 }
 .footerToolbar {
   display: inline-flex;
-  // padding: 32px 16px;
 }
 .el-header {
   border-bottom: 1px solid #e4e7ed;
 }
 .el-tree {
-  top: 40px;
   .el-tree-node__label {
     font-size: 12px;
   }
 }
 .tree-toolbar {
-  position: absolute;
-  z-index: 99;
   display: flex;
   justify-content: flex-end;
-  padding: 6px 2px 2px 38px;
+  padding: 6px 2px 2px 0;
   border-bottom: 1px solid #e4e7ed;
   background-color: #fff;
+}
+.tree-container {
+  height: calc(100% - 41px);
+  overflow: auto;
 }
 .pagination-container {
   display: inline-block;
