@@ -76,21 +76,21 @@
               </span>
               <el-main style="padding:0;">
                 <div class="topToolbar">
-                  <div v-if="tab.viewName === gridLists[0].name || tab.view_name === gridLists[0].name">
+                  <div v-for="gridList in gridLists" v-if="tab.viewName === gridList.name || tab.view_name === gridList.name">
                     <el-button-group>
-                      <el-button v-for="btn in gridLists[0].topToolbar.components" v-if="!btn.isMore" size="mini">
+                      <el-button v-for="btn in gridList.topToolbar.components" v-if="!btn.isMore" size="mini">
                         <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
                         <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
                         <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
                         <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
                         {{btn.label}}
                       </el-button>
-                      <el-dropdown v-if="gridLists[0].topToolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
+                      <el-dropdown v-if="gridList.topToolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
                         <el-button size="mini">
                           更多<i class="el-icon-arrow-down el-icon--right"></i>
                         </el-button>
                         <el-dropdown-menu slot="dropdown">
-                          <el-dropdown-item v-for="btn in gridLists[0].topToolbar.components" v-if="btn.isMore">
+                          <el-dropdown-item v-for="btn in gridList.topToolbar.components" v-if="btn.isMore">
                             <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
                             <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
                             <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
@@ -101,7 +101,7 @@
                       </el-dropdown>
                     </el-button-group>
                   </div>
-                  <div v-if="tab.viewName === gridLists[1].name || tab.view_name === gridLists[1].name">
+                  <!-- <div v-if="tab.viewName === gridLists[1].name || tab.view_name === gridLists[1].name">
                     <el-button-group>
                       <el-button v-for="btn in gridLists[1].topToolbar.components" v-if="!btn.isMore" size="mini">
                         <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
@@ -125,7 +125,7 @@
                         </el-dropdown-menu>
                       </el-dropdown>
                     </el-button-group>
-                  </div>
+                  </div> -->
                 </div>
                 <el-table v-for="gridList in gridLists" v-if="tab.viewName === gridList.name || tab.view_name === gridList.name" ref="multipleTable" :data="list" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight" :cell-style="cellStyle" :row-style="rowStyle">
                   <!-- <el-table-column type="selection" align="center"/> -->
@@ -210,21 +210,21 @@
               </el-main>
               <el-footer style="height:auto;">
                 <div class="footerToolbar">
-                  <div v-if="tab.viewName === gridLists[0].name || tab.view_name === gridLists[0].name">
+                  <div v-for="gridList in gridLists" v-if="tab.viewName === gridList.name || tab.view_name === gridList.name">
                     <el-button-group>
-                      <el-button v-for="btn in gridLists[0].footerToolbar.components" v-if="!btn.isMore" size="mini">
+                      <el-button v-for="btn in gridList.footerToolbar.components" v-if="!btn.isMore" size="mini">
                         <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
                         <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
                         <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
                         <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
                         {{btn.label}}
                       </el-button>
-                      <el-dropdown v-if="gridLists[0].footerToolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
+                      <el-dropdown v-if="gridList.footerToolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
                         <el-button size="mini">
                           更多<i class="el-icon-arrow-down el-icon--right"></i>
                         </el-button>
                         <el-dropdown-menu slot="dropdown">
-                          <el-dropdown-item v-for="btn in gridLists[0].footerToolbar.components" v-if="btn.isMore">
+                          <el-dropdown-item v-for="btn in gridList.footerToolbar.components" v-if="btn.isMore">
                             <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
                             <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
                             <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
@@ -235,7 +235,7 @@
                       </el-dropdown>
                     </el-button-group>
                   </div>
-                  <div v-if="tab.viewName === gridLists[1].name || tab.view_name === gridLists[1].name">
+                  <!-- <div v-if="tab.viewName === gridLists[1].name || tab.view_name === gridLists[1].name">
                     <el-button-group>
                       <el-button v-for="btn in gridLists[1].footerToolbar.components" v-if="!btn.isMore" size="mini">
                         <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
@@ -259,7 +259,7 @@
                         </el-dropdown-menu>
                       </el-dropdown>
                     </el-button-group>
-                  </div>
+                  </div> -->
                 </div>
                 <pagination v-show="list.length>0" :total="list.length" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList"/>
               </el-footer>
