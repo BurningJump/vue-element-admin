@@ -13,8 +13,9 @@
             <el-button-group>
               <el-button size="mini" icon="el-icon-search">查询</el-button>
               <el-button size="mini" @click="resetForm()" icon="el-icon-close">重置</el-button>
-              <el-button size="mini" @click="showMoreCondition=!showMoreCondition">
-                更多
+              <el-button size="mini" @click="showMoreCondition=!showMoreCondition;calcTableHeight()">
+                <span v-show="!showMoreCondition">更多</span>
+                <span v-show="showMoreCondition">收起</span>
                 <i v-if="!showMoreCondition" class="el-icon-arrow-down"></i>
                 <i v-if="showMoreCondition" class="el-icon-arrow-up"></i>
               </el-button>
@@ -286,6 +287,7 @@ export default{
   },
   data() {
     return {
+      gotUIData: false,  // 是否已获取UI数据
       showMoreCondition: false,
       treeHeight: '600px',
       tableHeight: 600, // 表头高度
@@ -387,13 +389,19 @@ export default{
   },
   mounted() {
     this.getUIdata().then(() => {
+      this.gotUIData = true
       this.renderTree()
-      this.tableHeight = document.body.clientHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 186
-      this.treeHeight = (document.body.clientHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 96) + 'px'
+      this.calcTableHeight()
     })
     this.getListData()
   },
   methods: {
+    calcTableHeight() {
+      setTimeout(() => {
+        this.tableHeight = window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 190
+        this.treeHeight = (window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 100) + 'px'
+      })
+    },
     renderContent(h, { node, data, store }) {
       return (
         <span class="custom-tree-node">
@@ -403,7 +411,6 @@ export default{
       );
     },
     handleClick(index,row, action) {
-      console.log(index,row,action, '44444444444')
       switch(action) {
         case 'modify':
           console.log('修改')
