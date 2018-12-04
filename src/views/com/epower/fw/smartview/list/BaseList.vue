@@ -126,9 +126,9 @@
                     </el-button-group>
                   </div>
                 </div>
-                <el-table v-if="tab.viewName === gridLists[0].name || tab.view_name === gridLists[0].name" ref="multipleTable" :data="list" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight" :cell-style="cellStyle" :row-style="rowStyle">
+                <el-table v-for="gridList in gridLists" v-if="tab.viewName === gridList.name || tab.view_name === gridList.name" ref="multipleTable" :data="list" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight" :cell-style="cellStyle" :row-style="rowStyle">
                   <!-- <el-table-column type="selection" align="center"/> -->
-                  <el-table-column v-for="(header, index) in grid[0]" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="gridLists[0].gridFixColumn > index" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
+                  <el-table-column v-for="(header, index) in grid[0]" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="gridList.gridFixColumn > index" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
                     <template slot-scope="scope">
                       <img v-if="header.ctype === 'image'" :src="scope.row[header.prop]" :width="header.width">
                       <div v-else-if="header.ctype === 'valuelistField'" v-html="scope.row[header.prop][header.valueListModel.displayField]"></div>
@@ -138,7 +138,7 @@
                   <el-table-column fixed="right" label="操作" width="auto" align="center">
                     <template slot-scope="scope">
                       <el-button-group>
-                        <el-tooltip v-for="btn in gridLists[0].rowToolbar.components" v-if="!btn.isMore" class="item" effect="dark" :content="btn.label" placement="top">
+                        <el-tooltip v-for="btn in gridList.rowToolbar.components" v-if="!btn.isMore" class="item" effect="dark" :content="btn.label" placement="top">
                           <el-button @click="handleClick(scope.$index, scope.row, btn.fun)" size="mini">
                             <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
                             <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
@@ -146,12 +146,12 @@
                             <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
                           </el-button>
                         </el-tooltip>
-                        <el-dropdown v-if="gridLists[1].rowToolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
+                        <el-dropdown v-if="gridList.rowToolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
                           <el-button size="mini">
                             <i class="el-icon-arrow-down el-icon--right" style="margin-left:0;"></i>
                           </el-button>
                           <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item v-for="btn in gridLists[1].rowToolbar.components" v-if="btn.isMore">
+                            <el-dropdown-item v-for="btn in gridList.rowToolbar.components" v-if="btn.isMore">
                               <!-- <el-tooltip class="item" effect="dark" :content="btn.label" placement="top"> -->
                                 <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
                                 <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
@@ -166,8 +166,8 @@
                     </template>
                   </el-table-column>
                 </el-table>
-                <el-table v-else-if="tab.viewName === gridLists[1].name || tab.view_name === gridLists[1].name" ref="multipleTable" :data="list" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight" :cell-style="cellStyle" :row-style="rowStyle">
-                  <!-- <el-table-column type="selection" align="center"/> -->
+                <!-- <el-table v-else-if="tab.viewName === gridLists[1].name || tab.view_name === gridLists[1].name" ref="multipleTable" :data="list" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight" :cell-style="cellStyle" :row-style="rowStyle">
+                  <el-table-column type="selection" align="center"/>
                   <el-table-column v-for="header in grid[1]" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="gridLists[1].gridFixColumn > index" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
                     <template slot-scope="scope">
                       <img v-if="header.ctype === 'image'" :src="scope.row[header.prop]" :width="header.width">
@@ -192,20 +192,20 @@
                           </el-button>
                           <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item v-for="btn in gridLists[1].rowToolbar.components" v-if="btn.isMore">
-                              <!-- <el-tooltip class="item" effect="dark" :content="btn.label" placement="top"> -->
+                              <el-tooltip class="item" effect="dark" :content="btn.label" placement="top">
                                 <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
                                 <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
                                 <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
                                 <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
                                 {{btn.label}}
-                              <!-- </el-tooltip> -->
+                              </el-tooltip>
                             </el-dropdown-item>
                           </el-dropdown-menu>
                         </el-dropdown>
                       </el-button-group>
                     </template>
                   </el-table-column>
-                </el-table>
+                </el-table> -->
               </el-main>
               <el-footer style="height:auto;">
                 <div class="footerToolbar">
