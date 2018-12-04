@@ -10,13 +10,15 @@
             <el-input v-model="conditionForm[condition.findField]"/>
           </el-form-item>
           <el-form-item>
-            <el-button size="mini" icon="el-icon-search">查询</el-button>
-            <el-button size="mini" @click="resetForm()" icon="el-icon-close">重置</el-button>
-            <el-button size="mini" @click="showMoreCondition=!showMoreCondition">
-              更多
-              <i v-if="!showMoreCondition" class="el-icon-arrow-down"></i>
-              <i v-if="showMoreCondition" class="el-icon-arrow-up"></i>
-            </el-button>
+            <el-button-group>
+              <el-button size="mini" icon="el-icon-search">查询</el-button>
+              <el-button size="mini" @click="resetForm()" icon="el-icon-close">重置</el-button>
+              <el-button size="mini" @click="showMoreCondition=!showMoreCondition">
+                更多
+                <i v-if="!showMoreCondition" class="el-icon-arrow-down"></i>
+                <i v-if="showMoreCondition" class="el-icon-arrow-up"></i>
+              </el-button>
+            </el-button-group>
           </el-form-item>
         </el-form>
       </el-header>
