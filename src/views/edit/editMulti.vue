@@ -128,6 +128,9 @@ export default {
   .el-form-item {
     margin-bottom: 5px;
   }
+  .el-tabs {
+    width: 100%;
+  }
 }
 </style>
 
