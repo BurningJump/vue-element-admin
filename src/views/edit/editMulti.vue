@@ -3,7 +3,7 @@
     <el-container>
       <el-header height="auto">
         <el-button-group>
-          <el-button v-for="btn in buttons" :key="btn.label" size="mini">
+          <el-button v-for="btn in buttons" v-if="!btn.isMore" :key="btn.label" size="mini">
             <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
             <i v-else-if="btn.iconcls === 'table_view'" class="el-icon-view"/>
             <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
@@ -13,6 +13,23 @@
             <i v-else-if="btn.iconcls === 'refresh'" class="el-icon-refresh"/>
             {{ btn.label }}
           </el-button>
+          <el-dropdown v-if="editMultiUI.detailViewModel.masterPage.toolbarModel.showMoreButton" trigger="click" placement="bottom" szie="mini">
+            <el-button size="mini">
+              更多<i class="el-icon-arrow-down el-icon--right" style="margin-left:0;"></i>
+            </el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item v-for="btn in buttons" v-if="btn.isMore">
+                <!-- <el-tooltip class="item" effect="dark" :content="btn.label" placement="top"> -->
+                  <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
+                  <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
+                  <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
+                  <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
+                  <i v-else-if="btn.iconcls === 'table_close'" class="el-icon-close"/>
+                  {{btn.label}}
+                <!-- </el-tooltip> -->
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </el-button-group>
       </el-header>
       <el-main>
@@ -36,11 +53,28 @@
         <el-container>
           <el-header height="auto">
             <el-button-group>
-              <el-button v-for="btn in tab.toolbarModel.buttons" v-if="tab.toolbarModel.buttons.length > 0" :key="btn.label" size="mini">
+              <el-button v-for="btn in tab.toolbarModel.buttons" v-if="tab.toolbarModel.buttons.length > 0 && !btn.isMore" :key="btn.label" size="mini">
                 <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
                 <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
                 {{ btn.label }}
               </el-button>
+              <el-dropdown v-if="tab.toolbarModel.showMoreButton" trigger="click" placement="bottom" szie="mini">
+                <el-button size="mini">
+                  更多<i class="el-icon-arrow-down el-icon--right" style="margin-left:0;"></i>
+                </el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item v-for="btn in tab.toolbarModel.buttons" v-if="btn.isMore">
+                    <!-- <el-tooltip class="item" effect="dark" :content="btn.label" placement="top"> -->
+                      <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
+                      <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
+                      <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
+                      <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
+                      <i v-else-if="btn.iconcls === 'table_close'" class="el-icon-close"/>
+                      {{btn.label}}
+                    <!-- </el-tooltip> -->
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
             </el-button-group>
           </el-header>
           <el-main>
