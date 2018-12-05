@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { HotTable } from '@handsontable-pro/vue'
+import { HotTable } from '@handsontable/vue'
 
 export default {
   name: 'com.epower.fw.smartview.detail.BaseBillDetail',
@@ -28,5 +28,5 @@ export default {
 </script>
 
 <style>
-@import "handsontable-pro/dist/handsontable.full"
+@import "handsontable/dist/handsontable.full.css"
 </style>

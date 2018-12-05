@@ -13,9 +13,6 @@ export default{
 </script>
 
 <style lang="scss">
-.toolbar {
-  margin-bottom: 10px;
-}
 .el-form {
   display: flex;
   width: 100%;

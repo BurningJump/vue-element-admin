@@ -2,8 +2,8 @@
   <div class="app-container">
     <el-container>
       <el-header height="auto">
-        <div class="toolbar">
-          <el-button v-for="btn in buttons" :key="btn.label" size="small">
+        <el-button-group>
+          <el-button v-for="btn in buttons" :key="btn.label" size="mini">
             <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
             <i v-else-if="btn.iconcls === 'table_view'" class="el-icon-view"/>
             <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
@@ -13,7 +13,7 @@
             <i v-else-if="btn.iconcls === 'refresh'" class="el-icon-refresh"/>
             {{ btn.label }}
           </el-button>
-        </div>
+        </el-button-group>
       </el-header>
       <el-main>
         <el-form v-for="input in masterPageInputs" :key="input.label" :style="{width: input.width*100 + '%'}" class="demo-ruleForm" label-width="100px" size="mini">
@@ -35,11 +35,13 @@
       <el-tab-pane v-for="tab in detailPagesTabs" :key="tab.name" :label="tab.label" :name="tab.name">
         <el-container>
           <el-header height="auto">
-            <el-button v-for="btn in tab.toolbarModel.buttons" v-if="tab.toolbarModel.buttons.length > 0" :key="btn.label" size="small">
-              <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
-              <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
-              {{ btn.label }}
-            </el-button>
+            <el-button-group>
+              <el-button v-for="btn in tab.toolbarModel.buttons" v-if="tab.toolbarModel.buttons.length > 0" :key="btn.label" size="mini">
+                <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
+                <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
+                {{ btn.label }}
+              </el-button>
+            </el-button-group>
           </el-header>
           <el-main>
             <el-table v-if="tab.componentSetModel.style === 'grid'" ref="multipleTable" :data="firstTabData" element-loading-text="拼命加载中" border fit highlight-current-row>
@@ -88,11 +90,11 @@ export default {
   name: 'EditMulti',
   data() {
     return {
-      editMultiUI: require('./edit-ui-多表.json'),
+      editMultiUI: '',
       buttons: [],
       masterPageInputs: [],
       detailPagesTabs: [],
-      editMultiData: require('./edit-data-多表-主从表.json'),
+      editMultiData: '',
       masterPageData: [],
       firstTabData: [],
       activeTab: ''
@@ -101,17 +103,23 @@ export default {
   mounted() {
     this.getUIdata()
     this.getMultiData()
-    this.activeTab = this.detailPagesTabs[0].name
   },
   methods: {
     getUIdata() {
-      this.buttons = [...this.editMultiUI.detailViewModel.masterPage.toolbarModel.buttons]
-      this.masterPageInputs = [...this.editMultiUI.detailViewModel.masterPage.componentSetModel.components]
-      this.detailPagesTabs = [...this.editMultiUI.detailViewModel.detailPages]
+      this.$http.get('http://root.yiuser.com:3001/openapi/shopOrderDetailUI').then((res) => {
+        this.editMultiUI = res.data
+        this.buttons = [...this.editMultiUI.detailViewModel.masterPage.toolbarModel.buttons]
+        this.masterPageInputs = [...this.editMultiUI.detailViewModel.masterPage.componentSetModel.components]
+        this.detailPagesTabs = [...this.editMultiUI.detailViewModel.detailPages]
+        this.activeTab = this.detailPagesTabs[0].name
+      })
     },
     getMultiData() {
-      this.masterPageData = this.editMultiData.dataPackage.dataSets[0].currentTable[0]
-      this.firstTabData = this.editMultiData.dataPackage.dataSets[1].currentTable
+      this.$http.get('http://root.yiuser.com:3001/openapi/shopOrderDetailData').then((res) => {
+        this.editMultiData = res.data
+        this.masterPageData = this.editMultiData.dataPackage.dataSets[0].currentTable[0]
+        this.firstTabData = this.editMultiData.dataPackage.dataSets[1].currentTable
+      })
     },
     remoteMethod() {},
     handleClick() {}
@@ -120,6 +128,13 @@ export default {
 </script>
 <style lang="scss">
 .app-container {
+  .el-header {
+    padding: 0;
+    border-bottom: 1px solid #e4e7ed;
+    .el-button-group {
+      margin-bottom: 2px;
+    }
+  }
   .el-main {
     display: flex;
     flex-wrap: wrap;
@@ -127,6 +142,9 @@ export default {
   }
   .el-form-item {
     margin-bottom: 5px;
+  }
+  .el-form-item, .el-select, .el-input {
+    width: 100%;
   }
   .el-tabs {
     width: 100%;
