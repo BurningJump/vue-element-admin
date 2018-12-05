@@ -1,4 +1,4 @@
-<template>
+<temp/* late>
   <div class="app-container">
     <el-container>
       <el-header height="auto">
@@ -45,11 +45,13 @@
       </el-main>
     </el-container>
   </div>
-</template>
+</template> */
 
 <script>
+import BaseBillDetail from '@/views/com/epower/fw/smartview/detail/BaseBillDetail'
 export default {
   name: 'EditSingle',
+  extends: BaseBillDetail,
   data() {
     return {
       editSingleUI: require('./edit-ui-单表.json'),
