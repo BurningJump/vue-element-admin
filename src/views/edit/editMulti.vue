@@ -51,8 +51,8 @@
     <el-tabs v-model="activeTab" type="card" @tab-click="handleClick">
       <el-tab-pane v-for="tab in detailPagesTabs" :key="tab.name" :label="tab.label" :name="tab.name">
         <el-container>
-          <el-header height="auto">
-            <el-button-group>
+          <el-header v-if="tab.toolbarModel.buttons.length > 0 || tab.componentSetModel.style === 'aGrid'" height="35px">
+            <el-button-group v-if="tab.toolbarModel.buttons.length > 0">
               <el-button v-for="btn in tab.toolbarModel.buttons" v-if="tab.toolbarModel.buttons.length > 0 && !btn.isMore" :key="btn.label" size="mini">
                 <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
                 <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
@@ -76,11 +76,12 @@
                 </el-dropdown-menu>
               </el-dropdown>
             </el-button-group>
+            <pagination v-show="tab.componentSetModel.style === 'aGrid'" :total="list.length" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" style="position: absolute; right: 50px; top: 0; margin-top: 0;"/>
           </el-header>
           <el-main>
-            <el-table v-if="tab.componentSetModel.style === 'grid'" ref="multipleTable" :data="firstTabData" element-loading-text="拼命加载中" border fit highlight-current-row>
+            <el-table v-if="tab.componentSetModel.style === 'grid'" ref="multipleTable" :data="firstTabData" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight" :cell-style="cellStyle" :row-style="rowStyle">
               <el-table-column type="selection" align="center"/>
-              <el-table-column v-for="header in tab.componentSetModel.components" :key="header.label" :prop="header.field" :label="header.label" align="center">
+              <el-table-column v-for="header in tab.componentSetModel.components" :key="header.label" :prop="header.field" :label="header.label" align="center" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
                 <template slot-scope="scope">
                   <img v-if="header.ctype === 'image'" :src="scope.row[header.field]" :width="header.width">
                   <div v-else-if="header.ctype === 'valuelistField'" v-html="scope.row[header.field][header.valueListModel.displayField]"></div>
@@ -88,14 +89,14 @@
                 </template>
               </el-table-column>
             </el-table>
-            <el-table v-else-if="tab.componentSetModel.style === 'aGrid'" ref="multipleTable" element-loading-text="拼命加载中" border fit highlight-current-row>
+            <el-table v-else-if="tab.componentSetModel.style === 'aGrid'" ref="multipleTable" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight" :cell-style="cellStyle" :row-style="rowStyle">
               <el-table-column type="selection" align="center"/>
-              <el-table-column v-for="header in tab.componentSetModel.components" :key="header.label" :prop="header.prop" :label="header.label" align="center"/>
+              <el-table-column v-for="header in tab.componentSetModel.components" :key="header.label" :prop="header.prop" :label="header.label" align="center" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''"/>
             </el-table>
             <div v-else-if="tab.componentSetModel.style === 'column'" class="column">
               <el-main>
                 <el-form v-for="input in tab.componentSetModel.components" :key="input.label" :style="{width: input.width*100 + '%'}" class="demo-ruleForm" label-width="100px" size="mini">
-                  <el-form-item :label="input.label">
+                  <el-form-item :label="input.label" :rules="[{ required: !input.allowBlank, message: input.label + '不能为空'}]">
                     <el-input v-if="input.ctype === 'textfield'"/>
                     <el-checkbox v-else-if="input.ctype === 'checkboxField'"/>
                     <el-date-picker v-else-if="input.ctype === 'dateTimeField'"/>
@@ -120,10 +121,17 @@
   </div>
 </template>
 <script>
+import Pagination from '@/components/Pagination'
 export default {
   name: 'EditMulti',
   data() {
     return {
+      tableHeight: 600, // 表头高度
+      list: [],
+      listQuery: {
+        page: 1,
+        limit: 20
+      },
       editMultiUI: '',
       buttons: [],
       masterPageInputs: [],
@@ -134,11 +142,43 @@ export default {
       activeTab: ''
     }
   },
+  components: {
+    Pagination
+  },
+  computed: {
+    cellStyle() {
+      return {
+        'padding-left': '6px',
+        'padding-right': '6px'
+      }
+    },
+    rowStyle({ row, rowIndex}) {
+      console.log(rowIndex)
+      if (rowIndex%2 === 0) {
+        return {
+          'fontSize': '12px',
+          'backgroundColor': '#fafafa'
+        }
+      } else {
+        return {
+          'fontSize': '12px',
+          'backgroundColor': '#fff'
+        }
+      }
+    }
+  },
   mounted() {
     this.getUIdata()
     this.getMultiData()
+    this.calcTableHeight()
   },
   methods: {
+    calcTableHeight() {
+      setTimeout(() => {
+        this.tableHeight = window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 190
+        this.treeHeight = (window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 100) + 'px'
+      })
+    },
     getUIdata() {
       this.$http.get('http://root.yiuser.com:3001/openapi/shopOrderDetailUI').then((res) => {
         this.editMultiUI = res.data
@@ -180,8 +220,23 @@ export default {
   .el-form-item, .el-select, .el-input {
     width: 100%;
   }
+  .el-input__inner {
+    height: 22px;
+    line-height: 22px;
+  }
+  .el-form-item__label {
+    font-size: 12px;
+    font-weight: normal;
+  }
   .el-tabs {
     width: 100%;
+  }
+  .el-tabs__item {
+    height: 32px;
+    line-height: 32px;
+  }
+  .el-tabs__header {
+    margin: 0 0 3px;
   }
 }
 </style>
