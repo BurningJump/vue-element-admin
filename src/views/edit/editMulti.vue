@@ -34,7 +34,7 @@
       </el-header>
       <el-main>
         <el-form v-for="input in masterPageInputs" :key="input.label" :style="{width: input.width*100 + '%'}" class="demo-ruleForm" label-width="100px" size="mini">
-          <el-form-item :label="input.label">
+          <el-form-item :label="input.label" :required="!Boolean(input.allowBlank)">
             <el-input v-if="input.ctype === 'textfield'" v-model="masterPageData[input.field]"/>
             <el-date-picker v-else-if="input.ctype === 'dateTimeField'" v-model="masterPageData[input.field]" type="datetime"/>
             <el-select v-else-if="input.ctype === 'comboBox'" v-model="masterPageData[input.field].toString()" filterable>
@@ -96,7 +96,7 @@
             <div v-else-if="tab.componentSetModel.style === 'column'" class="column">
               <el-main>
                 <el-form v-for="input in tab.componentSetModel.components" :key="input.label" :style="{width: input.width*100 + '%'}" class="demo-ruleForm" label-width="100px" size="mini">
-                  <el-form-item :label="input.label" :rules="[{ required: !input.allowBlank, message: input.label + '不能为空'}]">
+                  <el-form-item :label="input.label" :required="!Boolean(input.allowBlank)">
                     <el-input v-if="input.ctype === 'textfield'"/>
                     <el-checkbox v-else-if="input.ctype === 'checkboxField'"/>
                     <el-date-picker v-else-if="input.ctype === 'dateTimeField'"/>
