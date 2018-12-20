@@ -49,7 +49,18 @@
       </el-main>
     </el-container>
     <el-tabs v-model="activeTab" type="card" @tab-click="handleClick">
-      <el-tab-pane v-for="tab in detailPagesTabs" :key="tab.name" :label="tab.label" :name="tab.name">
+      <!-- <el-tab-pane v-for="tab in detailPagesTabs" :key="tab.name" :label="tab.label" :name="tab.name"> -->
+      <el-tab-pane v-for="tab in detailPagesTabs" :key="tab.name" :name="tab.name">
+        <span slot="label">
+          <i v-if="tab.iconcls === 'table_add'" class="el-icon-plus"/>
+          <i v-else-if="tab.iconcls === 'table_view'" class="el-icon-view"/>
+          <i v-else-if="tab.iconcls === 'table_edit'" class="el-icon-edit"/>
+          <i v-else-if="tab.iconcls === 'table_delete'" class="el-icon-delete"/>
+          <i v-else-if="tab.iconcls === 'table_close'" class="el-icon-close"/>
+          <i v-else-if="tab.iconcls === 'table_save'" class="el-icon-document"/>
+          <i v-else-if="tab.iconcls === 'refresh'" class="el-icon-refresh"/>
+          {{tab.label}}
+        </span>
         <el-container>
           <el-header v-if="tab.toolbarModel.buttons.length > 0 || tab.componentSetModel.style === 'aGrid'" height="35px">
             <el-button-group v-if="tab.toolbarModel.buttons.length > 0">
