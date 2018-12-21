@@ -25,6 +25,9 @@ export default {
   props: ['settings'],
   components: {
     HotTable
+  },
+  mounted() {
+    console.log(this.settings, 'handsontable');
   }
 }
 </script>

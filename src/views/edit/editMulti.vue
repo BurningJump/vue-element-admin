@@ -100,7 +100,7 @@
                 </template>
               </el-table-column>
             </el-table> -->
-            <base-bill-detail v-if="tab.componentSetModel.style === 'grid'" :settings="gridTableSettings[0]"></base-bill-detail>
+            <base-bill-detail v-if="tab.componentSetModel.style === 'grid'" :settings="settings"></base-bill-detail>
             <el-table v-else-if="tab.componentSetModel.style === 'aGrid'" ref="multipleTable" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight" :cell-style="cellStyle" :row-style="rowStyle">
               <el-table-column type="selection" align="center"/>
               <el-table-column v-for="header in tab.componentSetModel.components" :key="header.label" :prop="header.prop" :label="header.label" align="center" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''"/>
@@ -156,17 +156,11 @@ export default {
       activeTab: '',
       gridObjectData: [],
       gridTableSettings: [],
-      // settings: {
-        // data: [
-        //   ["", "Ford", "Volvo", "Toyota", "Honda"],
-        //   ["2016", 10, 11, 12, 13],
-        //   ["2017", 20, 11, 14, 13],
-        //   ["2018", 30, 15, 12, 13]
-        // ],
-      //   data: null,
-      //   colHeaders: true,
-      //   rowHeaders: true,
-      // },
+      settings: {
+        data: null,
+        colHeaders: true,
+        rowHeaders: false,
+      },
     }
   },
   components: {
@@ -181,7 +175,6 @@ export default {
       }
     },
     rowStyle({ row, rowIndex}) {
-      console.log(rowIndex)
       if (rowIndex%2 === 0) {
         return {
           'fontSize': '12px',
@@ -195,10 +188,32 @@ export default {
       }
     }
   },
-  mounted() {
-    this.getUIdata().then(() => {
-      this.getMultiData()
+  created() {
+    Promise.all([this.getUIdata(), this.getMultiData()]).then(() => {
+      this.settings.data = [].concat(this.firstTabData)
+      
+      // this.settings.colHeaders.push(this.detailPagesTabs[0].componentSetModel.components.field)
+      // this.detailPagesTabs[0].forEach((tab, tabIndex) => {
+      //   // if (tab.componentSetModel.style === 'grid') {
+          
+      //     this.gridTableSettings[0] = []
+      //     this.gridTableSettings[0].push({
+      //       data: null,
+      //       colHeaders: [],
+      //       rowHeaders: false,
+      //     })
+      //     tab.componentSetModel.components.forEach((thead, theadIndex) => {
+      //       console.log(this.gridTableSettings[tabIndex],thead,theadIndex, 'thead');
+            
+      //       this.gridTableSettings[tabIndex][0].colHeaders.push(thead.field)
+      //       // this.gridTableSettings[tabIndex].data = null
+      //     })
+      //   // }
+      // })
+      // this.gridTableSettings[0][0].data = [].concat(this.firstTabData)
     })
+  },
+  mounted() {
     this.calcTableHeight()
   },
   methods: {
@@ -209,39 +224,25 @@ export default {
       })
     },
     getUIdata() {
-      return new Promise((res, rej) => {
+      return new Promise((resolve, reject) => {
         this.$http.get('http://root.yiuser.com:3001/openapi/shopOrderDetailUI').then((res) => {
           this.editMultiUI = res.data
           this.buttons = [...this.editMultiUI.detailViewModel.masterPage.toolbarModel.buttons]
           this.masterPageInputs = [...this.editMultiUI.detailViewModel.masterPage.componentSetModel.components]
           this.detailPagesTabs = [...this.editMultiUI.detailViewModel.detailPages]
           this.activeTab = this.detailPagesTabs[0].name
-  
-          this.detailPagesTabs.forEach((tab, tabIndex) => {
-            if (tab.componentSetModel.style === 'grid') {
-              this.gridObjectData[tabIndex] = []
-              this.gridTableSettings[tabIndex].push({
-                data: null,
-                colHeaders: [],
-                rowHeaders: true,
-              })
-              tab.components.forEach((thead, theadIndex) => {
-                this.gridTableSettings[tabIndex].colHeaders.push(thead.field)
-                this.gridTableSettings[tabIndex].data = null
-              })
-            }
-          })
-          res()
+          resolve('ok')
         })
       })
     },
     getMultiData() {
-      this.$http.get('http://root.yiuser.com:3001/openapi/shopOrderDetailData').then((res) => {
-        this.editMultiData = res.data
-        this.masterPageData = this.editMultiData.dataPackage.dataSets[0].currentTable[0]
-        this.firstTabData = this.editMultiData.dataPackage.dataSets[1].currentTable
-        this.gridTableSettings[0].data = [].concat(this.firstTabData)
-
+      return new Promise((resolve, reject) => {
+        this.$http.get('http://root.yiuser.com:3001/openapi/shopOrderDetailData').then((res) => {
+          this.editMultiData = res.data
+          this.masterPageData = this.editMultiData.dataPackage.dataSets[0].currentTable[0]
+          this.firstTabData = this.editMultiData.dataPackage.dataSets[1].currentTable
+          resolve('ok')
+        })
       })
     },
     remoteMethod() {},
