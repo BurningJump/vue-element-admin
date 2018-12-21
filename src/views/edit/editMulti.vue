@@ -50,7 +50,7 @@
     </el-container>
     <el-tabs v-model="activeTab" type="card" @tab-click="handleClick">
       <!-- <el-tab-pane v-for="tab in detailPagesTabs" :key="tab.name" :label="tab.label" :name="tab.name"> -->
-      <el-tab-pane v-for="tab in detailPagesTabs" :key="tab.name" :name="tab.name">
+      <el-tab-pane v-for="(tab,tabIndex) in detailPagesTabs" :key="tab.name" :name="tab.name">
         <span slot="label">
           <i v-if="tab.iconcls === 'table_add'" class="el-icon-plus"/>
           <i v-else-if="tab.iconcls === 'table_view'" class="el-icon-view"/>
@@ -90,7 +90,7 @@
             <pagination v-show="tab.componentSetModel.style === 'aGrid'" :total="list.length" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" style="position: absolute; right: 50px; top: 0; margin-top: 0;"/>
           </el-header>
           <el-main>
-            <el-table v-if="tab.componentSetModel.style === 'grid'" ref="multipleTable" :data="firstTabData" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight" :cell-style="cellStyle" :row-style="rowStyle">
+            <!-- <el-table v-if="tab.componentSetModel.style === 'grid'" ref="multipleTable" :data="firstTabData" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight" :cell-style="cellStyle" :row-style="rowStyle">
               <el-table-column type="selection" align="center"/>
               <el-table-column v-for="header in tab.componentSetModel.components" :key="header.label" :prop="header.field" :label="header.label" align="center" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
                 <template slot-scope="scope">
@@ -99,7 +99,8 @@
                   <div v-else v-html="scope.row[header.field]"></div>
                 </template>
               </el-table-column>
-            </el-table>
+            </el-table> -->
+            <base-bill-detail v-if="tab.componentSetModel.style === 'grid'" :settings="gridTableSettings[0]"></base-bill-detail>
             <el-table v-else-if="tab.componentSetModel.style === 'aGrid'" ref="multipleTable" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight" :cell-style="cellStyle" :row-style="rowStyle">
               <el-table-column type="selection" align="center"/>
               <el-table-column v-for="header in tab.componentSetModel.components" :key="header.label" :prop="header.prop" :label="header.label" align="center" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''"/>
@@ -133,6 +134,8 @@
 </template>
 <script>
 import Pagination from '@/components/Pagination'
+import { HotTable } from '@handsontable/vue'
+import BaseBillDetail from '@/views/com/epower/fw/smartview/detail/BaseBillDetail'
 export default {
   name: 'EditMulti',
   data() {
@@ -150,11 +153,25 @@ export default {
       editMultiData: '',
       masterPageData: [],
       firstTabData: [],
-      activeTab: ''
+      activeTab: '',
+      gridObjectData: [],
+      gridTableSettings: [],
+      // settings: {
+        // data: [
+        //   ["", "Ford", "Volvo", "Toyota", "Honda"],
+        //   ["2016", 10, 11, 12, 13],
+        //   ["2017", 20, 11, 14, 13],
+        //   ["2018", 30, 15, 12, 13]
+        // ],
+      //   data: null,
+      //   colHeaders: true,
+      //   rowHeaders: true,
+      // },
     }
   },
   components: {
-    Pagination
+    Pagination,
+    BaseBillDetail,
   },
   computed: {
     cellStyle() {
@@ -179,8 +196,9 @@ export default {
     }
   },
   mounted() {
-    this.getUIdata()
-    this.getMultiData()
+    this.getUIdata().then(() => {
+      this.getMultiData()
+    })
     this.calcTableHeight()
   },
   methods: {
@@ -191,12 +209,30 @@ export default {
       })
     },
     getUIdata() {
-      this.$http.get('http://root.yiuser.com:3001/openapi/shopOrderDetailUI').then((res) => {
-        this.editMultiUI = res.data
-        this.buttons = [...this.editMultiUI.detailViewModel.masterPage.toolbarModel.buttons]
-        this.masterPageInputs = [...this.editMultiUI.detailViewModel.masterPage.componentSetModel.components]
-        this.detailPagesTabs = [...this.editMultiUI.detailViewModel.detailPages]
-        this.activeTab = this.detailPagesTabs[0].name
+      return new Promise((res, rej) => {
+        this.$http.get('http://root.yiuser.com:3001/openapi/shopOrderDetailUI').then((res) => {
+          this.editMultiUI = res.data
+          this.buttons = [...this.editMultiUI.detailViewModel.masterPage.toolbarModel.buttons]
+          this.masterPageInputs = [...this.editMultiUI.detailViewModel.masterPage.componentSetModel.components]
+          this.detailPagesTabs = [...this.editMultiUI.detailViewModel.detailPages]
+          this.activeTab = this.detailPagesTabs[0].name
+  
+          this.detailPagesTabs.forEach((tab, tabIndex) => {
+            if (tab.componentSetModel.style === 'grid') {
+              this.gridObjectData[tabIndex] = []
+              this.gridTableSettings[tabIndex].push({
+                data: null,
+                colHeaders: [],
+                rowHeaders: true,
+              })
+              tab.components.forEach((thead, theadIndex) => {
+                this.gridTableSettings[tabIndex].colHeaders.push(thead.field)
+                this.gridTableSettings[tabIndex].data = null
+              })
+            }
+          })
+          res()
+        })
       })
     },
     getMultiData() {
@@ -204,6 +240,8 @@ export default {
         this.editMultiData = res.data
         this.masterPageData = this.editMultiData.dataPackage.dataSets[0].currentTable[0]
         this.firstTabData = this.editMultiData.dataPackage.dataSets[1].currentTable
+        this.gridTableSettings[0].data = [].concat(this.firstTabData)
+
       })
     },
     remoteMethod() {},

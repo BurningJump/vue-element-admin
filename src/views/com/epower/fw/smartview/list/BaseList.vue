@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-container>
       <el-header height="auto" id="qconHeader">
-        <el-form :model="conditionForm" ref="conditionForm" class="demo-ruleForm" label-width="100px" size="mini">
+        <el-form :inline="true" :model="conditionForm" ref="conditionForm" class="demo-ruleForm" label-width="100px" size="mini">
           <el-form-item v-for="condition in qCondition" v-if="!condition.isMore" :key="condition.label" :style="{width: (condition.width <= 1 ? condition.width*100 + '%' : condition.width + 'px')}" :label="condition.label" :prop="conditionForm[condition.findField]">
             <el-input v-model="conditionForm[condition.findField]"/>
           </el-form-item>
