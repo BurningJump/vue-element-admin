@@ -90,7 +90,7 @@
             <pagination v-show="tab.componentSetModel.style === 'aGrid'" :total="list.length" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" style="position: absolute; right: 50px; top: 0; margin-top: 0;"/>
           </el-header>
           <el-main>
-            <!-- <el-table v-if="tab.componentSetModel.style === 'grid'" ref="multipleTable" :data="firstTabData" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight" :cell-style="cellStyle" :row-style="rowStyle">
+            <el-table v-if="tab.componentSetModel.style === 'grid'" ref="multipleTable" :data="firstTabData" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight" :cell-style="cellStyle" :row-style="rowStyle">
               <el-table-column type="selection" align="center"/>
               <el-table-column v-for="header in tab.componentSetModel.components" :key="header.label" :prop="header.field" :label="header.label" align="center" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
                 <template slot-scope="scope">
@@ -99,7 +99,7 @@
                   <div v-else v-html="scope.row[header.field]"></div>
                 </template>
               </el-table-column>
-            </el-table> -->
+            </el-table>
             <base-bill-detail v-if="tab.componentSetModel.style === 'grid'" :settings="settings"></base-bill-detail>
             <el-table v-else-if="tab.componentSetModel.style === 'aGrid'" ref="multipleTable" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight" :cell-style="cellStyle" :row-style="rowStyle">
               <el-table-column type="selection" align="center"/>
@@ -136,6 +136,7 @@
 import Pagination from '@/components/Pagination'
 import { HotTable } from '@handsontable/vue'
 import BaseBillDetail from '@/views/com/epower/fw/smartview/detail/BaseBillDetail'
+import Handsontable from 'handsontable';
 export default {
   name: 'EditMulti',
   data() {
@@ -157,9 +158,14 @@ export default {
       gridObjectData: [],
       gridTableSettings: [],
       settings: {
-        data: null,
-        colHeaders: true,
+        data: [],
+        dataSchema: {},
+        colHeaders: [],
         rowHeaders: false,
+        columns: [],
+        colWidths: [],
+        rowHeights: 55,
+        className: 'htCenter htMiddle',
       },
     }
   },
@@ -188,35 +194,76 @@ export default {
       }
     }
   },
-  created() {
+  mounted() {
     Promise.all([this.getUIdata(), this.getMultiData()]).then(() => {
       this.settings.data = [].concat(this.firstTabData)
-      
-      // this.settings.colHeaders.push(this.detailPagesTabs[0].componentSetModel.components.field)
-      // this.detailPagesTabs[0].forEach((tab, tabIndex) => {
-      //   // if (tab.componentSetModel.style === 'grid') {
-          
-      //     this.gridTableSettings[0] = []
-      //     this.gridTableSettings[0].push({
-      //       data: null,
-      //       colHeaders: [],
-      //       rowHeaders: false,
-      //     })
-      //     tab.componentSetModel.components.forEach((thead, theadIndex) => {
-      //       console.log(this.gridTableSettings[tabIndex],thead,theadIndex, 'thead');
-            
-      //       this.gridTableSettings[tabIndex][0].colHeaders.push(thead.field)
-      //       // this.gridTableSettings[tabIndex].data = null
-      //     })
-      //   // }
-      // })
-      // this.gridTableSettings[0][0].data = [].concat(this.firstTabData)
+      // this.settings.data = this.settings.data.concat(this.firstTabData)
+      // this.settings.data = this.settings.data.concat(this.firstTabData)
+      // this.settings.data = this.settings.data.concat(this.firstTabData)
+      this.detailPagesTabs[0].componentSetModel.components.forEach(theader => {
+        this.settings.colHeaders.push(theader.label)
+        this.settings.dataSchema[theader.field] = null
+        // this.settings.colWidths.push(theader.width)
+        this.settings.colWidths.push(theader.width > 1 ? theader.width : theader.width > 0 && theader.width <= 1 ? theader.width*100 + '%' : '')
+        this.settings.columns.push({
+          type: 'autocomplete',
+        //   // use HTML in the source list
+          allowHtml: true,
+          // renderer: 'html',
+          data: theader.field,
+          renderer: function(instance, td, row, col, prop, value, cellProperties) {
+            const escaped = Handsontable.helper.stringify(value);
+            let img = null;
+
+            if (escaped.indexOf('http') === 0) {
+              img = document.createElement('IMG');
+              img.src = value;
+              img.width = theader.width
+
+              Handsontable.dom.addEvent(img, 'mousedown', function(event) {
+                event.preventDefault();
+              });
+
+              Handsontable.dom.empty(td);
+              td.className = 'htCenter htMiddle'
+              td.appendChild(img);
+            } else {
+              Handsontable.renderers.TextRenderer.apply(this, arguments);
+            }
+
+            return td;
+          }
+        })
+        
+      });
+      this.calcTableHeight()
     })
   },
-  mounted() {
-    this.calcTableHeight()
-  },
+  // mounted() {
+  // },
   methods: {
+    coverRenderer (instance, td, row, col, prop, value, cellProperties) {
+      var escaped = Handsontable.helper.stringify(value),
+        img;
+
+      if (escaped.indexOf('http') === 0) {
+        img = document.createElement('IMG');
+        img.src = value;
+
+        Handsontable.dom.addEvent(img, 'mousedown', function (e){
+          e.preventDefault(); // prevent selection quirk
+        });
+
+        Handsontable.dom.empty(td);
+        td.appendChild(img);
+      }
+      else {
+        // render as text
+        Handsontable.renderers.TextRenderer.apply(this, arguments);
+      }
+
+      return td;
+    },
     calcTableHeight() {
       setTimeout(() => {
         this.tableHeight = window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 190

@@ -1,14 +1,20 @@
 <template>
-  <hot-table :settings="settings"></hot-table>
+  <div class="handson-table-container">
+    <div class="wrapper">
+      <hot-table :root="root" :settings="settings"></hot-table>
+    </div>
+  </div>
 </template>
 
 <script>
 import { HotTable } from '@handsontable/vue'
+import Handsontable from 'handsontable'
 
 export default {
   name: 'com.epower.fw.smartview.detail.BaseBillDetail',
   data: function() {
     return {
+      root: 'test-hot',
       // settings: {
       //   data: [
       //     {id: 1, name: 'Ted Right', address: ''},
@@ -27,11 +33,73 @@ export default {
     HotTable
   },
   mounted() {
-    console.log(this.settings, 'handsontable');
+    this.$nextTick(() => {
+      console.log(this.settings.colHeaders, 'handsontable改变前');
+      console.log(Array.isArray(this.settings.colHeaders), 'colHeaders类型');
+      console.log(this.settings.colHeaders.length,'this.settings.colHeaders-+-+-')
+      console.log(JSON.parse(JSON.stringify(this.settings.colHeaders)).length,'Array.prototype.slice.call(this.settings.colHeaders)-+-+-')
+      
+      Array.prototype.slice.call(this.settings.colHeaders).forEach((element, index) => {
+        console.log(index, 'index----------')
+      })
+      console.log(this.settings.colHeaders, 'handsontable改变后');
+    })
+  },
+  methods: {
+    coverRenderer (instance, td, row, col, prop, value, cellProperties) {
+      var escaped = Handsontable.helper.stringify(value),
+        img;
+
+      if (escaped.indexOf('http') === 0) {
+        img = document.createElement('IMG');
+        img.src = value;
+
+        Handsontable.dom.addEvent(img, 'mousedown', function (e){
+          e.preventDefault(); // prevent selection quirk
+        });
+
+        Handsontable.dom.empty(td);
+        td.appendChild(img);
+      }
+      else {
+        // render as text
+        Handsontable.renderers.TextRenderer.apply(this, arguments);
+      }
+
+      return td;
+    },
   }
 }
 </script>
 
-<style>
-@import "handsontable/dist/handsontable.full.css"
+<style lang="scss">
+@import "handsontable/dist/handsontable.full.css";
+.handson-table-container {
+  width: 100%;
+  height: 500px;
+  overflow: hidden;
+  .wrapper {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    th {
+      color: #909399;
+      font-size: 14px;
+      font-weight: bold;
+      background: rgb(246, 246, 246);
+    }
+    td {
+      color: #606266;
+      font-size: 12px;
+    }
+    tbody {
+      tr:nth-child(2n) {
+        td {
+        background-color: #fafafa;
+
+        }
+      }
+    }
+  }
+}
 </style>
