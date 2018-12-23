@@ -1,5 +1,5 @@
 <template>
-  <div class="handson-table-container">
+  <div class="handson-table-container" :style="{height: height+'px'}">
     <div class="wrapper">
       <hot-table :root="root" :settings="settings"></hot-table>
     </div>
@@ -28,21 +28,12 @@ export default {
       // }
     }
   },
-  props: ['settings'],
+  props: ['settings', 'height'],
   components: {
     HotTable
   },
   mounted() {
     this.$nextTick(() => {
-      console.log(this.settings.colHeaders, 'handsontable改变前');
-      console.log(Array.isArray(this.settings.colHeaders), 'colHeaders类型');
-      console.log(this.settings.colHeaders.length,'this.settings.colHeaders-+-+-')
-      console.log(JSON.parse(JSON.stringify(this.settings.colHeaders)).length,'Array.prototype.slice.call(this.settings.colHeaders)-+-+-')
-      
-      Array.prototype.slice.call(this.settings.colHeaders).forEach((element, index) => {
-        console.log(index, 'index----------')
-      })
-      console.log(this.settings.colHeaders, 'handsontable改变后');
     })
   },
   methods: {
@@ -76,7 +67,6 @@ export default {
 @import "handsontable/dist/handsontable.full.css";
 .handson-table-container {
   width: 100%;
-  height: 500px;
   overflow: hidden;
   .wrapper {
     width: 100%;

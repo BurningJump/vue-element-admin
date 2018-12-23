@@ -90,7 +90,7 @@
             <pagination v-show="tab.componentSetModel.style === 'aGrid'" :total="list.length" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" style="position: absolute; right: 50px; top: 0; margin-top: 0;"/>
           </el-header>
           <el-main>
-            <el-table v-if="tab.componentSetModel.style === 'grid'" ref="multipleTable" :data="firstTabData" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight" :cell-style="cellStyle" :row-style="rowStyle">
+            <!-- <el-table v-if="tab.componentSetModel.style === 'grid'" ref="multipleTable" :data="firstTabData" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight" :cell-style="cellStyle" :row-style="rowStyle">
               <el-table-column type="selection" align="center"/>
               <el-table-column v-for="header in tab.componentSetModel.components" :key="header.label" :prop="header.field" :label="header.label" align="center" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
                 <template slot-scope="scope">
@@ -99,8 +99,8 @@
                   <div v-else v-html="scope.row[header.field]"></div>
                 </template>
               </el-table-column>
-            </el-table>
-            <base-bill-detail v-if="tab.componentSetModel.style === 'grid'" :settings="settings"></base-bill-detail>
+            </el-table> -->
+            <base-bill-detail v-if="tab.componentSetModel.style === 'grid'" :settings="settings" :height="tableHeight"/>
             <el-table v-else-if="tab.componentSetModel.style === 'aGrid'" ref="multipleTable" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight" :cell-style="cellStyle" :row-style="rowStyle">
               <el-table-column type="selection" align="center"/>
               <el-table-column v-for="header in tab.componentSetModel.components" :key="header.label" :prop="header.prop" :label="header.label" align="center" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''"/>
@@ -166,6 +166,10 @@ export default {
         colWidths: [],
         rowHeights: 55,
         className: 'htCenter htMiddle',
+        contextMenu: true,
+        manualColumnFreeze: true,
+        fixedColumnsLeft: 0,    // 冻结前n列
+        fixedRowsTop: 1,     // 冻结前n行
       },
     }
   },
@@ -236,8 +240,8 @@ export default {
         })
         
       });
-      this.calcTableHeight()
     })
+    this.calcTableHeight()
   },
   // mounted() {
   // },
