@@ -316,7 +316,7 @@ export default {
     padding: 5px;
   }
   .el-form-item {
-    margin-bottom: 5px;
+    margin-bottom: 3px;
   }
   .el-form-item, .el-select, .el-input {
     width: 100%;

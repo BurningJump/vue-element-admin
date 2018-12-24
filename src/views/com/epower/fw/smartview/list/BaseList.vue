@@ -9,7 +9,7 @@
           <el-form-item v-for="condition in qCondition" v-if="condition.isMore && showMoreCondition" :key="condition.label" :style="{width: (condition.width <= 1 ? condition.width*100 + '%' : condition.width + 'px')}" :label="condition.label" :prop="conditionForm[condition.findField]">
             <el-input v-model="conditionForm[condition.findField]"/>
           </el-form-item>
-          <el-form-item :inline="true">
+          <el-form-item :style="{width: 'auto'}">
             <el-button-group>
               <el-button size="mini" icon="el-icon-search">查询</el-button>
               <el-button size="mini" @click="resetForm()" icon="el-icon-close">重置</el-button>
