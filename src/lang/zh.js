@@ -8,6 +8,7 @@ export default {
     operationList: '权限项列表',
     pagePermission: '页面权限',
     edit: '编辑界面',
+    supply: '物资申报单明细',
     editSingle: '第三方对接平台明细',
     editMulti: '网店订单明细',
     directivePermission: '指令权限',

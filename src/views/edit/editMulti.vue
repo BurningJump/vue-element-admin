@@ -100,10 +100,17 @@
                 </template>
               </el-table-column>
             </el-table> -->
-            <base-bill-detail v-if="tab.componentSetModel.style === 'grid'" :settings="settings" :height="tableHeight"/>
-            <el-table v-else-if="tab.componentSetModel.style === 'aGrid'" ref="multipleTable" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight" :cell-style="cellStyle" :row-style="rowStyle">
+            <base-bill-detail v-if="tab.componentSetModel.style === 'grid' && tab.name==='detailpage'" :settings="detailpageSettings" :height="tableHeight"/>
+            <el-table v-else-if="tab.componentSetModel.style === 'aGrid'" :data="aGridList[tabIndex]" ref="multipleTable" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight" :cell-style="cellStyle" :row-style="rowStyle">
               <el-table-column type="selection" align="center"/>
-              <el-table-column v-for="header in tab.componentSetModel.components" :key="header.label" :prop="header.prop" :label="header.label" align="center" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''"/>
+              <el-table-column v-for="header in tab.componentSetModel.components" :key="header.label" :prop="header.field" :label="header.label" align="center" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
+                <template slot-scope="scope">
+                    <img v-if="header.ctype === 'image'" :src="scope.row[header.field]" :width="header.width">
+                    <div v-else-if="header.ctype === 'valuelistField'" v-html="scope.row[header.field][header.valueListModel.displayField]"></div>
+                    <div v-else v-html="scope.row[header.field]"></div>
+                  </template>
+              </el-table-column>
+              </el-table-column>
             </el-table>
             <div v-else-if="tab.componentSetModel.style === 'column'" class="column">
               <el-main>
@@ -157,6 +164,20 @@ export default {
       activeTab: '',
       gridObjectData: [],
       gridTableSettings: [],
+      detailpageSettings: {
+        data: [],
+        dataSchema: {},
+        colHeaders: [],
+        rowHeaders: false,
+        columns: [],
+        colWidths: [],
+        rowHeights: 55,
+        className: 'htCenter htMiddle',
+        contextMenu: true,
+        manualColumnFreeze: true,
+        fixedColumnsLeft: 0,    // 冻结前n列
+        fixedRowsTop: 0,     // 冻结前n行
+      },
       settings: {
         data: [],
         dataSchema: {},
@@ -169,8 +190,9 @@ export default {
         contextMenu: true,
         manualColumnFreeze: true,
         fixedColumnsLeft: 0,    // 冻结前n列
-        fixedRowsTop: 1,     // 冻结前n行
+        fixedRowsTop: 0,     // 冻结前n行
       },
+      aGridList: [],
     }
   },
   components: {
@@ -200,69 +222,44 @@ export default {
   },
   mounted() {
     Promise.all([this.getUIdata(), this.getMultiData()]).then(() => {
-      this.settings.data = [].concat(this.firstTabData)
-      // this.settings.data = this.settings.data.concat(this.firstTabData)
-      // this.settings.data = this.settings.data.concat(this.firstTabData)
-      // this.settings.data = this.settings.data.concat(this.firstTabData)
-      this.detailPagesTabs[0].componentSetModel.components.forEach(theader => {
-        this.settings.colHeaders.push(theader.label)
-        this.settings.dataSchema[theader.field] = null
-        // this.settings.colWidths.push(theader.width)
-        this.settings.colWidths.push(theader.width > 1 ? theader.width : theader.width > 0 && theader.width <= 1 ? theader.width*100 + '%' : '')
-        this.settings.columns.push({
-          type: 'autocomplete',
-        //   // use HTML in the source list
-          allowHtml: true,
-          // renderer: 'html',
-          data: theader.field,
-          renderer: function(instance, td, row, col, prop, value, cellProperties) {
-            const escaped = Handsontable.helper.stringify(value);
-            let img = null;
-
-            if (escaped.indexOf('http') === 0) {
-              img = document.createElement('IMG');
-              img.src = value;
-              img.width = theader.width
-
-              Handsontable.dom.addEvent(img, 'mousedown', function(event) {
-                event.preventDefault();
-              });
-
-              Handsontable.dom.empty(td);
-              td.className = 'htCenter htMiddle'
-              td.appendChild(img);
-            } else {
-              Handsontable.renderers.TextRenderer.apply(this, arguments);
-            }
-
-            return td;
-          }
-        })
-        
-      });
+      this.getSettings(this.detailpageSettings,this.firstTabData,0)
     })
     this.calcTableHeight()
   },
   // mounted() {
   // },
   methods: {
+    getSettings(settings,sourceData,index) {
+      settings.data = [].concat(sourceData)
+      this.detailPagesTabs[index].componentSetModel.components.forEach(theader => {
+        settings.colHeaders.push(theader.label)
+        settings.dataSchema[theader.field] = null
+        settings.colWidths.push(theader.width > 1 ? theader.width : theader.width > 0 && theader.width <= 1 ? theader.width*100 + '%' : '')
+        settings.columns.push({
+          type: 'autocomplete',
+          allowHtml: true,
+          renderer: this.coverRenderer,
+          data: theader.field,
+        })
+      });
+    },
     coverRenderer (instance, td, row, col, prop, value, cellProperties) {
-      var escaped = Handsontable.helper.stringify(value),
-        img;
+      const escaped = Handsontable.helper.stringify(value);
+      let img = null;
 
       if (escaped.indexOf('http') === 0) {
         img = document.createElement('IMG');
         img.src = value;
+        img.width = instance.getColWidth()
 
-        Handsontable.dom.addEvent(img, 'mousedown', function (e){
-          e.preventDefault(); // prevent selection quirk
+        Handsontable.dom.addEvent(img, 'mousedown', function(event) {
+          event.preventDefault();
         });
 
         Handsontable.dom.empty(td);
+        td.className = 'htCenter htMiddle'
         td.appendChild(img);
-      }
-      else {
-        // render as text
+      } else {
         Handsontable.renderers.TextRenderer.apply(this, arguments);
       }
 
@@ -281,6 +278,9 @@ export default {
           this.buttons = [...this.editMultiUI.detailViewModel.masterPage.toolbarModel.buttons]
           this.masterPageInputs = [...this.editMultiUI.detailViewModel.masterPage.componentSetModel.components]
           this.detailPagesTabs = [...this.editMultiUI.detailViewModel.detailPages]
+          this.detailPagesTabs.forEach((tab, index) => {
+            // this.aGridList[index] = []
+          })
           this.activeTab = this.detailPagesTabs[0].name
           resolve('ok')
         })
@@ -292,6 +292,22 @@ export default {
           this.editMultiData = res.data
           this.masterPageData = this.editMultiData.dataPackage.dataSets[0].currentTable[0]
           this.firstTabData = this.editMultiData.dataPackage.dataSets[1].currentTable
+        })
+        this.$http.get('http://root.yiuser.com:3001/openapi/shopOrderDetailData_log').then((res) => {
+          // 日志
+          console.log(res, '99999999999');
+          this.aGridList[2] = []
+          this.aGridList[2] = [...res.data.resultList]
+        })
+        this.$http.get('http://root.yiuser.com:3001/openapi/shopOrderDetailData_distribute').then((res) => {
+          // 要货单
+          this.aGridList[3] = []
+          this.aGridList[3] = [...res.data.resultList]
+        })
+        this.$http.get('http://root.yiuser.com:3001/openapi/shopOrderDetailData_delivery').then((res) => {
+          // 发货单
+          this.aGridList[4] = []
+          this.aGridList[4] = [...res.data.resultList]
           resolve('ok')
         })
       })
