@@ -85,8 +85,7 @@ export default {
     tbody {
       tr:nth-child(2n) {
         td {
-        background-color: #fafafa;
-
+          background-color: #fafafa;
         }
       }
     }

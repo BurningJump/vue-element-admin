@@ -61,7 +61,7 @@
             {{tab.label}}
           </span>
           <el-container>
-            <el-aside width="200px" :style="{'height': treeHeight, 'padding': '0 5px'}">
+            <el-aside v-if="tab.treeModel" width="200px" :style="{'height': treeHeight, 'padding': '0 5px'}">
               <!-- <div class="tree-toolbar">
                 <el-button-group>
                   <el-tooltip class="item" effect="dark" v-for="btn in tab.tree.toolbar.components" :content="btn.label" placement="top">
@@ -102,7 +102,38 @@
                 </el-tree>
               </div>
             </el-aside>
-            <el-main></el-main>
+            <el-container>
+              <el-header v-if="tab.toolbarModel.buttons.length > 0 || tab.componentSetModel.style === 'aGrid'" height="35px">
+                <el-button-group v-if="tab.toolbarModel.buttons.length > 0">
+                  <el-button v-for="btn in tab.toolbarModel.buttons" v-if="tab.toolbarModel.buttons.length > 0 && !btn.isMore" :key="btn.label" size="mini">
+                    <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
+                    <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
+                    {{ btn.label }}
+                  </el-button>
+                  <el-dropdown v-if="tab.toolbarModel.showMoreButton" trigger="click" placement="bottom" szie="mini">
+                    <el-button size="mini">
+                      更多<i class="el-icon-arrow-down el-icon--right" style="margin-left:0;"></i>
+                    </el-button>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item v-for="btn in tab.toolbarModel.buttons" v-if="btn.isMore">
+                        <!-- <el-tooltip class="item" effect="dark" :content="btn.label" placement="top"> -->
+                          <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
+                          <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
+                          <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
+                          <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
+                          <i v-else-if="btn.iconcls === 'table_close'" class="el-icon-close"/>
+                          {{btn.label}}
+                        <!-- </el-tooltip> -->
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                </el-button-group>
+              </el-header>
+              <el-main>
+                <base-bill-detail v-if="tab.componentSetModel.style === 'grid' && tab.name==='detailpage'" :settings="detailpageSettings" :height="tableHeight"/>
+                <base-bill-detail v-else-if="tab.componentSetModel.style === 'grid' && tab.name==='detailPage3'" :settings="detailpageSettings" :height="tableHeight"/>
+              </el-main>
+            </el-container>
           </el-container>
         </el-tab-pane>
       </el-tabs>
@@ -111,28 +142,105 @@
 </template>
 
 <script>
+import BaseBillDetail from '@/views/com/epower/fw/smartview/detail/BaseBillDetail'
+import Handsontable from 'handsontable';
 export default {
   data() {
     return {
       supplyUI: '',
       supplyData: '',
       activeTab: '',
+      detailpageSettings: {
+        data: [],
+        dataSchema: {},
+        colHeaders: [],
+        rowHeaders: false,
+        columns: [],
+        colWidths: [],
+        rowHeights: 55,
+        className: 'htCenter htMiddle',
+        contextMenu: true,
+        manualColumnFreeze: true,
+        fixedColumnsLeft: 0,    // 冻结前n列
+        fixedRowsTop: 0,     // 冻结前n行
+      },
+      detailPage3Settings: {
+        data: [],
+        dataSchema: {},
+        colHeaders: [],
+        rowHeaders: false,
+        columns: [],
+        colWidths: [],
+        rowHeights: 55,
+        className: 'htCenter htMiddle',
+        contextMenu: true,
+        manualColumnFreeze: true,
+        fixedColumnsLeft: 0,    // 冻结前n列
+        fixedRowsTop: 0,     // 冻结前n行
+      },
     }
   },
+  components: {
+    BaseBillDetail
+  },
   mounted() {
-    this.getUIdata()
-    this.getSupplyData()
+    Promise.all([this.getUIdata(), this.getSupplyData()]).then(() => {
+      this.getSettings(this.detailpageSettings,this.supplyData.dataPackage.dataSets[1].currentTable,0)
+      this.getSettings(this.detailpage3Settings,this.supplyData.dataPackage.dataSets[2].currentTable,1)
+    })
   },
   methods: {
+    getSettings(settings,sourceData,index) {
+      settings.data = [].concat(sourceData)
+      this.supplyUI.detailViewModel.detailPages[index].componentSetModel.components.forEach(theader => {
+        settings.colHeaders.push(theader.label)
+        settings.dataSchema[theader.field] = null
+        settings.colWidths.push(theader.width > 1 ? theader.width : theader.width > 0 && theader.width <= 1 ? theader.width*100 + '%' : '')
+        settings.columns.push({
+          type: 'autocomplete',
+          allowHtml: true,
+          renderer: this.coverRenderer,
+          data: theader.field,
+        })
+      });
+    },
+    coverRenderer (instance, td, row, col, prop, value, cellProperties) {
+      const escaped = Handsontable.helper.stringify(value);
+      let img = null;
+
+      if (escaped.indexOf('http') === 0) {
+        img = document.createElement('IMG');
+        img.src = value;
+        img.width = instance.getColWidth()
+
+        Handsontable.dom.addEvent(img, 'mousedown', function(event) {
+          event.preventDefault();
+        });
+
+        Handsontable.dom.empty(td);
+        td.className = 'htCenter htMiddle'
+        td.appendChild(img);
+      } else {
+        Handsontable.renderers.TextRenderer.apply(this, arguments);
+      }
+
+      return td;
+    },
     getUIdata() {
-      this.$http.get('http://root.yiuser.com:3001/openapi/invRequestDetailUI').then((res) => {
-        this.supplyUI = res.data
-        this.activeTab = this.supplyUI.detailViewModel.detailPages[0].name
+      return new Promise((resolve, reject) => {
+        this.$http.get('http://root.yiuser.com:3001/openapi/invRequestDetailUI').then((res) => {
+          this.supplyUI = res.data
+          this.activeTab = this.supplyUI.detailViewModel.detailPages[0].name
+          resolve('ok')
+        })
       })
     },
     getSupplyData() {
-      this.$http.get('http://root.yiuser.com:3001/openapi/invRequestDetailData').then((res) => {
-        this.supplyData = res.data
+      return new Promise((resolve, reject) => {
+        this.$http.get('http://root.yiuser.com:3001/openapi/invRequestDetailData').then((res) => {
+          this.supplyData = res.data
+          resolve('ok')
+        })
       })
     }
   }
