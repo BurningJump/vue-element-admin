@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-container>
+    <el-container v-if="UiLoaded&&dataLoaded">
       <el-header height="auto" id="qconHeader">
         <el-button-group>
           <el-button v-for="btn in supplyUI.detailViewModel.masterPage.toolbarModel.buttons" v-if="!btn.isMore" :key="btn.label" size="mini">
@@ -131,7 +131,7 @@
               </el-header>
               <el-main>
                 <base-detail-grid v-if="tab.componentSetModel.style === 'grid' && tab.name==='detailpage'" :settings="detailpageSettings" :height="tableHeight"/>
-                <base-detail-grid v-else-if="tab.componentSetModel.style === 'grid' && tab.name==='detailPage3'" :settings="detailpage3Settings" :height="tableHeight"/>
+                <base-detail-grid v-else-if="tab.componentSetModel.style === 'grid' && tab.name==='detailPage3'" :settings="detailPage3Settings" :height="tableHeight"/>
               </el-main>
             </el-container>
           </el-container>
@@ -148,7 +148,14 @@ export default {
   name: 'com.epower.inv.invrequest.InvRequestDetail',
   data() {
     return {
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      },
+      tableHeight: 600, // 表头高度
       supplyUI: '',
+      UiLoaded: false,  // UI获取完成
+      dataLoaded: false,  // 数据获取完成
       supplyData: '',
       activeTab: '',
       detailpageSettings: {
@@ -187,10 +194,20 @@ export default {
   mounted() {
     Promise.all([this.getUIdata(), this.getSupplyData()]).then(() => {
       this.getSettings(this.detailpageSettings,this.supplyData.dataPackage.dataSets[1].currentTable,0)
-      this.getSettings(this.detailpage3Settings,this.supplyData.dataPackage.dataSets[2].currentTable,1)
+      this.getSettings(this.detailPage3Settings,this.supplyData.dataPackage.dataSets[2].currentTable,1)
     })
+    this.calcTableHeight()
   },
   methods: {
+    handleClick() {},
+    handleNodeExpand() {},
+    handleNodeClick() {},
+    calcTableHeight() {
+      setTimeout(() => {
+        this.tableHeight = window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 190
+        this.treeHeight = (window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 100) + 'px'
+      })
+    },
     getSettings(settings,sourceData,index) {
       settings.data = [].concat(sourceData)
       this.supplyUI.detailViewModel.detailPages[index].componentSetModel.components.forEach(theader => {
@@ -232,6 +249,7 @@ export default {
         this.$http.get('http://root.yiuser.com:3001/openapi/invRequestDetailUI').then((res) => {
           this.supplyUI = res.data
           this.activeTab = this.supplyUI.detailViewModel.detailPages[0].name
+          this.UiLoaded = true
           resolve('ok')
         })
       })
@@ -240,6 +258,7 @@ export default {
       return new Promise((resolve, reject) => {
         this.$http.get('http://root.yiuser.com:3001/openapi/invRequestDetailData').then((res) => {
           this.supplyData = res.data
+          this.dataLoaded = true
           resolve('ok')
         })
       })
