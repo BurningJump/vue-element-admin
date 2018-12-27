@@ -130,6 +130,15 @@ export const asyncRouterMap = [
     },
     children: [
       {
+        path: 'control',
+        component: () => import('@/views/edit/control'),
+        name: 'Control',
+        meta: {
+          title: 'control',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      },
+      {
         path: 'editSingle',
         component: () => import('@/views/edit/editSingle'),
         name: 'EditSingle',

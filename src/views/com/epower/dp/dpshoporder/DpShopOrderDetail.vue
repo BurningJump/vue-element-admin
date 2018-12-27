@@ -36,6 +36,7 @@
         <el-form v-for="input in masterPageInputs" :key="input.label" :style="{width: input.width*100 + '%'}" class="demo-ruleForm" label-width="100px" size="mini">
           <el-form-item :label="input.label" :required="!Boolean(input.allowBlank)">
             <el-input v-if="input.ctype === 'textfield'" v-model="masterPageData[input.field]"/>
+            <el-date-picker v-else-if="input.ctype === 'dateField'" v-model="masterPageData[input.field]" type="date"/>
             <el-date-picker v-else-if="input.ctype === 'dateTimeField'" v-model="masterPageData[input.field]" type="datetime"/>
             <el-select v-else-if="input.ctype === 'comboBox'" v-model="masterPageData[input.field].toString()" filterable>
               <el-option v-for="item in input.enumModel.items" :key="item.value" :label="item.label" :value="item.value"/>
@@ -163,27 +164,6 @@ export default {
     BaseDetailColumn,
     BaseDetailGrid,
   },
-  // computed: {
-  //   cellStyle() {
-  //     return {
-  //       'padding-left': '6px',
-  //       'padding-right': '6px'
-  //     }
-  //   },
-  //   rowStyle({ row, rowIndex}) {
-  //     if (rowIndex%2 === 0) {
-  //       return {
-  //         'fontSize': '12px',
-  //         'backgroundColor': '#fafafa'
-  //       }
-  //     } else {
-  //       return {
-  //         'fontSize': '12px',
-  //         'backgroundColor': '#fff'
-  //       }
-  //     }
-  //   }
-  // },
   mounted() {
     Promise.all([this.getUIdata(), this.getMultiData()]).then(() => {
       this.getSettings(this.detailpageSettings,this.firstTabData,0)

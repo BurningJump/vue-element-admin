@@ -11,6 +11,7 @@ export default {
     invrequest: '物资申报单',
     InvRequestDetail: '物资申报单明细',
     editSingle: '第三方对接平台明细',
+    control: '控件组件',
     dpshoporder: '网店订单',
     DpShopOrderDetail: '网店订单明细',
     directivePermission: '指令权限',

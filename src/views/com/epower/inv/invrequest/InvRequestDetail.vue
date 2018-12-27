@@ -36,6 +36,7 @@
         <el-form v-for="input in supplyUI.detailViewModel.masterPage.componentSetModel.components" :key="input.label" :style="{width: input.width*100 + '%'}" class="demo-ruleForm" label-width="100px" size="mini">
           <el-form-item :label="input.label" :required="!Boolean(input.allowBlank)">
             <el-input v-if="input.ctype === 'textfield'" v-model="supplyData.dataPackage.dataSets[0].currentTable[0][input.field]"/>
+            <el-date-picker v-else-if="input.ctype === 'dateField'" v-model="supplyData.dataPackage.dataSets[0].currentTable[0][input.field]" type="date"/>
             <el-date-picker v-else-if="input.ctype === 'dateTimeField'" v-model="supplyData.dataPackage.dataSets[0].currentTable[0][input.field]" type="datetime"/>
             <el-select v-else-if="input.ctype === 'comboBox'" v-model="supplyData.dataPackage.dataSets[0].currentTable[0][input.field].toString()" filterable>
               <el-option v-for="item in input.enumModel.items" :key="item.value" :label="item.label" :value="item.value"/>
