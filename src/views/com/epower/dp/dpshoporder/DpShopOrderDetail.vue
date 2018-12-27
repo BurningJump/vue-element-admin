@@ -90,49 +90,9 @@
             <pagination v-show="tab.componentSetModel.style === 'aGrid'" :total="list.length" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" style="position: absolute; right: 50px; top: 0; margin-top: 0;"/>
           </el-header>
           <el-main>
-            <!-- <el-table v-if="tab.componentSetModel.style === 'grid'" ref="multipleTable" :data="firstTabData" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight" :cell-style="cellStyle" :row-style="rowStyle">
-              <el-table-column type="selection" align="center"/>
-              <el-table-column v-for="header in tab.componentSetModel.components" :key="header.label" :prop="header.field" :label="header.label" align="center" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
-                <template slot-scope="scope">
-                  <img v-if="header.ctype === 'image'" :src="scope.row[header.field]" :width="header.width">
-                  <div v-else-if="header.ctype === 'valuelistField'" v-html="scope.row[header.field][header.valueListModel.displayField]"></div>
-                  <div v-else v-html="scope.row[header.field]"></div>
-                </template>
-              </el-table-column>
-            </el-table> -->
-            <base-bill-detail v-if="tab.componentSetModel.style === 'grid' && tab.name==='detailpage'" :settings="detailpageSettings" :height="tableHeight"/>
-            <el-table v-else-if="tab.componentSetModel.style === 'aGrid'" :data="aGridList[tabIndex]" ref="multipleTable" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight" :cell-style="cellStyle" :row-style="rowStyle">
-              <el-table-column type="selection" align="center"/>
-              <el-table-column v-for="header in tab.componentSetModel.components" :key="header.label" :prop="header.field" :label="header.label" align="center" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
-                <template slot-scope="scope">
-                    <img v-if="header.ctype === 'image'" :src="scope.row[header.field]" :width="header.width">
-                    <div v-else-if="header.ctype === 'valuelistField'" v-html="scope.row[header.field][header.valueListModel.displayField]"></div>
-                    <div v-else v-html="scope.row[header.field]"></div>
-                  </template>
-              </el-table-column>
-              </el-table-column>
-            </el-table>
-            <div v-else-if="tab.componentSetModel.style === 'column'" class="column">
-              <el-main>
-                <el-form v-for="input in tab.componentSetModel.components" :key="input.label" :style="{width: input.width*100 + '%'}" class="demo-ruleForm" label-width="100px" size="mini">
-                  <el-form-item :label="input.label" :required="!Boolean(input.allowBlank)">
-                    <el-input v-if="input.ctype === 'textfield'"/>
-                    <el-checkbox v-else-if="input.ctype === 'checkboxField'"/>
-                    <el-date-picker v-else-if="input.ctype === 'dateTimeField'"/>
-                    <el-select v-else-if="input.ctype === 'valuelistField'" filterable>
-                      <el-option v-for="item in input.valueList" :key="item.value" :label="item.label" :value="item.value"/>
-                    </el-select>
-                    <el-select v-else-if="input.ctype === 'comboBox'" filterable>
-                      <el-option v-for="item in input.enumModel.items" :key="item.value" :label="item.label" :value="item.value"/>
-                    </el-select>
-                    <el-input v-else-if="input.ctype === 'numberfield'" type="number"/>
-                    <el-select v-else-if="input.ctype === 'remoteComboBox'" v-model="value9" :remote-method="remoteMethod" multiple filterable remote reserve-keyword>
-                      <el-option v-for="item in options4" :key="item.value" :label="item.label" :value="item.value"/>
-                    </el-select>
-                  </el-form-item>
-                </el-form>
-              </el-main>
-            </div>
+            <base-detail-grid v-if="tab.componentSetModel.style === 'grid' && tab.name==='detailpage'" :settings="detailpageSettings" :height="tableHeight"/>
+            <base-detail-a-grid v-else-if="tab.componentSetModel.style === 'aGrid'" :agridData="aGridList[tabIndex]" :headers="tab.componentSetModel.components" :height="tableHeight"/>
+            <base-detail-column v-else-if="tab.componentSetModel.style === 'column'" :inputs="tab.componentSetModel.components"/>
           </el-main>
         </el-container>
       </el-tab-pane>
@@ -142,10 +102,12 @@
 <script>
 import Pagination from '@/components/Pagination'
 import { HotTable } from '@handsontable/vue'
-import BaseBillDetail from '@/views/com/epower/fw/smartview/detail/BaseBillDetail'
+import BaseDetailAGrid from '@/views/com/epower/fw/smartview/detail/BaseDetailAGrid'
+import BaseDetailColumn from '@/views/com/epower/fw/smartview/detail/BaseDetailColumn'
+import BaseDetailGrid from '@/views/com/epower/fw/smartview/detail/BaseDetailGrid'
 import Handsontable from 'handsontable';
 export default {
-  name: 'EditMulti',
+  name: 'com.epower.dp.dpshoporder.DpShopOrderDetail',
   data() {
     return {
       tableHeight: 600, // 表头高度
@@ -197,29 +159,31 @@ export default {
   },
   components: {
     Pagination,
-    BaseBillDetail,
+    BaseDetailAGrid,
+    BaseDetailColumn,
+    BaseDetailGrid,
   },
-  computed: {
-    cellStyle() {
-      return {
-        'padding-left': '6px',
-        'padding-right': '6px'
-      }
-    },
-    rowStyle({ row, rowIndex}) {
-      if (rowIndex%2 === 0) {
-        return {
-          'fontSize': '12px',
-          'backgroundColor': '#fafafa'
-        }
-      } else {
-        return {
-          'fontSize': '12px',
-          'backgroundColor': '#fff'
-        }
-      }
-    }
-  },
+  // computed: {
+  //   cellStyle() {
+  //     return {
+  //       'padding-left': '6px',
+  //       'padding-right': '6px'
+  //     }
+  //   },
+  //   rowStyle({ row, rowIndex}) {
+  //     if (rowIndex%2 === 0) {
+  //       return {
+  //         'fontSize': '12px',
+  //         'backgroundColor': '#fafafa'
+  //       }
+  //     } else {
+  //       return {
+  //         'fontSize': '12px',
+  //         'backgroundColor': '#fff'
+  //       }
+  //     }
+  //   }
+  // },
   mounted() {
     Promise.all([this.getUIdata(), this.getMultiData()]).then(() => {
       this.getSettings(this.detailpageSettings,this.firstTabData,0)

@@ -11,7 +11,7 @@ import { HotTable } from '@handsontable/vue'
 import Handsontable from 'handsontable'
 
 export default {
-  name: 'com.epower.fw.smartview.detail.BaseBillDetail',
+  name: 'com.epower.fw.smartview.detail.BaseDetailGrid',
   data: function() {
     return {
       root: 'test-hot',

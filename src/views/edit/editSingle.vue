@@ -48,10 +48,10 @@
 </template> */
 
 <script>
-import BaseBillDetail from '@/views/com/epower/fw/smartview/detail/BaseBillDetail'
+import BaseDetailGrid from '@/views/com/epower/fw/smartview/detail/BaseDetailGrid'
 export default {
   name: 'EditSingle',
-  extends: BaseBillDetail,
+  extends: BaseDetailGrid,
   data() {
     return {
       editSingleUI: require('./edit-ui-单表.json'),

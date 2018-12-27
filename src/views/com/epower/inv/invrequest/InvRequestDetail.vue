@@ -130,8 +130,8 @@
                 </el-button-group>
               </el-header>
               <el-main>
-                <base-bill-detail v-if="tab.componentSetModel.style === 'grid' && tab.name==='detailpage'" :settings="detailpageSettings" :height="tableHeight"/>
-                <base-bill-detail v-else-if="tab.componentSetModel.style === 'grid' && tab.name==='detailPage3'" :settings="detailpageSettings" :height="tableHeight"/>
+                <base-detail-grid v-if="tab.componentSetModel.style === 'grid' && tab.name==='detailpage'" :settings="detailpageSettings" :height="tableHeight"/>
+                <base-detail-grid v-else-if="tab.componentSetModel.style === 'grid' && tab.name==='detailPage3'" :settings="detailpage3Settings" :height="tableHeight"/>
               </el-main>
             </el-container>
           </el-container>
@@ -142,9 +142,10 @@
 </template>
 
 <script>
-import BaseBillDetail from '@/views/com/epower/fw/smartview/detail/BaseBillDetail'
+import BaseDetailGrid from '@/views/com/epower/fw/smartview/detail/BaseDetailGrid'
 import Handsontable from 'handsontable';
 export default {
+  name: 'com.epower.inv.invrequest.InvRequestDetail',
   data() {
     return {
       supplyUI: '',
@@ -181,7 +182,7 @@ export default {
     }
   },
   components: {
-    BaseBillDetail
+    BaseDetailGrid
   },
   mounted() {
     Promise.all([this.getUIdata(), this.getSupplyData()]).then(() => {
