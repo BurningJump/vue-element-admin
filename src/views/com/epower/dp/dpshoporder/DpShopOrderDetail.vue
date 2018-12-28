@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-container>
+    <el-container v-if="UiLoaded&&dataLoaded">
       <el-header height="auto">
         <el-button-group>
           <el-button v-for="btn in buttons" v-if="!btn.isMore" :key="btn.label" size="mini">
@@ -49,7 +49,7 @@
         </el-form>
       </el-main>
     </el-container>
-    <el-tabs v-model="activeTab" type="card" @tab-click="handleClick">
+    <el-tabs v-if="UiLoaded&&dataLoaded" v-model="activeTab" type="card" @tab-click="handleClick">
       <!-- <el-tab-pane v-for="tab in detailPagesTabs" :key="tab.name" :label="tab.label" :name="tab.name"> -->
       <el-tab-pane v-for="(tab,tabIndex) in detailPagesTabs" :key="tab.name" :name="tab.name">
         <span slot="label">
@@ -111,6 +111,8 @@ export default {
   name: 'com.epower.dp.dpshoporder.DpShopOrderDetail',
   data() {
     return {
+      UiLoaded: false,  // UI获取完成
+      dataLoaded: false,  // 数据获取完成
       tableHeight: 600, // 表头高度
       list: [],
       listQuery: {
@@ -166,6 +168,8 @@ export default {
   },
   mounted() {
     Promise.all([this.getUIdata(), this.getMultiData()]).then(() => {
+      this.UiLoaded = true
+      this.dataLoaded = true
       this.getSettings(this.detailpageSettings,this.firstTabData,0)
     })
     this.calcTableHeight()
@@ -239,7 +243,6 @@ export default {
         })
         this.$http.get('http://root.yiuser.com:3001/openapi/shopOrderDetailData_log').then((res) => {
           // 日志
-          console.log(res, '99999999999');
           this.aGridList[2] = []
           this.aGridList[2] = [...res.data.resultList]
         })

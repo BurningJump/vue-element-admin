@@ -197,7 +197,8 @@ export default{
   },
   data() {
     return {
-      gotUIData: false,  // 是否已获取UI数据
+      UiLoaded: false,  // UI获取完成
+      dataLoaded: false,  // 数据获取完成
       showMoreCondition: false,
       treeHeight: '600px',
       tableHeight: 600, // 表头高度
@@ -299,11 +300,13 @@ export default{
   },
   mounted() {
     this.getUIdata().then(() => {
-      this.gotUIData = true
+      this.UiLoaded = true
       this.renderTree()
       this.calcTableHeight()
     })
-    this.getListData()
+    this.getListData().then(() => {
+      this.dataLoaded = true
+    })
   },
   methods: {
     calcTableHeight() {
@@ -421,16 +424,18 @@ export default{
       })
     },
     getListData() {
-      this.$http.get('http://root.yiuser.com:3001/openapi/listGridData').then((res) => {
-        this.listGridData = res.data
-        this.listGridData.resultList.forEach((item) => {
-          this.list.push({
-            l_operationNo: item.operationNo,
-            l_operationName: item.operationName,
-            l_operationType: item.type ? item.type : 0,
-            l_parentOperationNumber: item.parentOperationRef ? item.parentOperationRef.operationNo : '',
-            l_parentOperationName: item.parentOperationRef ? item.parentOperationRef.operationName : '',
-            l_appType: item.appType
+      return new Promise((resolve,reject) => {
+        this.$http.get('http://root.yiuser.com:3001/openapi/listGridData').then((res) => {
+          this.listGridData = res.data
+          this.listGridData.resultList.forEach((item) => {
+            this.list.push({
+              l_operationNo: item.operationNo,
+              l_operationName: item.operationName,
+              l_operationType: item.type ? item.type : 0,
+              l_parentOperationNumber: item.parentOperationRef ? item.parentOperationRef.operationNo : '',
+              l_parentOperationName: item.parentOperationRef ? item.parentOperationRef.operationName : '',
+              l_appType: item.appType
+            })
           })
         })
       })
