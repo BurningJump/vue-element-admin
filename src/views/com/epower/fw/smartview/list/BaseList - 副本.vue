@@ -16,10 +16,7 @@
     </el-container>
     <div class="toolbar">
       <el-button v-for="btn in buttons" :key="btn.label">
-        <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
-        <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
-        <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
-        <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
+        <svg-icon :icon-class="`${btn.iconcls}`"/>
         {{ btn.label }}
       </el-button>
     </div>

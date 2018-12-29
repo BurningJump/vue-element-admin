@@ -4,13 +4,7 @@
       <el-header height="auto">
         <el-button-group>
           <el-button v-for="btn in buttons" v-if="!btn.isMore" :key="btn.label" size="mini">
-            <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
-            <i v-else-if="btn.iconcls === 'table_view'" class="el-icon-view"/>
-            <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
-            <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
-            <i v-else-if="btn.iconcls === 'table_close'" class="el-icon-close"/>
-            <i v-else-if="btn.iconcls === 'table_save'" class="el-icon-document"/>
-            <i v-else-if="btn.iconcls === 'refresh'" class="el-icon-refresh"/>
+            <svg-icon :icon-class="`${btn.iconcls}`"/>
             {{ btn.label }}
           </el-button>
           <el-dropdown v-if="editMultiUI.detailViewModel.masterPage.toolbarModel.showMoreButton" trigger="click" placement="bottom" szie="mini">
@@ -20,11 +14,7 @@
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item v-for="btn in buttons" v-if="btn.isMore">
                 <!-- <el-tooltip class="item" effect="dark" :content="btn.label" placement="top"> -->
-                  <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
-                  <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
-                  <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
-                  <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
-                  <i v-else-if="btn.iconcls === 'table_close'" class="el-icon-close"/>
+                  <svg-icon :icon-class="`${btn.iconcls}`"/>
                   {{btn.label}}
                 <!-- </el-tooltip> -->
               </el-dropdown-item>
@@ -53,21 +43,14 @@
       <!-- <el-tab-pane v-for="tab in detailPagesTabs" :key="tab.name" :label="tab.label" :name="tab.name"> -->
       <el-tab-pane v-for="(tab,tabIndex) in detailPagesTabs" :key="tab.name" :name="tab.name">
         <span slot="label">
-          <i v-if="tab.iconcls === 'table_add'" class="el-icon-plus"/>
-          <i v-else-if="tab.iconcls === 'table_view'" class="el-icon-view"/>
-          <i v-else-if="tab.iconcls === 'table_edit'" class="el-icon-edit"/>
-          <i v-else-if="tab.iconcls === 'table_delete'" class="el-icon-delete"/>
-          <i v-else-if="tab.iconcls === 'table_close'" class="el-icon-close"/>
-          <i v-else-if="tab.iconcls === 'table_save'" class="el-icon-document"/>
-          <i v-else-if="tab.iconcls === 'refresh'" class="el-icon-refresh"/>
+          <svg-icon :icon-class="`${tab.iconcls}`"/>
           {{tab.label}}
         </span>
         <el-container>
           <el-header v-if="tab.toolbarModel.buttons.length > 0 || tab.componentSetModel.style === 'aGrid'" height="35px">
             <el-button-group v-if="tab.toolbarModel.buttons.length > 0">
               <el-button v-for="btn in tab.toolbarModel.buttons" v-if="tab.toolbarModel.buttons.length > 0 && !btn.isMore" :key="btn.label" size="mini">
-                <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
-                <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
+                <svg-icon :icon-class="`${btn.iconcls}`"/>
                 {{ btn.label }}
               </el-button>
               <el-dropdown v-if="tab.toolbarModel.showMoreButton" trigger="click" placement="bottom" szie="mini">
@@ -77,11 +60,7 @@
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item v-for="btn in tab.toolbarModel.buttons" v-if="btn.isMore">
                     <!-- <el-tooltip class="item" effect="dark" :content="btn.label" placement="top"> -->
-                      <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
-                      <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
-                      <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
-                      <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
-                      <i v-else-if="btn.iconcls === 'table_close'" class="el-icon-close"/>
+                      <svg-icon :icon-class="`${btn.iconcls}`"/>
                       {{btn.label}}
                     <!-- </el-tooltip> -->
                   </el-dropdown-item>
