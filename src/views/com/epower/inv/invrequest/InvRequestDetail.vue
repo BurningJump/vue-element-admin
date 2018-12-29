@@ -25,7 +25,7 @@
       <el-main>
         <el-form v-for="input in supplyUI.detailViewModel.masterPage.componentSetModel.components" :key="input.label" :style="{width: input.width*100 + '%'}" class="demo-ruleForm" label-width="100px" size="mini">
           <el-form-item :label="input.label" :required="!Boolean(input.allowBlank)">
-            <el-input v-if="input.ctype === 'textfield'" v-model="supplyData.dataPackage.dataSets[0].currentTable[0][input.field]"/>
+            <el-input v-if="input.ctype === 'textfield' || input.ctype === 'valuelistField'" v-model="supplyData.dataPackage.dataSets[0].currentTable[0][input.field]"/>
             <el-date-picker v-else-if="input.ctype === 'dateField'" v-model="supplyData.dataPackage.dataSets[0].currentTable[0][input.field]" type="date"/>
             <el-date-picker v-else-if="input.ctype === 'dateTimeField'" v-model="supplyData.dataPackage.dataSets[0].currentTable[0][input.field]" type="datetime"/>
             <el-select v-else-if="input.ctype === 'comboBox'" v-model="supplyData.dataPackage.dataSets[0].currentTable[0][input.field].toString()" filterable>
@@ -104,7 +104,8 @@
                   </el-dropdown>
                 </el-button-group>
               </el-header>
-              <el-main>
+              <el-main v-if="tab.name === activeTab">
+                <!-- <base-detail :type="tab.componentSetModel.style" :settings="settings[tabIndex]" :height="tableHeight" :agridData="aGridList[tabIndex]" :headers="tab.componentSetModel.components" :inputs="tab.componentSetModel.components"/> -->
                 <base-detail-grid v-if="tab.componentSetModel.style === 'grid' && tab.name==='detailpage'" :settings="detailpageSettings" :height="tableHeight"/>
                 <base-detail-grid v-else-if="tab.componentSetModel.style === 'grid' && tab.name==='detailPage3'" :settings="detailPage3Settings" :height="tableHeight"/>
               </el-main>
@@ -118,7 +119,8 @@
 
 <script>
 import BaseDetailGrid from '@/views/com/epower/fw/smartview/detail/BaseDetailGrid'
-import Handsontable from 'handsontable';
+import Handsontable from 'handsontable'
+import BaseDetail from '@/views/com/epower/fw/smartview/detail/BaseDetail'
 export default {
   name: 'com.epower.inv.invrequest.InvRequestDetail',
   data() {
@@ -133,6 +135,7 @@ export default {
       dataLoaded: false,  // 数据获取完成
       supplyData: '',
       activeTab: '',
+      settings: [],
       detailpageSettings: {
         data: [],
         dataSchema: {},
@@ -164,17 +167,22 @@ export default {
     }
   },
   components: {
-    BaseDetailGrid
+    BaseDetailGrid,
+    BaseDetail,
   },
   mounted() {
     Promise.all([this.getUIdata(), this.getSupplyData()]).then(() => {
       this.getSettings(this.detailpageSettings,this.supplyData.dataPackage.dataSets[1].currentTable,0)
       this.getSettings(this.detailPage3Settings,this.supplyData.dataPackage.dataSets[2].currentTable,1)
+      this.settings[0] = this.detailpageSettings
+      this.settings[1] = this.detailPage3Settings
     })
     this.calcTableHeight()
   },
   methods: {
-    handleClick() {},
+    handleClick(tab, event) {
+      this.activeTab = tab.name
+    },
     handleNodeExpand() {},
     handleNodeClick() {},
     calcTableHeight() {
@@ -188,7 +196,8 @@ export default {
       this.supplyUI.detailViewModel.detailPages[index].componentSetModel.components.forEach(theader => {
         settings.colHeaders.push(theader.label)
         settings.dataSchema[theader.field] = null
-        settings.colWidths.push(theader.width > 1 ? theader.width : theader.width > 0 && theader.width <= 1 ? theader.width*100 + '%' : '')
+        // settings.colWidths.push(theader.width > 1 ? theader.width : theader.width > 0 && theader.width <= 1 ? theader.width*100 + '%' : '')
+        settings.colWidths.push(theader.width > 1 ? theader.width : '')
         settings.columns.push({
           type: 'autocomplete',
           allowHtml: true,

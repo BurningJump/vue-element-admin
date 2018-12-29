@@ -70,9 +70,7 @@
             <pagination v-show="tab.componentSetModel.style === 'aGrid'" :total="list.length" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" style="position: absolute; right: 50px; top: 0; margin-top: 0;"/>
           </el-header>
           <el-main>
-            <base-detail-grid v-if="tab.componentSetModel.style === 'grid' && tab.name==='detailpage'" :settings="detailpageSettings" :height="tableHeight"/>
-            <base-detail-a-grid v-else-if="tab.componentSetModel.style === 'aGrid'" :agridData="aGridList[tabIndex]" :headers="tab.componentSetModel.components" :height="tableHeight"/>
-            <base-detail-column v-else-if="tab.componentSetModel.style === 'column'" :inputs="tab.componentSetModel.components"/>
+            <base-detail :type="tab.componentSetModel.style" :settings="detailpageSettings" :height="tableHeight" :agridData="aGridList[tabIndex]" :headers="tab.componentSetModel.components" :inputs="tab.componentSetModel.components"/>
           </el-main>
         </el-container>
       </el-tab-pane>
@@ -85,6 +83,7 @@ import { HotTable } from '@handsontable/vue'
 import BaseDetailAGrid from '@/views/com/epower/fw/smartview/detail/BaseDetailAGrid'
 import BaseDetailColumn from '@/views/com/epower/fw/smartview/detail/BaseDetailColumn'
 import BaseDetailGrid from '@/views/com/epower/fw/smartview/detail/BaseDetailGrid'
+import BaseDetail from '@/views/com/epower/fw/smartview/detail/BaseDetail'
 import Handsontable from 'handsontable';
 export default {
   name: 'com.epower.dp.dpshoporder.DpShopOrderDetail',
@@ -144,6 +143,7 @@ export default {
     BaseDetailAGrid,
     BaseDetailColumn,
     BaseDetailGrid,
+    BaseDetail,
   },
   mounted() {
     Promise.all([this.getUIdata(), this.getMultiData()]).then(() => {
