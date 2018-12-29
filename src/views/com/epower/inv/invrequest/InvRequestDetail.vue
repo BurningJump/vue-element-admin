@@ -42,7 +42,7 @@
         <!-- <el-tab-pane v-for="tab in detailPagesTabs" :key="tab.name" :label="tab.label" :name="tab.name"> -->
         <el-tab-pane v-for="(tab,tabIndex) in supplyUI.detailViewModel.detailPages" :key="tab.name" :name="tab.name">
           <span slot="label">
-            <svg-icon :icon-class="`${btn.iconcls}`"/>
+            <svg-icon :icon-class="`${tab.iconcls}`"/>
             {{tab.label}}
           </span>
           <el-container>
