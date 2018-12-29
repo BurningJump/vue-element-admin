@@ -105,7 +105,7 @@
                 </el-button-group>
               </el-header>
               <el-main v-if="tab.name === activeTab">
-                <!-- <base-detail :type="tab.componentSetModel.style" :settings="settings[tabIndex]" :height="tableHeight" :agridData="aGridList[tabIndex]" :headers="tab.componentSetModel.components" :inputs="tab.componentSetModel.components"/> -->
+                <!-- <base-detail :type="'grid'" :settings="settings[tabIndex]" :height="tableHeight"/> -->
                 <base-detail-grid v-if="tab.componentSetModel.style === 'grid' && tab.name==='detailpage'" :settings="detailpageSettings" :height="tableHeight"/>
                 <base-detail-grid v-else-if="tab.componentSetModel.style === 'grid' && tab.name==='detailPage3'" :settings="detailPage3Settings" :height="tableHeight"/>
               </el-main>
