@@ -46,7 +46,8 @@
           <svg-icon :icon-class="`${tab.iconcls}`"/>
           {{tab.label}}
         </span>
-        <el-container>
+        <base-detail :url="editMultiUI.detailViewModel.datasetInfo.datasets[tabIndex].actionMethod" :tab="tab" :activeTab="activeTab" :type="tab.componentSetModel.style" :settings="detailpageSettings" :tableHeight="tableHeight" :agridData="aGridList[tabIndex]" :headers="tab.componentSetModel.components" :inputs="tab.componentSetModel.components"/>
+        <!-- <el-container>
           <el-header v-if="tab.toolbarModel.buttons.length > 0 || tab.componentSetModel.style === 'aGrid'" height="35px">
             <el-button-group v-if="tab.toolbarModel.buttons.length > 0">
               <el-button v-for="btn in tab.toolbarModel.buttons" v-if="tab.toolbarModel.buttons.length > 0 && !btn.isMore" :key="btn.label" size="mini">
@@ -59,10 +60,8 @@
                 </el-button>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item v-for="btn in tab.toolbarModel.buttons" v-if="btn.isMore">
-                    <!-- <el-tooltip class="item" effect="dark" :content="btn.label" placement="top"> -->
                       <svg-icon :icon-class="`${btn.iconcls}`"/>
                       {{btn.label}}
-                    <!-- </el-tooltip> -->
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -70,9 +69,9 @@
             <pagination v-show="tab.componentSetModel.style === 'aGrid'" :total="list.length" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" style="position: absolute; right: 50px; top: 0; margin-top: 0;"/>
           </el-header>
           <el-main>
-            <base-detail :type="tab.componentSetModel.style" :settings="detailpageSettings" :height="tableHeight" :agridData="aGridList[tabIndex]" :headers="tab.componentSetModel.components" :inputs="tab.componentSetModel.components"/>
+            <base-detail :tab="tab" :type="tab.componentSetModel.style" :settings="detailpageSettings" :height="tableHeight" :agridData="aGridList[tabIndex]" :headers="tab.componentSetModel.components" :inputs="tab.componentSetModel.components"/>
           </el-main>
-        </el-container>
+        </el-container> -->
       </el-tab-pane>
     </el-tabs>
   </div>

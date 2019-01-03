@@ -1,5 +1,5 @@
 <template>
-  <el-table :data="agridData" ref="multipleTable" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="height" :cell-style="cellStyle" :row-style="rowStyle">
+  <el-table v-loading="listLoading" :data="agridData" ref="multipleTable" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="height" :cell-style="cellStyle" :row-style="rowStyle">
     <el-table-column type="selection" align="center"/>
     <el-table-column v-for="header in headers" :key="header.label" :prop="header.field" :label="header.label" align="center" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
       <template slot-scope="scope">
@@ -17,7 +17,7 @@ export default {
   data() {
     return {}
   },
-  props: ['agridData', 'height', 'headers'],
+  props: ['listLoading', 'agridData', 'height', 'headers'],
   computed: {
     cellStyle() {
       return {
