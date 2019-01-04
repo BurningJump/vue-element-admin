@@ -21,6 +21,7 @@ import './permission' // permission control
 
 import axios from 'axios'
 Vue.prototype.$http = axios;
+axios.defaults.baseURL = 'http://root.yiuser.com:3001/'
 // axios.defaults.withCredentials = true;//是否跨域
 
 import * as filters from './filters' // global filters

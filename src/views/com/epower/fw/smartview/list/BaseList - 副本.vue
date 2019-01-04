@@ -138,11 +138,11 @@ export default{
             label: item.label
           })
         })
-        this.$http.get('http://112.93.248.117:3001/openapi/treeRoot').then((res) => {
+        this.$http.get('openapi/treeRoot').then((res) => {
           this.treeRoot = JSON.parse(JSON.stringify(res.data));
-          this.$http.get('http://112.93.248.117:3001/openapi/treeChild').then((res) => {
+          this.$http.get('openapi/treeChild').then((res) => {
             this.treeChild = JSON.parse(JSON.stringify(res.data));
-            this.$http.get('http://112.93.248.117:3001/openapi/treeGrandChild').then((res) => {
+            this.$http.get('openapi/treeGrandChild').then((res) => {
               this.treeGrandchild = JSON.parse(JSON.stringify(res.data));
               resolve(true);
             }).catch((err) => {

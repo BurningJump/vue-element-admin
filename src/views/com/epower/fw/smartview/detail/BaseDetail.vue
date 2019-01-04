@@ -100,7 +100,7 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      this.$http.get(`http://root.yiuser.com:3001/${this.url}`).then((res) => {
+      this.$http.get(this.url).then((res) => {
         this.listLoading = false
       })
       // fetchList(this.listQuery).then(response => {

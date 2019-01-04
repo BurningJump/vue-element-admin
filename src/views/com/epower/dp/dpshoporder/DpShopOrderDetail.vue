@@ -199,7 +199,7 @@ export default {
     },
     getUIdata() {
       return new Promise((resolve, reject) => {
-        this.$http.get('http://root.yiuser.com:3001/openapi/shopOrderDetailUI').then((res) => {
+        this.$http.get('openapi/shopOrderDetailUI').then((res) => {
           this.editMultiUI = res.data
           this.buttons = [...this.editMultiUI.detailViewModel.masterPage.toolbarModel.buttons]
           this.masterPageInputs = [...this.editMultiUI.detailViewModel.masterPage.componentSetModel.components]
@@ -214,22 +214,22 @@ export default {
     },
     getMultiData() {
       return new Promise((resolve, reject) => {
-        this.$http.get('http://root.yiuser.com:3001/openapi/shopOrderDetailData').then((res) => {
+        this.$http.get('openapi/shopOrderDetailData').then((res) => {
           this.editMultiData = res.data
           this.masterPageData = this.editMultiData.dataPackage.dataSets[0].currentTable[0]
           this.firstTabData = this.editMultiData.dataPackage.dataSets[1].currentTable
         })
-        this.$http.get('http://root.yiuser.com:3001/openapi/shopOrderDetailData_log').then((res) => {
+        this.$http.get('openapi/shopOrderDetailData_log').then((res) => {
           // 日志
           this.aGridList[2] = []
           this.aGridList[2] = [...res.data.resultList]
         })
-        this.$http.get('http://root.yiuser.com:3001/openapi/shopOrderDetailData_distribute').then((res) => {
+        this.$http.get('openapi/shopOrderDetailData_distribute').then((res) => {
           // 要货单
           this.aGridList[3] = []
           this.aGridList[3] = [...res.data.resultList]
         })
-        this.$http.get('http://root.yiuser.com:3001/openapi/shopOrderDetailData_delivery').then((res) => {
+        this.$http.get('openapi/shopOrderDetailData_delivery').then((res) => {
           // 发货单
           this.aGridList[4] = []
           this.aGridList[4] = [...res.data.resultList]
