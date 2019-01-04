@@ -46,42 +46,13 @@
           <svg-icon :icon-class="`${tab.iconcls}`"/>
           {{tab.label}}
         </span>
-        <base-detail :url="editMultiUI.detailViewModel.datasetInfo.datasets[tabIndex].actionMethod" :tab="tab" :activeTab="activeTab" :type="tab.componentSetModel.style" :settings="detailpageSettings" :tableHeight="tableHeight" :agridData="aGridList[tabIndex]" :headers="tab.componentSetModel.components" :inputs="tab.componentSetModel.components"/>
-        <!-- <el-container>
-          <el-header v-if="tab.toolbarModel.buttons.length > 0 || tab.componentSetModel.style === 'aGrid'" height="35px">
-            <el-button-group v-if="tab.toolbarModel.buttons.length > 0">
-              <el-button v-for="btn in tab.toolbarModel.buttons" v-if="tab.toolbarModel.buttons.length > 0 && !btn.isMore" :key="btn.label" size="mini">
-                <svg-icon :icon-class="`${btn.iconcls}`"/>
-                {{ btn.label }}
-              </el-button>
-              <el-dropdown v-if="tab.toolbarModel.showMoreButton" trigger="click" placement="bottom" szie="mini">
-                <el-button size="mini">
-                  更多<i class="el-icon-arrow-down el-icon--right" style="margin-left:0;"></i>
-                </el-button>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item v-for="btn in tab.toolbarModel.buttons" v-if="btn.isMore">
-                      <svg-icon :icon-class="`${btn.iconcls}`"/>
-                      {{btn.label}}
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-            </el-button-group>
-            <pagination v-show="tab.componentSetModel.style === 'aGrid'" :total="list.length" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" style="position: absolute; right: 50px; top: 0; margin-top: 0;"/>
-          </el-header>
-          <el-main>
-            <base-detail :tab="tab" :type="tab.componentSetModel.style" :settings="detailpageSettings" :height="tableHeight" :agridData="aGridList[tabIndex]" :headers="tab.componentSetModel.components" :inputs="tab.componentSetModel.components"/>
-          </el-main>
-        </el-container> -->
+        <base-detail :url="editMultiUI.detailViewModel.datasetInfo.datasets[tabIndex].actionMethod" :tab="tab" :activeTab="activeTab" :type="tab.componentSetModel.style" :settings="detailpageSettings" :tableHeight="tableHeight" :agridData="aGridList[tabIndex]"/>
       </el-tab-pane>
     </el-tabs>
   </div>
 </template>
 <script>
-import Pagination from '@/components/Pagination'
 import { HotTable } from '@handsontable/vue'
-import BaseDetailAGrid from '@/views/com/epower/fw/smartview/detail/BaseDetailAGrid'
-import BaseDetailColumn from '@/views/com/epower/fw/smartview/detail/BaseDetailColumn'
-import BaseDetailGrid from '@/views/com/epower/fw/smartview/detail/BaseDetailGrid'
 import BaseDetail from '@/views/com/epower/fw/smartview/detail/BaseDetail'
 import Handsontable from 'handsontable';
 export default {
@@ -91,11 +62,6 @@ export default {
       UiLoaded: false,  // UI获取完成
       dataLoaded: false,  // 数据获取完成
       tableHeight: 600, // 表头高度
-      list: [],
-      listQuery: {
-        page: 1,
-        limit: 20
-      },
       editMultiUI: '',
       buttons: [],
       masterPageInputs: [],
@@ -138,10 +104,6 @@ export default {
     }
   },
   components: {
-    Pagination,
-    BaseDetailAGrid,
-    BaseDetailColumn,
-    BaseDetailGrid,
     BaseDetail,
   },
   mounted() {

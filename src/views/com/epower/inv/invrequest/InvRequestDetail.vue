@@ -39,15 +39,12 @@
         </el-form>
       </el-main>
       <el-tabs v-model="activeTab" type="card" @tab-click="handleClick">
-        <!-- <el-tab-pane v-for="tab in detailPagesTabs" :key="tab.name" :label="tab.label" :name="tab.name"> -->
         <el-tab-pane v-for="(tab,tabIndex) in supplyUI.detailViewModel.detailPages" :key="tab.name" :name="tab.name">
           <span slot="label">
             <svg-icon :icon-class="`${tab.iconcls}`"/>
             {{tab.label}}
           </span>
-          <!-- <el-container> -->
-            <base-detail :treeHeight="treeHeight" :tab="tab" :activeTab="activeTab" :type="'grid'" :settings="settings[tabIndex]" :tableHeight="tableHeight"/>
-          <!-- </el-container> -->
+            <base-detail :treeHeight="treeHeight" :tab="tab" :activeTab="activeTab" :settings="settings[tabIndex]" :tableHeight="tableHeight"/>
         </el-tab-pane>
       </el-tabs>
     </el-container>
