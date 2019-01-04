@@ -1,5 +1,4 @@
-<template>
-  <div class="app-container">
+  <!-- <div class="app-container">
     <el-container v-if="UiLoaded&&dataLoaded">
       <el-header height="auto" id="qconHeader">
         <el-button-group>
@@ -13,10 +12,8 @@
             </el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item v-for="btn in buttons" v-if="btn.isMore">
-                <!-- <el-tooltip class="item" effect="dark" :content="btn.label" placement="top"> -->
                   <svg-icon :icon-class="`${btn.iconcls}`"/>
                   {{btn.label}}
-                <!-- </el-tooltip> -->
               </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -48,15 +45,16 @@
         </el-tab-pane>
       </el-tabs>
     </el-container>
-  </div>
-</template>
+  </div> -->
 
 <script>
-import BaseDetailGrid from '@/views/com/epower/fw/smartview/detail/BaseDetailGrid'
-import Handsontable from 'handsontable'
-import BaseDetail from '@/views/com/epower/fw/smartview/detail/BaseDetail'
+import BaseDataDetail from '@/views/com/epower/fw/smartview/detail/BaseDataDetail';
+// import BaseDetailGrid from '@/views/com/epower/fw/smartview/detail/BaseDetailGrid'
+// import Handsontable from 'handsontable'
+// import BaseDetail from '@/views/com/epower/fw/smartview/detail/BaseDetail'
 export default {
   name: 'com.epower.inv.invrequest.InvRequestDetail',
+  extends: BaseDataDetail,
   data() {
     return {
       defaultProps: {
@@ -100,88 +98,88 @@ export default {
       },
     }
   },
-  components: {
-    BaseDetailGrid,
-    BaseDetail,
-  },
-  mounted() {
-    Promise.all([this.getUIdata(), this.getSupplyData()]).then(() => {
-      this.activeTab = this.supplyUI.detailViewModel.detailPages[0].name
-      this.getSettings(this.detailpageSettings,this.supplyData.dataPackage.dataSets[1].currentTable,0)
-      this.getSettings(this.detailPage3Settings,this.supplyData.dataPackage.dataSets[2].currentTable,1)
-      this.settings[0] = this.detailpageSettings
-      this.settings[1] = this.detailPage3Settings
-      this.calcTableHeight()
-    })
-  },
-  methods: {
-    handleClick(tab, event) {
-      this.activeTab = tab.name
-    },
-    handleNodeExpand() {},
-    handleNodeClick() {},
-    calcTableHeight() {
-      setTimeout(() => {
-        this.tableHeight = window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 190
-        this.treeHeight = (window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 100) + 'px'
-      })
-    },
-    getSettings(settings,sourceData,index) {
-      settings.data = [].concat(sourceData)
-      this.supplyUI.detailViewModel.detailPages[index].componentSetModel.components.forEach(theader => {
-        settings.colHeaders.push(theader.label)
-        settings.dataSchema[theader.field] = null
-        // settings.colWidths.push(theader.width > 1 ? theader.width : theader.width > 0 && theader.width <= 1 ? theader.width*100 + '%' : '')
-        settings.colWidths.push(theader.width > 1 ? theader.width : '')
-        settings.columns.push({
-          type: 'autocomplete',
-          allowHtml: true,
-          renderer: this.coverRenderer,
-          data: theader.field,
-        })
-      });
-    },
-    coverRenderer (instance, td, row, col, prop, value, cellProperties) {
-      const escaped = Handsontable.helper.stringify(value);
-      let img = null;
+  // components: {
+  //   BaseDetailGrid,
+  //   BaseDetail,
+  // },
+  // mounted() {
+  //   Promise.all([this.getUIdata(), this.getSupplyData()]).then(() => {
+  //     this.activeTab = this.supplyUI.detailViewModel.detailPages[0].name
+  //     this.getSettings(this.detailpageSettings,this.supplyData.dataPackage.dataSets[1].currentTable,0)
+  //     this.getSettings(this.detailPage3Settings,this.supplyData.dataPackage.dataSets[2].currentTable,1)
+  //     this.settings[0] = this.detailpageSettings
+  //     this.settings[1] = this.detailPage3Settings
+  //     this.calcTableHeight()
+  //   })
+  // },
+  // methods: {
+  //   handleClick(tab, event) {
+  //     this.activeTab = tab.name
+  //   },
+  //   handleNodeExpand() {},
+  //   handleNodeClick() {},
+  //   calcTableHeight() {
+  //     setTimeout(() => {
+  //       this.tableHeight = window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 190
+  //       this.treeHeight = (window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 100) + 'px'
+  //     })
+  //   },
+  //   getSettings(settings,sourceData,index) {
+  //     settings.data = [].concat(sourceData)
+  //     this.supplyUI.detailViewModel.detailPages[index].componentSetModel.components.forEach(theader => {
+  //       settings.colHeaders.push(theader.label)
+  //       settings.dataSchema[theader.field] = null
+  //       // settings.colWidths.push(theader.width > 1 ? theader.width : theader.width > 0 && theader.width <= 1 ? theader.width*100 + '%' : '')
+  //       settings.colWidths.push(theader.width > 1 ? theader.width : '')
+  //       settings.columns.push({
+  //         type: 'autocomplete',
+  //         allowHtml: true,
+  //         renderer: this.coverRenderer,
+  //         data: theader.field,
+  //       })
+  //     });
+  //   },
+  //   coverRenderer (instance, td, row, col, prop, value, cellProperties) {
+  //     const escaped = Handsontable.helper.stringify(value);
+  //     let img = null;
 
-      if (escaped.indexOf('http') === 0) {
-        img = document.createElement('IMG');
-        img.src = value;
-        img.width = instance.getColWidth()
+  //     if (escaped.indexOf('http') === 0) {
+  //       img = document.createElement('IMG');
+  //       img.src = value;
+  //       img.width = instance.getColWidth()
 
-        Handsontable.dom.addEvent(img, 'mousedown', function(event) {
-          event.preventDefault();
-        });
+  //       Handsontable.dom.addEvent(img, 'mousedown', function(event) {
+  //         event.preventDefault();
+  //       });
 
-        Handsontable.dom.empty(td);
-        td.className = 'htCenter htMiddle'
-        td.appendChild(img);
-      } else {
-        Handsontable.renderers.TextRenderer.apply(this, arguments);
-      }
+  //       Handsontable.dom.empty(td);
+  //       td.className = 'htCenter htMiddle'
+  //       td.appendChild(img);
+  //     } else {
+  //       Handsontable.renderers.TextRenderer.apply(this, arguments);
+  //     }
 
-      return td;
-    },
-    getUIdata() {
-      return new Promise((resolve, reject) => {
-        this.$http.get('http://root.yiuser.com:3001/openapi/invRequestDetailUI').then((res) => {
-          this.supplyUI = res.data
-          this.UiLoaded = true
-          resolve('ok')
-        })
-      })
-    },
-    getSupplyData() {
-      return new Promise((resolve, reject) => {
-        this.$http.get('http://root.yiuser.com:3001/openapi/invRequestDetailData').then((res) => {
-          this.supplyData = res.data
-          this.dataLoaded = true
-          resolve('ok')
-        })
-      })
-    }
-  }
+  //     return td;
+  //   },
+  //   getUIdata() {
+  //     return new Promise((resolve, reject) => {
+  //       this.$http.get('http://root.yiuser.com:3001/openapi/invRequestDetailUI').then((res) => {
+  //         this.supplyUI = res.data
+  //         this.UiLoaded = true
+  //         resolve('ok')
+  //       })
+  //     })
+  //   },
+  //   getSupplyData() {
+  //     return new Promise((resolve, reject) => {
+  //       this.$http.get('http://root.yiuser.com:3001/openapi/invRequestDetailData').then((res) => {
+  //         this.supplyData = res.data
+  //         this.dataLoaded = true
+  //         resolve('ok')
+  //       })
+  //     })
+  //   }
+  // }
 }
 </script>
 

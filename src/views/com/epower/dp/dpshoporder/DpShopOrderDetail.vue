@@ -1,5 +1,4 @@
-<template>
-  <div class="app-container">
+  <!-- <div class="app-container">
     <el-container v-if="UiLoaded&&dataLoaded">
       <el-header height="auto">
         <el-button-group>
@@ -13,10 +12,8 @@
             </el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item v-for="btn in buttons" v-if="btn.isMore">
-                <!-- <el-tooltip class="item" effect="dark" :content="btn.label" placement="top"> -->
-                  <svg-icon :icon-class="`${btn.iconcls}`"/>
-                  {{btn.label}}
-                <!-- </el-tooltip> -->
+                <svg-icon :icon-class="`${btn.iconcls}`"/>
+                {{btn.label}}
               </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -40,7 +37,6 @@
       </el-main>
     </el-container>
     <el-tabs v-if="UiLoaded&&dataLoaded" v-model="activeTab" type="card" @tab-click="handleClick">
-      <!-- <el-tab-pane v-for="tab in detailPagesTabs" :key="tab.name" :label="tab.label" :name="tab.name"> -->
       <el-tab-pane v-for="(tab,tabIndex) in detailPagesTabs" :key="tab.name" :name="tab.name">
         <span slot="label">
           <svg-icon :icon-class="`${tab.iconcls}`"/>
@@ -49,14 +45,14 @@
         <base-detail :url="editMultiUI.detailViewModel.datasetInfo.datasets[tabIndex].actionMethod" :tab="tab" :activeTab="activeTab" :type="tab.componentSetModel.style" :settings="detailpageSettings" :tableHeight="tableHeight" :agridData="aGridList[tabIndex]"/>
       </el-tab-pane>
     </el-tabs>
-  </div>
-</template>
+  </div> -->
 <script>
-import { HotTable } from '@handsontable/vue'
-import BaseDetail from '@/views/com/epower/fw/smartview/detail/BaseDetail'
-import Handsontable from 'handsontable';
+// import { HotTable } from '@handsontable/vue'
+// import BaseDetail from '@/views/com/epower/fw/smartview/detail/BaseDetail'
+import BaseBillDetail from '@/views/com/epower/fw/smartview/detail/BaseBillDetail';
 export default {
   name: 'com.epower.dp.dpshoporder.DpShopOrderDetail',
+  extends: BaseBillDetail,
   data() {
     return {
       UiLoaded: false,  // UI获取完成
@@ -103,20 +99,20 @@ export default {
       aGridList: [],
     }
   },
-  components: {
-    BaseDetail,
-  },
-  mounted() {
-    Promise.all([this.getUIdata(), this.getMultiData()]).then(() => {
-      this.UiLoaded = true
-      this.dataLoaded = true
-      this.getSettings(this.detailpageSettings,this.firstTabData,0)
-    })
-    this.calcTableHeight()
-  },
+  // components: {
+  //   BaseDetail,
+  // },
+  // mounted() {
+  //   Promise.all([this.getUIdata(), this.getMultiData()]).then(() => {
+  //     this.UiLoaded = true
+  //     this.dataLoaded = true
+  //     this.getSettings(this.detailpageSettings,this.firstTabData,0)
+  //   })
+  //   this.calcTableHeight()
+  // },
   // mounted() {
   // },
-  methods: {
+  /* methods: {
     getSettings(settings,sourceData,index) {
       settings.data = [].concat(sourceData)
       this.detailPagesTabs[index].componentSetModel.components.forEach(theader => {
@@ -201,47 +197,7 @@ export default {
     },
     remoteMethod() {},
     handleClick() {}
-  }
+  } */
 }
 </script>
-<style lang="scss">
-.app-container {
-  .el-header {
-    padding: 0;
-    border-bottom: 1px solid #e4e7ed;
-    .el-button-group {
-      margin-bottom: 2px;
-    }
-  }
-  .el-main {
-    display: flex;
-    flex-wrap: wrap;
-    padding: 5px;
-  }
-  .el-form-item {
-    margin-bottom: 3px;
-  }
-  .el-form-item, .el-select, .el-input {
-    width: 100%;
-  }
-  .el-input__inner {
-    height: 22px;
-    line-height: 22px;
-  }
-  .el-form-item__label {
-    font-size: 12px;
-    font-weight: normal;
-  }
-  .el-tabs {
-    width: 100%;
-  }
-  .el-tabs__item {
-    height: 32px;
-    line-height: 32px;
-  }
-  .el-tabs__header {
-    margin: 0 0 3px;
-  }
-}
-</style>
 
