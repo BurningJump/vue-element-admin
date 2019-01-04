@@ -6,7 +6,7 @@
             <svg-icon :icon-class="`${btn.iconcls}`"/>
             {{ btn.label }}
           </el-button>
-          <el-dropdown v-if="editMultiUI.detailViewModel.masterPage.toolbarModel.showMoreButton" trigger="click" placement="bottom" szie="mini">
+          <el-dropdown v-if="UIMeta.detailViewModel.masterPage.toolbarModel.showMoreButton" trigger="click" placement="bottom" szie="mini">
             <el-button size="mini">
               更多<i class="el-icon-arrow-down el-icon--right" style="margin-left:0;"></i>
             </el-button>
@@ -42,7 +42,7 @@
           <svg-icon :icon-class="`${tab.iconcls}`"/>
           {{tab.label}}
         </span>
-        <base-detail :url="editMultiUI.detailViewModel.datasetInfo.datasets[tabIndex].actionMethod" :tab="tab" :activeTab="activeTab" :type="tab.componentSetModel.style" :settings="detailpageSettings" :tableHeight="tableHeight" :agridData="aGridList[tabIndex]"/>
+        <base-detail :url="UIMeta.detailViewModel.datasetInfo.datasets[tabIndex].actionMethod" :tab="tab" :activeTab="activeTab" :type="tab.componentSetModel.style" :settings="detailpageSettings" :tableHeight="tableHeight" :agridData="aGridList[tabIndex]"/>
       </el-tab-pane>
     </el-tabs>
   </div> -->
@@ -55,48 +55,48 @@ export default {
   extends: BaseBillDetail,
   data() {
     return {
-      UiLoaded: false,  // UI获取完成
-      dataLoaded: false,  // 数据获取完成
-      tableHeight: 600, // 表头高度
-      editMultiUI: '',
-      buttons: [],
-      masterPageInputs: [],
-      detailPagesTabs: [],
-      editMultiData: '',
-      masterPageData: [],
-      firstTabData: [],
-      activeTab: '',
-      gridObjectData: [],
-      gridTableSettings: [],
-      detailpageSettings: {
-        data: [],
-        dataSchema: {},
-        colHeaders: [],
-        rowHeaders: false,
-        columns: [],
-        colWidths: [],
-        rowHeights: 55,
-        className: 'htCenter htMiddle',
-        contextMenu: true,
-        manualColumnFreeze: true,
-        fixedColumnsLeft: 0,    // 冻结前n列
-        fixedRowsTop: 0,     // 冻结前n行
-      },
-      settings: {
-        data: [],
-        dataSchema: {},
-        colHeaders: [],
-        rowHeaders: false,
-        columns: [],
-        colWidths: [],
-        rowHeights: 55,
-        className: 'htCenter htMiddle',
-        contextMenu: true,
-        manualColumnFreeze: true,
-        fixedColumnsLeft: 0,    // 冻结前n列
-        fixedRowsTop: 0,     // 冻结前n行
-      },
-      aGridList: [],
+      // UiLoaded: false,  // UI获取完成
+      // dataLoaded: false,  // 数据获取完成
+      // tableHeight: 600, // 表头高度
+      // UIMeta: '',
+      // buttons: [],
+      // masterPageInputs: [],
+      // detailPagesTabs: [],
+      // editMultiData: '',
+      // masterPageData: [],
+      // firstTabData: [],
+      // activeTab: '',
+      // gridObjectData: [],
+      // gridTableSettings: [],
+      // detailpageSettings: {
+      //   data: [],
+      //   dataSchema: {},
+      //   colHeaders: [],
+      //   rowHeaders: false,
+      //   columns: [],
+      //   colWidths: [],
+      //   rowHeights: 55,
+      //   className: 'htCenter htMiddle',
+      //   contextMenu: true,
+      //   manualColumnFreeze: true,
+      //   fixedColumnsLeft: 0,    // 冻结前n列
+      //   fixedRowsTop: 0,     // 冻结前n行
+      // },
+      // settings: {
+      //   data: [],
+      //   dataSchema: {},
+      //   colHeaders: [],
+      //   rowHeaders: false,
+      //   columns: [],
+      //   colWidths: [],
+      //   rowHeights: 55,
+      //   className: 'htCenter htMiddle',
+      //   contextMenu: true,
+      //   manualColumnFreeze: true,
+      //   fixedColumnsLeft: 0,    // 冻结前n列
+      //   fixedRowsTop: 0,     // 冻结前n行
+      // },
+      // aGridList: [],
     }
   },
   // components: {
@@ -158,10 +158,10 @@ export default {
     getUIdata() {
       return new Promise((resolve, reject) => {
         this.$http.get('openapi/shopOrderDetailUI').then((res) => {
-          this.editMultiUI = res.data
-          this.buttons = [...this.editMultiUI.detailViewModel.masterPage.toolbarModel.buttons]
-          this.masterPageInputs = [...this.editMultiUI.detailViewModel.masterPage.componentSetModel.components]
-          this.detailPagesTabs = [...this.editMultiUI.detailViewModel.detailPages]
+          this.UIMeta = res.data
+          this.buttons = [...this.UIMeta.detailViewModel.masterPage.toolbarModel.buttons]
+          this.masterPageInputs = [...this.UIMeta.detailViewModel.masterPage.componentSetModel.components]
+          this.detailPagesTabs = [...this.UIMeta.detailViewModel.detailPages]
           this.detailPagesTabs.forEach((tab, index) => {
             // this.aGridList[index] = []
           })
