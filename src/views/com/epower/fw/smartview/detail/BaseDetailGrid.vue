@@ -48,7 +48,7 @@
         </el-button-group>
       </el-header>
       <el-main v-if="activeTab === tab.name">
-        <div class="handson-table-container" :style="{height: tableHeight+'px'}">
+        <div class="handson-table-container" :style="{height: height+'px'}">
           <div class="wrapper">
             <hot-table :root="root" :settings="settings"></hot-table>
           </div>
@@ -80,7 +80,7 @@ export default {
       // }
     }
   },
-  props: ['tab', 'activeTab', 'settings', 'tableHeight'],
+  props: ['tab', 'activeTab', 'settings', 'height'],
   components: {
     HotTable
   },

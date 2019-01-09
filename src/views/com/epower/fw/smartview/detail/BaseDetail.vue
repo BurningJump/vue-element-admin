@@ -26,7 +26,7 @@
             <el-input v-if="input.ctype === 'textfield'" v-model="masterPageData[input.field]"/>
             <el-date-picker v-else-if="input.ctype === 'dateField'" v-model="masterPageData[input.field]" type="date"/>
             <el-date-picker v-else-if="input.ctype === 'dateTimeField'" v-model="masterPageData[input.field]" type="datetime"/>
-            <el-select v-else-if="input.ctype === 'comboBox'" v-model="masterPageData[input.field].toString()" filterable>
+            <el-select v-else-if="input.ctype === 'comboBox'" v-model="masterPageData[input.field]" filterable>
               <el-option v-for="item in input.enumModel.items" :key="item.value" :label="item.label" :value="item.value"/>
             </el-select>
             <el-input v-else-if="input.ctype === 'numberfield'" v-model="masterPageData[input.field]" type="number"/>
@@ -44,11 +44,11 @@
           {{tab.label}}
         </span>
         <div class="base-detail-container">
-          <base-detail-grid v-if="tab.componentSetModel.style === 'grid'" :tab="tab" :activeTab="activeTab" :settings="detailpageSettings" :tableHeight="tableHeight"/>
-          <base-detail-a-grid v-else-if="tab.componentSetModel.style === 'aGrid'" :url="UIMeta.detailViewModel.datasetInfo.datasets[tabIndex].actionMethod" :tab="tab" :activeTab="activeTab" :listLoading="listLoading" :agridData="aGridList[tabIndex]" :height="tableHeight"/>
+          <base-detail-grid v-if="tab.componentSetModel.style === 'grid'&&settings[tabIndex]" :tab="tab" :activeTab="activeTab" :settings="settings[tabIndex]" :height="height"/>
+          <base-detail-a-grid v-else-if="tab.componentSetModel.style === 'aGrid'" :url="UIMeta.detailViewModel.datasetInfo.datasets[tabIndex].actionMethod" :tab="tab" :activeTab="activeTab" :listLoading="listLoading" :agridData="DetailDataStore.DataLists[tabIndex]" :height="height"/>
           <base-detail-column v-else-if="tab.componentSetModel.style === 'column'" :tab="tab" :activeTab="activeTab"/>
         </div>
-        <!-- <base-detail :url="UIMeta.detailViewModel.datasetInfo.datasets[tabIndex].actionMethod" :tab="tab" :activeTab="activeTab" :type="tab.componentSetModel.style" :settings="detailpageSettings" :tableHeight="tableHeight" :agridData="aGridList[tabIndex]"/> -->
+        <!-- <base-detail :url="UIMeta.detailViewModel.datasetInfo.datasets[tabIndex].actionMethod" :tab="tab" :activeTab="activeTab" :type="tab.componentSetModel.style" :settings="detailpageSettings" :height="height" :agridData="DetailDataStore.DataLists[tabIndex]"/> -->
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -72,80 +72,64 @@ export default {
       },
       UiLoaded: false,  // UI获取完成
       dataLoaded: false,  // 数据获取完成
-      tableHeight: 600, // 表头高度
+      height: 600, // 表头高度
       UIMeta: '',
-      editMultiData: '',
+      dataPackageResp: '',
+      DetailDataStore: {  // DetailDataStore.Datapackage = dataPackageResp.datapackage, detailDataStore.DataLists = agrid的返回List, detailDataStore.DataSetMetas = detailViewModel.datasetInfo
+        DataPackage: [],
+        DataLists: [],
+        DataSetMetas: []
+      },
       masterPageData: [],
       firstTabData: [],
       activeTab: '',
-      gridObjectData: [],
-      gridTableSettings: [],
-      detailpageSettings: {
-        data: [],
-        dataSchema: {},
-        colHeaders: [],
-        rowHeaders: false,
-        columns: [],
-        colWidths: [],
-        rowHeights: 55,
-        className: 'htCenter htMiddle',
-        contextMenu: true,
-        manualColumnFreeze: true,
-        fixedColumnsLeft: 0,    // 冻结前n列
-        fixedRowsTop: 0,     // 冻结前n行
-      },
-      settings: {
-        data: [],
-        dataSchema: {},
-        colHeaders: [],
-        rowHeaders: false,
-        columns: [],
-        colWidths: [],
-        rowHeights: 55,
-        className: 'htCenter htMiddle',
-        contextMenu: true,
-        manualColumnFreeze: true,
-        fixedColumnsLeft: 0,    // 冻结前n列
-        fixedRowsTop: 0,     // 冻结前n行
-      },
-      aGridList: [],
-
-      url: String,
+      settings: [],
+      // settings: {
+      //   data: [],
+      //   dataSchema: {},
+      //   colHeaders: [],
+      //   rowHeaders: false,
+      //   columns: [],
+      //   colWidths: [],
+      //   rowHeights: 55,
+      //   className: 'htCenter htMiddle',
+      //   contextMenu: true,
+      //   manualColumnFreeze: true,
+      //   fixedColumnsLeft: 0,    // 冻结前n列
+      //   fixedRowsTop: 0,     // 冻结前n行
+      // },
+      url: '',
       tab: Object,
-      activeTab: String,
-      settings: Object,
-      tableHeight: '',
       agridData: Array,
-      treeHeight: '',
     }
   },
-  // props: {
-  //   url: String,
-  //   tab: Object,
-  //   activeTab: String,
-  //   settings: Object,
-  //   tableHeight: [Number, String],
-  //   agridData: Array,
-  //   treeHeight: [Number, String],
-  // },
   components: {
     BaseDetailAGrid,
     BaseDetailColumn,
     BaseDetailGrid,
   },
   mounted() {
-    Promise.all([this.getUIdata(), this.getMultiData()]).then(() => {
+    // Promise.all([this.getUIMeta(), this.getMultiData()]).then(() => {
+    //   this.UiLoaded = true
+    //   this.dataLoaded = true
+    //   this.DetailDataStore.DataPackage = this.dataPackageResp.dataPackage
+    //   this.DetailDataStore.DataSetMetas = this.UIMeta.detailViewModel.datasetInfo
+    //   this.getSettings(this.detailpageSettings, this.firstTabData, 0)
+    // })
+    this.getUIMeta().then(() => {
       this.UiLoaded = true
-      this.dataLoaded = true
-      this.getSettings(this.detailpageSettings,this.firstTabData,0)
+      this.DetailDataStore.DataSetMetas = this.UIMeta.detailViewModel.datasetInfo
+      this.getMultiData().then(() => {
+        this.dataLoaded = true
+        // this.getSettings(this.detailpageSettings, this.firstTabData, 0)
+      })
     })
     this.calcTableHeight()
   },
-  // mounted() {
-  // },
   methods: {
-    getSettings(settings,sourceData,index) {
+    getSettings(settings, sourceData, index) {
       settings.data = [].concat(sourceData)
+      console.log(settings.data, 'settings.data')
       this.UIMeta.detailViewModel.detailPages[index].componentSetModel.components.forEach(theader => {
         settings.colHeaders.push(theader.label)
         settings.dataSchema[theader.field] = null
@@ -182,44 +166,63 @@ export default {
     },
     calcTableHeight() {
       setTimeout(() => {
-        this.tableHeight = window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 190
-        this.treeHeight = (window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 100) + 'px'
+        this.height = window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 190
+        // this.height = (window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 100) + 'px'
       })
     },
-    getUIdata() {
+    getUIMeta() {
       return new Promise((resolve, reject) => {
         this.$http.get('openapi/shopOrderDetailUI').then((res) => {
           this.UIMeta = res.data
-          this.UIMeta.detailViewModel.detailPages.forEach((tab, index) => {
-            // this.aGridList[index] = []
-          })
           this.activeTab = this.UIMeta.detailViewModel.detailPages[0].name
           resolve('ok')
         })
       })
     },
+    // UIMeta.detailViewModel.datasetInfo.datasets.name = UIMeta.detailViewModel.detailPages.componentSetModel.dataset = dataPackageResp.dataPackage.dataSets.name
+    // UIMeta.detailViewModel.detasetInfo.datasets.Datasource
     getMultiData() {
       return new Promise((resolve, reject) => {
-        this.$http.get('openapi/shopOrderDetailData').then((res) => {
-          this.editMultiData = res.data
-          this.masterPageData = this.editMultiData.dataPackage.dataSets[0].currentTable[0]
-          this.firstTabData = this.editMultiData.dataPackage.dataSets[1].currentTable
-        })
-        this.$http.get('openapi/shopOrderDetailData_log').then((res) => {
-          // 日志
-          this.aGridList[2] = []
-          this.aGridList[2] = [...res.data.resultList]
-        })
-        this.$http.get('openapi/shopOrderDetailData_distribute').then((res) => {
-          // 要货单
-          this.aGridList[3] = []
-          this.aGridList[3] = [...res.data.resultList]
-        })
-        this.$http.get('openapi/shopOrderDetailData_delivery').then((res) => {
-          // 发货单
-          this.aGridList[4] = []
-          this.aGridList[4] = [...res.data.resultList]
-          resolve('ok')
+        if (this.UIMeta.detailViewModel.actionUrl) {
+          this.$http.get(this.UIMeta.detailViewModel.actionUrl).then((res) => {
+            this.dataPackageResp = res.data
+            this.DetailDataStore.DataPackage = this.dataPackageResp.dataPackage
+
+            // todo----------------------------------------------------------------------------------
+            this.masterPageData = this.dataPackageResp.dataPackage.dataSets[0].currentTable[0]
+            this.firstTabData = this.dataPackageResp.dataPackage.dataSets[1].currentTable
+            // todo----------------------------------------------------------------------------------
+
+            this.UIMeta.detailViewModel.detailPages.forEach((tab, index) => {
+              if (tab.componentSetModel.style === 'grid') {
+                this.settings[index] = {
+                  data: [],
+                  dataSchema: {},
+                  colHeaders: [],
+                  rowHeaders: false,
+                  columns: [],
+                  colWidths: [],
+                  rowHeights: 55,
+                  className: 'htCenter htMiddle',
+                  contextMenu: true,
+                  manualColumnFreeze: true,
+                  fixedColumnsLeft: 0,    // 冻结前n列
+                  fixedRowsTop: 0,     // 冻结前n行
+                }
+                this.getSettings(this.settings[index], this.firstTabData, 0)
+              }
+            })
+          })
+        }
+        this.UIMeta.detailViewModel.datasetInfo.datasets.forEach((item, index) => {
+          if (item.datasource === 'ajaxRequest') {
+            this.$http.get(item.actionMethod).then((res) => {
+              this.DetailDataStore.DataLists[index] = [].concat(res.data.resultList)
+            })
+          }
+          if (index === this.UIMeta.detailViewModel.datasetInfo.datasets.length - 1) {
+            resolve('ok')
+          }
         })
       })
     },
