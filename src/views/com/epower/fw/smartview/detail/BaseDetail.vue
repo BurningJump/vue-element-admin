@@ -1,6 +1,6 @@
 <template>
 <div class="base-bill-detail-container">
-    <el-container v-if="UiLoaded&&dataLoaded">
+    <!-- <el-container v-if="UiLoaded&&dataLoaded">
       <el-header height="auto" id="qconHeader">
         <el-button-group>
           <el-button v-for="btn in UIMeta.detailViewModel.masterPage.toolbarModel.buttons" v-if="!btn.isMore" :key="btn.label" size="mini">
@@ -36,7 +36,8 @@
           </el-form-item>
         </el-form>
       </el-main>
-    </el-container>
+    </el-container> -->
+    <base-detail-column v-if="UiLoaded&&dataLoaded" :tab="UIMeta.detailViewModel.masterPage"/>
     <el-tabs v-if="UiLoaded&&dataLoaded" v-model="activeTab" type="card" @tab-click="handleClick">
       <el-tab-pane v-for="(tab,tabIndex) in UIMeta.detailViewModel.detailPages" :key="tab.name" :name="tab.name">
         <span slot="label">
@@ -44,8 +45,8 @@
           {{tab.label}}
         </span>
         <div class="base-detail-container">
-          <base-detail-grid v-if="tab.componentSetModel.style === 'grid'&&settings[tabIndex]" :tab="tab" :activeTab="activeTab" :settings="settings[tabIndex]" :height="height"/>
-          <base-detail-a-grid v-else-if="tab.componentSetModel.style === 'aGrid'" :url="UIMeta.detailViewModel.datasetInfo.datasets[tabIndex].actionMethod" :tab="tab" :activeTab="activeTab" :listLoading="listLoading" :agridData="DetailDataStore.DataLists[tabIndex]" :height="height"/>
+          <base-detail-grid v-if="tab.componentSetModel.style === 'grid'&&settings[tab.componentSetModel.dataset]" :tab="tab" :activeTab="activeTab" :settings="settings[tab.componentSetModel.dataset]" :height="height"/>
+          <base-detail-a-grid v-else-if="tab.componentSetModel.style === 'aGrid'" :url="UIMeta.detailViewModel.datasetInfo.datasets[tabIndex].actionMethod" :tab="tab" :activeTab="activeTab" :listLoading="listLoading" :agridData="DetailDataStore.DataLists[tab.componentSetModel.dataset]" :height="height"/>
           <base-detail-column v-else-if="tab.componentSetModel.style === 'column'" :tab="tab" :activeTab="activeTab"/>
         </div>
         <!-- <base-detail :url="UIMeta.detailViewModel.datasetInfo.datasets[tabIndex].actionMethod" :tab="tab" :activeTab="activeTab" :type="tab.componentSetModel.style" :settings="detailpageSettings" :height="height" :agridData="DetailDataStore.DataLists[tabIndex]"/> -->
@@ -188,42 +189,70 @@ export default {
             this.dataPackageResp = res.data
             this.DetailDataStore.DataPackage = this.dataPackageResp.dataPackage
 
-            // todo----------------------------------------------------------------------------------
-            this.masterPageData = this.dataPackageResp.dataPackage.dataSets[0].currentTable[0]
-            this.firstTabData = this.dataPackageResp.dataPackage.dataSets[1].currentTable
-            // todo----------------------------------------------------------------------------------
-
-            this.UIMeta.detailViewModel.detailPages.forEach((tab, index) => {
-              if (tab.componentSetModel.style === 'grid') {
-                this.settings[index] = {
-                  data: [],
-                  dataSchema: {},
-                  colHeaders: [],
-                  rowHeaders: false,
-                  columns: [],
-                  colWidths: [],
-                  rowHeights: 55,
-                  className: 'htCenter htMiddle',
-                  contextMenu: true,
-                  manualColumnFreeze: true,
-                  fixedColumnsLeft: 0,    // 冻结前n列
-                  fixedRowsTop: 0,     // 冻结前n行
-                }
-                this.getSettings(this.settings[index], this.firstTabData, 0)
+            this.DetailDataStore.DataPackage.dataSets.forEach((item, index) => {
+              if (item.name === this.UIMeta.detailViewModel.masterPage.componentSetModel.dataset) {
+                this.masterPageData = item.currentTable[0]
               }
             })
+
+            this.UIMeta.detailViewModel.datasetInfo.datasets.forEach((item, index) => {
+              if (item.datasource === 'ajaxRequest') {
+                this.$http.get(item.actionMethod).then((res) => {
+                  this.DetailDataStore.DataLists[item.name] = [].concat(res.data.resultList)
+                })
+              } else if (item.datasource === 'dataPackage') {
+                this.DetailDataStore.DataPackage.dataSets.forEach((dpItem, dpIndex) => {
+                  if (item.name === dpItem.name) {
+                    this.settings[item.name] = {
+                      data: [],
+                      dataSchema: {},
+                      colHeaders: [],
+                      rowHeaders: false,
+                      columns: [],
+                      colWidths: [],
+                      rowHeights: 55,
+                      className: 'htCenter htMiddle',
+                      contextMenu: true,
+                      manualColumnFreeze: true,
+                      fixedColumnsLeft: 0,    // 冻结前n列
+                      fixedRowsTop: 0,     // 冻结前n行
+                    }
+                    this.firstTabData = dpItem.currentTable
+                    this.getSettings(this.settings[item.name], dpItem.currentTable, 0)
+                  }
+                })
+              }
+              if (index === this.UIMeta.detailViewModel.datasetInfo.datasets.length - 1) {
+                resolve('ok')
+              }
+            })
+
+            // todo----------------------------------------------------------------------------------
+            // this.firstTabData = this.dataPackageResp.dataPackage.dataSets[1].currentTable
+            // todo----------------------------------------------------------------------------------
+
+            // this.UIMeta.detailViewModel.detailPages.forEach((tab, index) => {
+            //   if (tab.componentSetModel.style === 'grid') {
+            //     this.settings[index] = {
+            //       data: [],
+            //       dataSchema: {},
+            //       colHeaders: [],
+            //       rowHeaders: false,
+            //       columns: [],
+            //       colWidths: [],
+            //       rowHeights: 55,
+            //       className: 'htCenter htMiddle',
+            //       contextMenu: true,
+            //       manualColumnFreeze: true,
+            //       fixedColumnsLeft: 0,    // 冻结前n列
+            //       fixedRowsTop: 0,     // 冻结前n行
+            //     }
+            //     this.getSettings(this.settings[index], this.firstTabData, 0)
+            //   }
+            // })
           })
         }
-        this.UIMeta.detailViewModel.datasetInfo.datasets.forEach((item, index) => {
-          if (item.datasource === 'ajaxRequest') {
-            this.$http.get(item.actionMethod).then((res) => {
-              this.DetailDataStore.DataLists[index] = [].concat(res.data.resultList)
-            })
-          }
-          if (index === this.UIMeta.detailViewModel.datasetInfo.datasets.length - 1) {
-            resolve('ok')
-          }
-        })
+        
       })
     },
     remoteMethod() {},

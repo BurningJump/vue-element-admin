@@ -46,7 +46,7 @@
             </el-dropdown-menu>
           </el-dropdown>
         </el-button-group>
-        <pagination v-show="tab.componentSetModel.style === 'aGrid'" :total="list.length" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" style="position: absolute; right: 50px; top: 0; margin-top: 0;"/>
+        <pagination v-show="tab.componentSetModel.style === 'aGrid'" :total="agridData.length" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" style="position: absolute; right: 50px; top: 0; margin-top: 0;"/>
       </el-header>
       <el-main v-if="activeTab === tab.name">
         <el-table v-loading="listLoading" :data="agridData" ref="multipleTable" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="height" :cell-style="cellStyle" :row-style="rowStyle">
