@@ -3,10 +3,10 @@
     <el-container>
       <el-header height="auto" id="qconHeader">
         <el-form :inline="true" :model="conditionForm" ref="conditionForm" class="demo-ruleForm" label-width="100px" size="mini">
-          <el-form-item v-for="condition in qCondition" v-if="!condition.isMore" :key="condition.label" :style="{width: (condition.width <= 1 ? condition.width*100 + '%' : condition.width + 'px')}" :label="condition.label" :prop="conditionForm[condition.findField]">
+          <el-form-item v-for="condition in UIMeta.listViewModel.qCondition.components" v-if="!condition.isMore" :key="condition.label" :style="{width: (condition.width <= 1 ? condition.width*100 + '%' : condition.width + 'px')}" :label="condition.label" :prop="conditionForm[condition.findField]">
             <el-input v-model="conditionForm[condition.findField]"/>
           </el-form-item>
-          <el-form-item v-for="condition in qCondition" v-if="condition.isMore && showMoreCondition" :key="condition.label" :style="{width: (condition.width <= 1 ? condition.width*100 + '%' : condition.width + 'px')}" :label="condition.label" :prop="conditionForm[condition.findField]">
+          <el-form-item v-for="condition in UIMeta.listViewModel.qCondition.components" v-if="condition.isMore && showMoreCondition" :key="condition.label" :style="{width: (condition.width <= 1 ? condition.width*100 + '%' : condition.width + 'px')}" :label="condition.label" :prop="conditionForm[condition.findField]">
             <el-input v-model="conditionForm[condition.findField]"/>
           </el-form-item>
           <el-form-item :style="{width: 'auto'}">
@@ -27,17 +27,17 @@
         <el-aside width="200px" :style="{'height': treeHeight, 'padding': '0 5px'}">
           <div class="tree-toolbar">
             <el-button-group>
-              <el-tooltip class="item" effect="dark" v-for="btn in treeToolbar" :content="btn.label" placement="top">
+              <el-tooltip class="item" effect="dark" v-for="btn in UIMeta.listViewModel.tree.toolbar.components" :content="btn.label" placement="top">
                 <el-button v-if="btn.fun === 'new'" size="mini" icon="el-icon-document"></el-button>
                 <el-button v-else-if="btn.fun === 'view'" size="mini" icon="el-icon-view"></el-button>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="更多" placement="top">
-                <el-dropdown v-if="listUI.listViewModel.tree.toolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
+                <el-dropdown v-if="UIMeta.listViewModel.tree.toolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
                   <el-button size="mini">
                     <i class="el-icon-arrow-down el-icon--right" style="margin-left:0;"></i>
                   </el-button>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item v-for="btn in treeToolbar" v-if="btn.isMore">
+                    <el-dropdown-item v-for="btn in UIMeta.listViewModel.tree.toolbar.components" v-if="btn.isMore">
                       <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
                       <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
                       <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
@@ -67,7 +67,7 @@
         </el-aside>
         <el-main>
           <el-tabs v-model="activeTab" @tab-click="handleTabClick">
-            <el-tab-pane v-for="tab in tabs" :name="tab.name">
+            <el-tab-pane v-for="tab in UIMeta.listViewModel.dataType.types" :name="tab.name">
               <span slot="label">
                 <i v-if="tab.iconcls === 'table_add'" class="el-icon-plus"/>
                 <i v-else-if="tab.iconcls === 'table_delete'" class="el-icon-delete"/>
@@ -76,7 +76,7 @@
               </span>
               <el-main style="padding:0;">
                 <div class="topToolbar">
-                  <div v-for="gridList in gridLists" v-if="tab.viewName === gridList.name || tab.view_name === gridList.name">
+                  <div v-for="gridList in UIMeta.listViewModel.dataView.views" v-if="tab.viewName === gridList.name || tab.view_name === gridList.name">
                     <el-button-group>
                       <el-button v-for="btn in gridList.topToolbar.components" v-if="!btn.isMore" size="mini">
                         <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
@@ -102,9 +102,9 @@
                     </el-button-group>
                   </div>
                 </div>
-                <el-table v-for="gridList in gridLists" v-if="tab.viewName === gridList.name || tab.view_name === gridList.name" ref="multipleTable" :data="list" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight" :cell-style="cellStyle" :row-style="rowStyle">
+                <el-table v-for="gridList in UIMeta.listViewModel.dataView.views" v-if="tab.viewName === gridList.name || tab.view_name === gridList.name" ref="multipleTable" :data="list[gridList.name]" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight" :cell-style="cellStyle" :row-style="rowStyle">
                   <!-- <el-table-column type="selection" align="center"/> -->
-                  <el-table-column v-for="(header, index) in grid[0]" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="gridList.gridFixColumn > index" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
+                  <el-table-column v-for="(header, index) in grid[gridList.name]" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="gridList.gridFixColumn > index" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
                     <template slot-scope="scope">
                       <img v-if="header.ctype === 'image'" :src="scope.row[header.prop]" :width="header.width">
                       <div v-else-if="header.ctype === 'valuelistField'" v-html="scope.row[header.prop][header.valueListModel.displayField]"></div>
@@ -145,7 +145,7 @@
               </el-main>
               <el-footer style="height:auto;">
                 <div class="footerToolbar">
-                  <div v-for="gridList in gridLists" v-if="tab.viewName === gridList.name || tab.view_name === gridList.name">
+                  <div v-for="gridList in UIMeta.listViewModel.dataView.views" v-if="tab.viewName === gridList.name || tab.view_name === gridList.name">
                     <el-button-group>
                       <el-button v-for="btn in gridList.footerToolbar.components" v-if="!btn.isMore" size="mini">
                         <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
@@ -204,9 +204,7 @@ export default{
       tableHeight: 600, // 表头高度
       dialogVisible: false,
       activeTab: '',
-      tabs: [],
-      listUI: '',
-      treeToolbar: [],
+      UIMeta: '',
       options: [
         {
           value: 'more',
@@ -216,12 +214,9 @@ export default{
           label: '收起'
         }
       ],
-      gridLists: [],
-      listData: require('../../../am/operation/list-data.json'),
       treeRoot: {},
       treeChild: {},
       treeGrandchild: {},
-      qCondition: [],
       buttons: [],
       tree: [],
       grid: [],
@@ -230,6 +225,7 @@ export default{
         page: 1,
         limit: 20
       },
+      listGridData: '',
       multipleSelection: [],
       data: [
         {
@@ -301,11 +297,13 @@ export default{
   mounted() {
     this.getUIMeta().then(() => {
       this.UiLoaded = true
-      this.renderTree()
-      this.calcTableHeight()
-    })
-    this.getListData().then(() => {
-      this.dataLoaded = true
+      this.getTree().then(() => {
+        this.renderTree()
+        this.calcTableHeight()
+      })
+      this.getListData().then(() => {
+        this.dataLoaded = true
+      })
     })
   },
   methods: {
@@ -341,30 +339,32 @@ export default{
     getUIMeta() {
       return new Promise((resolve,reject) => {
         this.$http.get(`http://root.yiuser.com:3001/getListUIMeta/${this.$options.name}`).then((res) => {
-          this.listUI = res.data;
-          this.treeToolbar = [...this.listUI.listViewModel.tree.toolbar.components]
-          this.tabs = [...this.listUI.listViewModel.dataType.types]
-          this.activeTab = this.listUI.listViewModel.dataType.default
-          this.qCondition = [...this.listUI.listViewModel.qCondition.components]
-          this.gridLists = [...this.listUI.listViewModel.dataView.views]
-
-          this.gridLists.forEach((item, index) => {
-            this.grid.push([])
+          this.UIMeta = res.data
+          this.activeTab = this.UIMeta.listViewModel.dataType.default
+          this.UIMeta.listViewModel.dataView.views.forEach((item, index) => {
+            this.grid[item.name] = []
             item.components.forEach((thead) => {
-              this.grid[index].push({
+              this.grid[item.name].push({
                 prop: thead.name,
                 label: thead.label
               })
             })
+            console.log(this.grid, 'this.grid-----------')
           })
+          resolve(true)
         })
-        this.$http.get('http://root.yiuser.com:3001/openapi/treeRoot').then((res) => {
-          this.treeRoot = JSON.parse(JSON.stringify(res.data));
-          this.$http.get('http://root.yiuser.com:3001/openapi/treeChild').then((res) => {
-            this.treeChild = JSON.parse(JSON.stringify(res.data));
-            this.$http.get('http://root.yiuser.com:3001/openapi/treeGrandChild').then((res) => {
-              this.treeGrandchild = JSON.parse(JSON.stringify(res.data));
-              resolve(true);
+      })
+    },
+    getTree() {
+      return new Promise((resolve,reject) => {
+        this.$http.get(`http://root.yiuser.com:3001/${this.UIMeta.listViewModel.tree.initUrl}/${this.UIMeta.listViewModel.tree.initMethod}`).then((res) => {
+          this.treeRoot = JSON.parse(JSON.stringify(res.data))
+          this.$http.get(`http://root.yiuser.com:3001/${this.UIMeta.listViewModel.tree.actionUrl}/${this.UIMeta.listViewModel.tree.method}`).then((res) => {
+            this.treeChild = JSON.parse(JSON.stringify(res.data))
+            // this.$http.get('http://root.yiuser.com:3001/openapi/treeGrandChild').then((res) => {
+            this.$http.get(`http://root.yiuser.com:3001/${this.UIMeta.listViewModel.tree.actionUrl}/${this.UIMeta.listViewModel.tree.method}`).then((res) => {
+              this.treeGrandchild = JSON.parse(JSON.stringify(res.data))
+              resolve(true)
             }).catch((err) => {
               reject(err)
             })
@@ -425,19 +425,27 @@ export default{
     },
     getListData() {
       return new Promise((resolve,reject) => {
-        this.$http.get('http://root.yiuser.com:3001/openapi/listGridData').then((res) => {
-          this.listGridData = res.data
-          this.listGridData.resultList.forEach((item) => {
-            this.list.push({
-              l_operationNo: item.operationNo,
-              l_operationName: item.operationName,
-              l_operationType: item.type ? item.type : 0,
-              l_parentOperationNumber: item.parentOperationRef ? item.parentOperationRef.operationNo : '',
-              l_parentOperationName: item.parentOperationRef ? item.parentOperationRef.operationName : '',
-              l_appType: item.appType
-            })
+        this.UIMeta.listViewModel.dataView.views.forEach((view, vIndex) => {
+          this.UIMeta.listViewModel.querys.forEach((query, qIndex) => {
+            if (view.queryName === query.name) {
+              this.$http.get(`http://root.yiuser.com:3001/${query.actionUrl}/${query.queryMethod}`).then((res) => {
+                this.listGridData = res.data
+                this.list[view.name] = []
+                this.listGridData.resultList.forEach((item) => {
+                  this.list[view.name].push({
+                    l_operationNo: item.operationNo,
+                    l_operationName: item.operationName,
+                    l_operationType: item.type ? item.type : 0,
+                    l_parentOperationNumber: item.parentOperationRef ? item.parentOperationRef.operationNo : '',
+                    l_parentOperationName: item.parentOperationRef ? item.parentOperationRef.operationName : '',
+                    l_appType: item.appType
+                  })
+                })
+              })
+            }
           })
         })
+        
       })
     },
     getList() {
