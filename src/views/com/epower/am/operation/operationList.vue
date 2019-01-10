@@ -5,7 +5,9 @@ export default{
   extends: BaseList,
   components: {},
   data() {
-    return {}
+    return {
+      UIapi: `http://root.yiuser.com:3001/getListUIMeta/${this.$options.name}`
+    }
   },
   mounted() {},
   methods: {}

@@ -118,8 +118,8 @@ export default {
     //   this.DetailDataStore.DataSetMetas = this.UIMeta.detailViewModel.datasetInfo
     //   this.getSettings(this.detailpageSettings, this.firstTabData, 0)
     // })
-    this.getUIapi.then(() => {
-      this.getUIMeta(this.$options.name).then(() => {
+    // this.getUIapi().then(() => {
+      this.getUIMeta().then(() => {
         this.UiLoaded = true
         this.DetailDataStore.DataSetMetas = this.UIMeta.detailViewModel.datasetInfo
         this.getMultiData().then(() => {
@@ -127,7 +127,7 @@ export default {
           // this.getSettings(this.detailpageSettings, this.firstTabData, 0)
         })
       })
-    })
+    // })
     this.calcTableHeight()
   },
   methods: {
@@ -173,10 +173,13 @@ export default {
         // this.height = (window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 100) + 'px'
       })
     },
-    getUIapi() {
-      this.UIapi = 'openapi/shopOrderDetailUI'
-    },
-    getUIMeta(componentName) {
+    // getUIapi() {
+    //   return new Promise((resolve, reject) => {
+    //     this.UIapi = 'openapi/shopOrderDetailUI'
+    //     resolve('ok')
+    //   })
+    // },
+    getUIMeta() {
       return new Promise((resolve, reject) => {
         this.$http.get(this.UIapi).then((res) => {
           this.UIMeta = res.data

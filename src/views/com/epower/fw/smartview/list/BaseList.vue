@@ -197,6 +197,7 @@ export default{
   },
   data() {
     return {
+      UIapi: 'http://root.yiuser.com:3001/openapi/listUi',
       UiLoaded: false,  // UI获取完成
       dataLoaded: false,  // 数据获取完成
       showMoreCondition: false,
@@ -299,7 +300,7 @@ export default{
     }
   },
   mounted() {
-    this.getUIdata().then(() => {
+    this.getUIMeta().then(() => {
       this.UiLoaded = true
       this.renderTree()
       this.calcTableHeight()
@@ -338,9 +339,9 @@ export default{
         break
       }
     },
-    getUIdata() {
+    getUIMeta() {
       return new Promise((resolve,reject) => {
-        this.$http.get('http://root.yiuser.com:3001/openapi/listUi').then((res) => {
+        this.$http.get(this.UIapi).then((res) => {
           this.listUI = res.data;
           this.treeToolbar = [...this.listUI.listViewModel.tree.toolbar.components]
           this.tabs = [...this.listUI.listViewModel.dataType.types]
