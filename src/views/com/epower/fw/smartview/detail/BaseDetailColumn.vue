@@ -22,19 +22,16 @@
     <el-main>
       <el-form v-for="input in tab.componentSetModel.components" :key="input.label" :style="{width: input.width*100 + '%'}" class="demo-ruleForm" label-width="100px" size="mini">
         <el-form-item :label="input.label" :required="!Boolean(input.allowBlank)">
-          <el-input v-if="input.ctype === 'textfield'"/>
-          <el-checkbox v-else-if="input.ctype === 'checkboxField'"/>
-          <el-date-picker v-else-if="input.ctype === 'dateTimeField'"/>
-          <el-select v-else-if="input.ctype === 'valuelistField'" filterable>
-            <el-option v-for="item in input.valueList" :key="item.value" :label="item.label" :value="item.value"/>
-          </el-select>
-          <el-select v-else-if="input.ctype === 'comboBox'" filterable>
-            <el-option v-for="item in input.enumModel.items" :key="item.value" :label="item.label" :value="item.value"/>
-          </el-select>
-          <el-input v-else-if="input.ctype === 'numberfield'" type="number"/>
-          <el-select v-else-if="input.ctype === 'remoteComboBox'" v-model="value9" :remote-method="remoteMethod" multiple filterable remote reserve-keyword>
-            <el-option v-for="item in options4" :key="item.value" :label="item.label" :value="item.value"/>
-          </el-select>
+          <el-input v-if="input.ctype === 'textfield'" v-model="inputData[input.field]"/>
+            <el-date-picker v-else-if="input.ctype === 'dateField'" v-model="inputData[input.field]" type="date"/>
+            <el-date-picker v-else-if="input.ctype === 'dateTimeField'" v-model="inputData[input.field]" type="datetime"/>
+            <el-select v-else-if="input.ctype === 'comboBox'" v-model="inputData[input.field]" filterable>
+              <el-option v-for="item in input.enumModel.items" :key="item.value" :label="item.label" :value="item.value"/>
+            </el-select>
+            <el-input v-else-if="input.ctype === 'numberfield'" v-model="inputData[input.field]" type="number"/>
+            <el-select v-else-if="input.ctype === 'remoteComboBox'" v-model="inputData[input.field]" :remote-method="remoteMethod" multiple filterable remote reserve-keyword>
+              <el-option v-for="item in options4" :key="item.value" :label="item.label" :value="item.value"/>
+            </el-select>
         </el-form-item>
       </el-form>
     </el-main>
@@ -47,7 +44,7 @@ export default {
   data() {
     return {}
   },
-  props: ['tab']
+  props: ['tab', 'inputData']
 }
 </script>
 

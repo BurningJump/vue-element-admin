@@ -37,7 +37,7 @@
         </el-form>
       </el-main>
     </el-container> -->
-    <base-detail-column v-if="UiLoaded&&dataLoaded" :tab="UIMeta.detailViewModel.masterPage"/>
+    <base-detail-column v-if="UiLoaded&&dataLoaded" :tab="UIMeta.detailViewModel.masterPage" :inputData="masterPageData"/>
     <el-tabs v-if="UiLoaded&&dataLoaded" v-model="activeTab" type="card" @tab-click="handleClick">
       <el-tab-pane v-for="(tab,tabIndex) in UIMeta.detailViewModel.detailPages" :key="tab.name" :name="tab.name">
         <span slot="label">
@@ -47,7 +47,7 @@
         <div class="base-detail-container">
           <base-detail-grid v-if="tab.componentSetModel.style === 'grid'&&settings[tab.componentSetModel.dataset]" :tab="tab" :activeTab="activeTab" :settings="settings[tab.componentSetModel.dataset]" :height="height"/>
           <base-detail-a-grid v-else-if="tab.componentSetModel.style === 'aGrid'" :url="UIMeta.detailViewModel.datasetInfo.datasets[tabIndex].actionMethod" :tab="tab" :activeTab="activeTab" :listLoading="listLoading" :agridData="DetailDataStore.DataLists[tab.componentSetModel.dataset]" :height="height"/>
-          <base-detail-column v-else-if="tab.componentSetModel.style === 'column'" :tab="tab" :activeTab="activeTab"/>
+          <base-detail-column v-else-if="tab.componentSetModel.style === 'column'" :tab="tab" :activeTab="activeTab" :inputData=""/>
         </div>
         <!-- <base-detail :url="UIMeta.detailViewModel.datasetInfo.datasets[tabIndex].actionMethod" :tab="tab" :activeTab="activeTab" :type="tab.componentSetModel.style" :settings="detailpageSettings" :height="height" :agridData="DetailDataStore.DataLists[tabIndex]"/> -->
       </el-tab-pane>
