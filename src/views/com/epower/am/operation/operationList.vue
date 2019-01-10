@@ -6,7 +6,6 @@ export default{
   components: {},
   data() {
     return {
-      UIapi: `http://root.yiuser.com:3001/getListUIMeta/${this.$options.name}`
     }
   },
   mounted() {},

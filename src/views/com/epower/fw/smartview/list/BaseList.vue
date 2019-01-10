@@ -197,7 +197,6 @@ export default{
   },
   data() {
     return {
-      UIapi: 'http://root.yiuser.com:3001/openapi/listUi',
       UiLoaded: false,  // UI获取完成
       dataLoaded: false,  // 数据获取完成
       showMoreCondition: false,
@@ -341,7 +340,7 @@ export default{
     },
     getUIMeta() {
       return new Promise((resolve,reject) => {
-        this.$http.get(this.UIapi).then((res) => {
+        this.$http.get(`http://root.yiuser.com:3001/getListUIMeta/${this.$options.name}`).then((res) => {
           this.listUI = res.data;
           this.treeToolbar = [...this.listUI.listViewModel.tree.toolbar.components]
           this.tabs = [...this.listUI.listViewModel.dataType.types]
