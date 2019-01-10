@@ -43,7 +43,7 @@
           <svg-icon :icon-class="`${tab.iconcls}`"/>
           {{tab.label}}
         </span>
-          <!-- <base-detail :treeHeight="treeHeight" :tab="tab" :activeTab="activeTab" :settings="settings[tabIndex]" :tableHeight="tableHeight"/> -->
+          <base-detail :treeHeight="treeHeight" :tab="tab" :activeTab="activeTab" :settings="settings[tabIndex]" :tableHeight="tableHeight"/>
       </el-tab-pane>
     </el-tabs>
   </div>

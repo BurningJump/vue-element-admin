@@ -65,6 +65,7 @@ import BaseDetailGrid from '@/views/com/epower/fw/smartview/detail/BaseDetailGri
 export default {
   data() {
     return {
+      UIapi: '',
       options4: [],
       listLoading: false,
       defaultProps: {
@@ -117,12 +118,14 @@ export default {
     //   this.DetailDataStore.DataSetMetas = this.UIMeta.detailViewModel.datasetInfo
     //   this.getSettings(this.detailpageSettings, this.firstTabData, 0)
     // })
-    this.getUIMeta().then(() => {
-      this.UiLoaded = true
-      this.DetailDataStore.DataSetMetas = this.UIMeta.detailViewModel.datasetInfo
-      this.getMultiData().then(() => {
-        this.dataLoaded = true
-        // this.getSettings(this.detailpageSettings, this.firstTabData, 0)
+    this.getUIapi.then(() => {
+      this.getUIMeta(this.$options.name).then(() => {
+        this.UiLoaded = true
+        this.DetailDataStore.DataSetMetas = this.UIMeta.detailViewModel.datasetInfo
+        this.getMultiData().then(() => {
+          this.dataLoaded = true
+          // this.getSettings(this.detailpageSettings, this.firstTabData, 0)
+        })
       })
     })
     this.calcTableHeight()
@@ -130,7 +133,6 @@ export default {
   methods: {
     getSettings(settings, sourceData, index) {
       settings.data = [].concat(sourceData)
-      console.log(settings.data, 'settings.data')
       this.UIMeta.detailViewModel.detailPages[index].componentSetModel.components.forEach(theader => {
         settings.colHeaders.push(theader.label)
         settings.dataSchema[theader.field] = null
@@ -171,9 +173,12 @@ export default {
         // this.height = (window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 100) + 'px'
       })
     },
-    getUIMeta() {
+    getUIapi() {
+      this.UIapi = 'openapi/shopOrderDetailUI'
+    },
+    getUIMeta(componentName) {
       return new Promise((resolve, reject) => {
-        this.$http.get('openapi/shopOrderDetailUI').then((res) => {
+        this.$http.get(this.UIapi).then((res) => {
           this.UIMeta = res.data
           this.activeTab = this.UIMeta.detailViewModel.detailPages[0].name
           resolve('ok')
