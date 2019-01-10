@@ -55,7 +55,7 @@ export default {
   extends: BaseBillDetail,
   data() {
     return {
-      UIapi: `http://root.yiuser.com:3001/getDetailUIMeta/${this.$options.name}`
+      // UIapi: `http://root.yiuser.com:3001/getDetailUIMeta/${this.$options.name}`
     }
   },
 }

@@ -129,6 +129,8 @@ export default {
       })
     // })
     this.calcTableHeight()
+    console.log(this.$options.name,'this.$options.name------------basedetail');
+    
   },
   methods: {
     getSettings(settings, sourceData, index) {
@@ -181,7 +183,7 @@ export default {
     // },
     getUIMeta() {
       return new Promise((resolve, reject) => {
-        this.$http.get(this.UIapi).then((res) => {
+        this.$http.get(`http://root.yiuser.com:3001/getDetailUIMeta/${this.$options.name}`).then((res) => {
           this.UIMeta = res.data
           this.activeTab = this.UIMeta.detailViewModel.detailPages[0].name
           resolve('ok')
