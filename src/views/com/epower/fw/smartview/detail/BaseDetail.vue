@@ -47,7 +47,11 @@
         <div class="base-detail-container">
           <base-detail-grid v-if="tab.componentSetModel.style === 'grid'&&settings[tab.componentSetModel.dataset]" :tab="tab" :activeTab="activeTab" :settings="settings[tab.componentSetModel.dataset]" :height="height"/>
           <base-detail-a-grid v-else-if="tab.componentSetModel.style === 'aGrid'" :url="UIMeta.detailViewModel.datasetInfo.datasets[tabIndex].actionMethod" :tab="tab" :activeTab="activeTab" :listLoading="listLoading" :agridData="DetailDataStore.DataLists[tab.componentSetModel.dataset]" :height="height"/>
-          <base-detail-column v-else-if="tab.componentSetModel.style === 'column'" :tab="tab" :activeTab="activeTab" :inputData=""/>
+
+          <!-- todo masterPageData要改成column的data -->
+          <base-detail-column v-else-if="tab.componentSetModel.style === 'column'" :tab="tab" :activeTab="activeTab" :inputData="masterPageData"/>
+          <!-- todo -->
+
         </div>
         <!-- <base-detail :url="UIMeta.detailViewModel.datasetInfo.datasets[tabIndex].actionMethod" :tab="tab" :activeTab="activeTab" :type="tab.componentSetModel.style" :settings="detailpageSettings" :height="height" :agridData="DetailDataStore.DataLists[tabIndex]"/> -->
       </el-tab-pane>
