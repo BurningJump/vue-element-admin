@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-container>
+    <el-container v-if="UiLoaded">
       <el-header height="auto" id="qconHeader">
         <el-form :inline="true" :model="conditionForm" ref="conditionForm" class="demo-ruleForm" label-width="100px" size="mini">
           <el-form-item v-for="condition in UIMeta.listViewModel.qCondition.components" v-if="!condition.isMore" :key="condition.label" :style="{width: (condition.width <= 1 ? condition.width*100 + '%' : condition.width + 'px')}" :label="condition.label" :prop="conditionForm[condition.findField]">
@@ -128,13 +128,11 @@
                           </el-button>
                           <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item v-for="btn in gridList.rowToolbar.components" v-if="btn.isMore">
-                              <!-- <el-tooltip class="item" effect="dark" :content="btn.label" placement="top"> -->
-                                <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
-                                <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
-                                <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
-                                <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
-                                {{btn.label}}
-                              <!-- </el-tooltip> -->
+                              <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
+                              <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
+                              <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
+                              <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
+                              {{btn.label}}
                             </el-dropdown-item>
                           </el-dropdown-menu>
                         </el-dropdown>
@@ -280,7 +278,6 @@ export default{
       }
     },
     rowStyle({ row, rowIndex}) {
-      console.log(rowIndex)
       if (rowIndex%2 === 0) {
         return {
           'fontSize': '12px',
@@ -345,11 +342,10 @@ export default{
             this.grid[item.name] = []
             item.components.forEach((thead) => {
               this.grid[item.name].push({
-                prop: thead.name,
+                prop: thead.field,
                 label: thead.label
               })
             })
-            console.log(this.grid, 'this.grid-----------')
           })
           resolve(true)
         })
@@ -431,14 +427,10 @@ export default{
               this.$http.get(`http://root.yiuser.com:3001/${query.actionUrl}/${query.queryMethod}`).then((res) => {
                 this.listGridData = res.data
                 this.list[view.name] = []
-                this.listGridData.resultList.forEach((item) => {
-                  this.list[view.name].push({
-                    l_operationNo: item.operationNo,
-                    l_operationName: item.operationName,
-                    l_operationType: item.type ? item.type : 0,
-                    l_parentOperationNumber: item.parentOperationRef ? item.parentOperationRef.operationNo : '',
-                    l_parentOperationName: item.parentOperationRef ? item.parentOperationRef.operationName : '',
-                    l_appType: item.appType
+                this.listGridData.resultList.forEach((item, index) => {
+                  this.list[view.name][index] = {}
+                  this.grid[view.name].forEach((thead, tIndex) => {
+                    this.list[view.name][index][thead.prop] = item[thead.prop]
                   })
                 })
               })
