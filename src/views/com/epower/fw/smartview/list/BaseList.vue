@@ -69,12 +69,11 @@
           <el-tabs v-model="activeTab" @tab-click="handleTabClick">
             <el-tab-pane v-for="tab in UIMeta.listViewModel.dataType.types" :name="tab.name">
               <span slot="label">
-                <i v-if="tab.iconcls === 'table_add'" class="el-icon-plus"/>
-                <i v-else-if="tab.iconcls === 'table_delete'" class="el-icon-delete"/>
-                <i v-else-if="tab.iconcls === 'table_edit'" class="el-icon-edit"/>
+                <svg-icon :icon-class="`${tab.iconcls}`"/>
                 {{tab.label}}
               </span>
-              <el-main style="padding:0;">
+              <base-list-grid :views="UIMeta.listViewModel.dataView.views" :tabViewName="tab.viewName || tab.view_name" :height="tableHeight" :list="list" :grid="grid"/>
+              <!-- <el-main style="padding:0;">
                 <div class="topToolbar">
                   <div v-for="gridList in UIMeta.listViewModel.dataView.views" v-if="tab.viewName === gridList.name || tab.view_name === gridList.name">
                     <el-button-group>
@@ -103,7 +102,7 @@
                   </div>
                 </div>
                 <el-table v-for="gridList in UIMeta.listViewModel.dataView.views" v-if="tab.viewName === gridList.name || tab.view_name === gridList.name" ref="multipleTable" :data="list[gridList.name]" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight" :cell-style="cellStyle" :row-style="rowStyle">
-                  <!-- <el-table-column type="selection" align="center"/> -->
+                  <el-table-column type="selection" align="center"/>
                   <el-table-column v-for="(header, index) in grid[gridList.name]" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="gridList.gridFixColumn > index" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
                     <template slot-scope="scope">
                       <img v-if="header.ctype === 'image'" :src="scope.row[header.prop]" :width="header.width">
@@ -140,8 +139,8 @@
                     </template>
                   </el-table-column>
                 </el-table>
-              </el-main>
-              <el-footer style="height:auto;">
+              </el-main> -->
+              <!-- <el-footer style="height:auto;">
                 <div class="footerToolbar">
                   <div v-for="gridList in UIMeta.listViewModel.dataView.views" v-if="tab.viewName === gridList.name || tab.view_name === gridList.name">
                     <el-button-group>
@@ -170,7 +169,7 @@
                   </div>
                 </div>
                 <pagination v-show="list.length>0" :total="list.length" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList"/>
-              </el-footer>
+              </el-footer> -->
             </el-tab-pane>
           </el-tabs>
         </el-main>
@@ -187,12 +186,17 @@
 </template>
 
 <script>
-import Pagination from '@/components/Pagination'
+import BaseListGrid from '@/views/com/epower/fw/smartview/list/BaseListGrid'
+import BaseDetailCard from '@/views/com/epower/fw/smartview/list/BaseDetailCard'
+// import Pagination from '@/components/Pagination'
 export default{
   name: 'com.epower.fw.smartview.list.BaseList',
   components: {
-    Pagination
+    BaseListGrid,
+    BaseDetailCard,
+    // Pagination,
   },
+  // extends: {BaseListGrid,BaseDetailCard},
   data() {
     return {
       UiLoaded: false,  // UI获取完成
