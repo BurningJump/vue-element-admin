@@ -16,10 +16,7 @@
     </el-container>
     <div class="toolbar">
       <el-button v-for="btn in buttons" :key="btn.label">
-        <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
-        <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
-        <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
-        <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
+        <svg-icon :icon-class="`${btn.iconcls}`"/>
         {{ btn.label }}
       </el-button>
     </div>
@@ -141,11 +138,11 @@ export default{
             label: item.label
           })
         })
-        this.$http.get('http://112.93.248.117:3001/openapi/treeRoot').then((res) => {
+        this.$http.get('openapi/treeRoot').then((res) => {
           this.treeRoot = JSON.parse(JSON.stringify(res.data));
-          this.$http.get('http://112.93.248.117:3001/openapi/treeChild').then((res) => {
+          this.$http.get('openapi/treeChild').then((res) => {
             this.treeChild = JSON.parse(JSON.stringify(res.data));
-            this.$http.get('http://112.93.248.117:3001/openapi/treeGrandChild').then((res) => {
+            this.$http.get('openapi/treeGrandChild').then((res) => {
               this.treeGrandchild = JSON.parse(JSON.stringify(res.data));
               resolve(true);
             }).catch((err) => {

@@ -4,11 +4,7 @@
       <el-header height="auto">
         <div class="toolbar">
           <el-button v-for="btn in buttons" :key="btn.label">
-            <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
-            <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
-            <i v-else-if="btn.iconcls === 'table_save'" class="el-icon-document"/>
-            <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
-            <i v-else-if="btn.iconcls === 'refresh'" class="el-icon-refresh"/>
+            <svg-icon :icon-class="`${btn.iconcls}`"/>
             {{ btn.label }}
           </el-button>
         </div>
@@ -48,10 +44,10 @@
 </template> */
 
 <script>
-import BaseBillDetail from '@/views/com/epower/fw/smartview/detail/BaseBillDetail'
+import BaseDetailGrid from '@/views/com/epower/fw/smartview/detail/BaseDetailGrid'
 export default {
   name: 'EditSingle',
-  extends: BaseBillDetail,
+  extends: BaseDetailGrid,
   data() {
     return {
       editSingleUI: require('./edit-ui-单表.json'),

@@ -75,6 +75,50 @@ export const asyncRouterMap = [
     ]
   },
   {
+    path: '/com/epower/dp/dpshoporder',
+    component: Layout,
+    redirect: '/com/epower/dp/dpshoporder/DpShopOrderDetail',
+    alwaysShow: true, // will always show the root menu
+    meta: {
+      title: 'dpshoporder',
+      icon: 'lock',
+      roles: ['admin', 'editor'] // you can set roles in root nav
+    },
+    children: [
+      {
+        path: 'DpShopOrderDetail',
+        component: () => import('@/views/com/epower/dp/dpshoporder/DpShopOrderDetail'),
+        name: 'com.epower.dp.dpshoporder.DpShopOrderDetail',
+        meta: {
+          title: 'DpShopOrderDetail',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      }
+    ]
+  },
+  {
+    path: '/com/epower/inv/invrequest',
+    component: Layout,
+    redirect: '/com/epower/inv/invrequest/InvRequestDetail',
+    alwaysShow: true, // will always show the root menu
+    meta: {
+      title: 'invrequest',
+      icon: 'lock',
+      roles: ['admin', 'editor'] // you can set roles in root nav
+    },
+    children: [
+      {
+        path: 'InvRequestDetail',
+        component: () => import('@/views/com/epower/inv/invrequest/InvRequestDetail'),
+        name: 'com.epower.inv.invrequest.InvRequestDetail',
+        meta: {
+          title: 'InvRequestDetail',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      }
+    ]
+  },
+  {
     path: '/edit',
     component: Layout,
     redirect: '/edit/index',
@@ -86,6 +130,15 @@ export const asyncRouterMap = [
     },
     children: [
       {
+        path: 'control',
+        component: () => import('@/views/edit/control'),
+        name: 'Control',
+        meta: {
+          title: 'control',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      },
+      {
         path: 'editSingle',
         component: () => import('@/views/edit/editSingle'),
         name: 'EditSingle',
@@ -93,35 +146,8 @@ export const asyncRouterMap = [
           title: 'editSingle',
           roles: ['admin'] // or you can only set roles in sub nav
         }
-      },
-      {
-        path: 'editMulti',
-        component: () => import('@/views/edit/editMulti'),
-        name: 'EditMulti',
-        meta: {
-          title: 'editMulti',
-          roles: ['admin'] // or you can only set roles in sub nav
-        }
       }
     ]
-  },
-  {
-    path: '/supply',
-    component: Layout,
-    redirect: '/supply/index', //重定向地址，在面包屑中点击会重定向去的地址
-    alwaysShow: false, //一直显示根路由
-    meta: { roles: ['admin', 'editor'] }, //你可以在根路由设置权限，这样它下面所以的子路由都继承了这个权限
-    children: [{
-      path: 'index',
-      component: () => import('@/views/supply/index'),
-      name: 'supply',
-      meta: {
-        title: 'supply',
-        icon: 'lock', //图标
-        role: ['admin', 'editor'], //或者你可以给每一个子路由设置自己的权限
-        noCache: true // 不会被 <keep-alive> 缓存
-      }
-    }]
   },
   { path: '*', redirect: '/404', hidden: true }
 ]

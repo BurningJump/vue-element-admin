@@ -5,7 +5,8 @@ export default{
   extends: BaseList,
   components: {},
   data() {
-    return {}
+    return {
+    }
   },
   mounted() {},
   methods: {}
