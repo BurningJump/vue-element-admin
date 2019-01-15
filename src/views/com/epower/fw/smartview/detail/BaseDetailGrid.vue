@@ -80,7 +80,7 @@ export default {
       // }
     }
   },
-  props: ['tab', 'activeTab', 'settings', 'height'],
+  props: ['tab', 'activeTab', 'settings', 'height','componentSet'],
   components: {
     HotTable
   },

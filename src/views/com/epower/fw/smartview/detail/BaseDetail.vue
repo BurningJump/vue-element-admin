@@ -62,6 +62,7 @@
             :activeTab="activeTab"
             :settings="settings[tab.componentSetModel.dataset]"
             :height="height"
+            :componentSet="vDataView.getComponentSet(tab.componentSetModel.name)"
           />
           <base-detail-a-grid
             v-else-if="tab.componentSetModel.style === 'aGrid'"
