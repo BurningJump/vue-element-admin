@@ -19,7 +19,7 @@ export default class VDataView {
       // 建立数据
       this.dataStore = new VDataStore(viewModel.datasetInfo)
       this.dataStore.dataView = this
-      // 建立视图
+      // 开始建立视图
       var cs
       // 建立Master视图
       cs = new VComponentSet(viewModel.masterPage.componentSetModel)
@@ -40,6 +40,9 @@ export default class VDataView {
       this.dataStore.loadDataByPackage(dataPackage)
     }
 
+    loadDataByList(datasetName, list) {
+      this.dataStore.loadDataByList(datasetName, list)
+    }
     /**
      * 添加一个数据视图
      * @param {*} AComponentSet
@@ -72,7 +75,7 @@ export default class VDataView {
     openAll() {
       const datasetNames = new Set()
       for (const cs of this.componentSets) {
-        if (datasetNames.has(cs.dataSetName)===false) {
+        if (datasetNames.has(cs.dataSetName) === false) {
           datasetNames.add(cs.dataSetName)
         }
       }
@@ -96,7 +99,7 @@ export default class VDataView {
 
       for (const cs of this.componentSets) {
         if (cs.datasetName === dataSetName) {
-          cs.open(list)
+          cs.openByData(list)
         }
       }
     }

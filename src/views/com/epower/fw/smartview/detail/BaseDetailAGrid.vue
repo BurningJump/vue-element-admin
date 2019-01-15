@@ -46,10 +46,10 @@
             </el-dropdown-menu>
           </el-dropdown>
         </el-button-group>
-        <pagination v-show="tab.componentSetModel.style === 'aGrid'" :total="agridData.length" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" style="position: absolute; right: 50px; top: 0; margin-top: 0;"/>
+        <pagination v-show="tab.componentSetModel.style === 'aGrid'" :total="componentSet.dataList.length" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" style="position: absolute; right: 50px; top: 0; margin-top: 0;"/>
       </el-header>
       <el-main v-if="activeTab === tab.name">
-        <el-table v-loading="listLoading" :data="agridData" ref="multipleTable" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="height" :cell-style="cellStyle" :row-style="rowStyle">
+        <el-table v-loading="listLoading" :data="componentSet.dataList" ref="multipleTable" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="height" :cell-style="cellStyle" :row-style="rowStyle">
           <el-table-column type="selection" align="center"/>
           <el-table-column v-for="header in tab.componentSetModel.components" :key="header.label" :prop="header.field" :label="header.label" align="center" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
             <template slot-scope="scope">
@@ -68,6 +68,11 @@
 import Pagination from '@/components/Pagination'
 export default {
   name: 'com.epower.fw.smartview.detail.BaseDetailAGrid',
+  props: ['url', 'tab', 'activeTab', 'height','componentSet'],
+  components: {
+    Pagination
+  },
+
   data() {
     return {
       list: [],
@@ -80,10 +85,6 @@ export default {
       },
     }
   },
-  components: {
-    Pagination
-  },
-  props: ['url', 'tab', 'activeTab', 'agridData', 'height'],
   computed: {
     cellStyle() {
       return {
@@ -105,11 +106,20 @@ export default {
       }
     }
   },
+
+
+  mounted() {
+    console.log(this.$options.name, "this.$options.name------------agrid")
+    this.getList();
+  },
+
   methods: {
     getList() {
       this.listLoading = true
       this.$http.get(this.url).then((res) => {
         this.listLoading = false
+        this.componentSet.loadDataToDataSet(res.data.resultList);
+        this.componentSet.open();
       })
       // fetchList(this.listQuery).then(response => {
       //   this.list = response.data.items

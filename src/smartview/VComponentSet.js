@@ -87,7 +87,7 @@ export default class VComponentSet {
      * 装载可视数据 光标设置为零
      * @param {*} listData
      */
-    open(listData) {
+    openByData(listData) {
       this.dataList = listData
       if (this.dataList !== null || this.dataList !== undefined) {
         if (this.dataList.length > 0) {
@@ -98,6 +98,10 @@ export default class VComponentSet {
           this._clearComponentData()
         }
       }
+    }
+
+    open(filter = null) {
+      this.dataView.open(this.datasetName, filter)
     }
 
   /**
@@ -137,6 +141,10 @@ export default class VComponentSet {
         }
       }
       return result
+    }
+
+    loadDataToDataSet(list) {
+      this.dataView.loadDataByList(this.datasetName, list)
     }
 }
 

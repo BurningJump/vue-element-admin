@@ -38,8 +38,17 @@ export default class VDataStore {
 
   // 装载DataPackage数据
   loadDataByPackage(ADataPackage) {
-    for (var j = 0; j < this.datasets.length; j++) {
-      this.datasets[j].loadData(ADataPackage)
+    for (const ds of this.datasets) {
+      ds.loadData(ADataPackage)
+    }
+  }
+
+  // 装载List数据
+  loadDataByList(datasetName, list) {
+    for (const ds of this.datasets) {
+      if (ds.name === datasetName) {
+        ds.loadList(list)
+      }
     }
   }
 

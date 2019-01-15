@@ -69,7 +69,6 @@
             :tab="tab"
             :activeTab="activeTab"
             :listLoading="listLoading"
-            :agridData="DetailDataStore.DataLists[tab.componentSetModel.dataset]"
             :height="height"
             :componentSet="vDataView.getComponentSet(tab.componentSetModel.name)"
           />
@@ -117,8 +116,8 @@ export default {
         DataLists: [],
         DataSetMetas: []
       },
-      masterPageData: [],
-      firstTabData: [],
+      // masterPageData: [],disable by Max
+      //firstTabData: [], disable by Max
       activeTab: "",
       settings: [],
       // settings: {
@@ -137,7 +136,7 @@ export default {
       // },
       url: "",
       tab: Object,
-      agridData: Array,
+     // agridData: Array, delete by max 用componentset的datalist代替
       vDataView: VDataView //add by max
     };
   },
@@ -253,28 +252,30 @@ export default {
           this.$http.get(this.UIMeta.detailViewModel.actionUrl).then(res => {
             this.dataPackageResp = res.data;
             this.DetailDataStore.DataPackage = this.dataPackageResp.dataPackage;
-            this.vDataView.loadDataByPackage(this.DetailDataStore.DataPackage); //add by max
+            this.vDataView.loadDataByPackage(this.dataPackageResp.dataPackage); //add by max
             this.vDataView.openAll(); //add by max
 
-
-            this.DetailDataStore.DataPackage.dataSets.forEach((item, index) => {
-              if (
-                item.name ===
-                this.UIMeta.detailViewModel.masterPage.componentSetModel.dataset
-              ) {
-                this.masterPageData = item.currentTable[0];
-              }
-            });
+            //disable by max
+            // this.DetailDataStore.DataPackage.dataSets.forEach((item, index) => {
+            //   if (
+            //     item.name ===
+            //     this.UIMeta.detailViewModel.masterPage.componentSetModel.dataset
+            //   ) {
+            //     this.masterPageData = item.currentTable[0];
+            //   }
+            // });
 
             this.UIMeta.detailViewModel.datasetInfo.datasets.forEach(
               (item, index) => {
-                if (item.datasource === "ajaxRequest") {
-                  this.$http.get(item.actionMethod).then(res => {
-                    this.DetailDataStore.DataLists[item.name] = [].concat(
-                      res.data.resultList
-                    );
-                  });
-                } else if (item.datasource === "dataPackage") {
+                // disable by Max
+                // if (item.datasource === "ajaxRequest") {
+                //   this.$http.get(item.actionMethod).then(res => {
+                //     this.DetailDataStore.DataLists[item.name] = [].concat(
+                //       res.data.resultList
+                //     );
+                //   });
+                // } else
+                if (item.datasource === "dataPackage") {
                   this.DetailDataStore.DataPackage.dataSets.forEach(
                     (dpItem, dpIndex) => {
                       if (item.name === dpItem.name) {
