@@ -2,7 +2,7 @@
   <div>
     <el-main style="padding:0;" class="base-list-grid-container">
       <div class="topToolbar">
-        <div v-for="view in views" v-if="tabViewName === view.name">
+        <div>
           <el-button-group>
             <el-button v-for="btn in view.topToolbar.components" v-if="!btn.isMore" size="mini">
               <svg-icon :icon-class="`${btn.iconcls}`"/>
@@ -22,7 +22,7 @@
           </el-button-group>
         </div>
       </div>
-      <el-table v-for="view in views" v-if="tabViewName === view.name" ref="multipleTable" :data="list[view.name]" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="height" :cell-style="cellStyle" :row-style="rowStyle">
+      <el-table ref="multipleTable" :data="list[view.name]" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="height" :cell-style="cellStyle" :row-style="rowStyle">
         <!-- <el-table-column type="selection" align="center"/> -->
         <el-table-column v-for="(header, index) in grid[view.name]" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="view.gridFixColumn > index" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
           <template slot-scope="scope">
@@ -57,7 +57,7 @@
     </el-main>
     <el-footer style="height:auto;">
       <div class="footerToolbar">
-        <div v-for="view in views" v-if="tabViewName === view.name">
+        <div>
           <el-button-group>
             <el-button v-for="btn in view.footerToolbar.components" v-if="!btn.isMore" size="mini">
               <svg-icon :icon-class="`${btn.iconcls}`"/>
@@ -94,7 +94,7 @@ export default {
       },
     }
   },
-  props: ['views', 'tabViewName', 'height', 'list', 'grid'],
+  props: ['view', 'height', 'list', 'grid'],
   components: {
     Pagination
   },

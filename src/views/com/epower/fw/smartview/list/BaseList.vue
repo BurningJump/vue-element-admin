@@ -72,7 +72,7 @@
                 <svg-icon :icon-class="`${tab.iconcls}`"/>
                 {{tab.label}}
               </span>
-              <base-list-grid :views="UIMeta.listViewModel.dataView.views" :tabViewName="tab.viewName || tab.view_name" :height="tableHeight" :list="list" :grid="grid"/>
+              <base-list-grid v-for="view in UIMeta.listViewModel.dataView.views" v-if="view.viewType === 'grid' && (tab.viewName === view.name || tab.view_name === view.name)" :view="view" :height="tableHeight" :list="list" :grid="grid"/>
               <!-- <el-main style="padding:0;">
                 <div class="topToolbar">
                   <div v-for="gridList in UIMeta.listViewModel.dataView.views" v-if="tab.viewName === gridList.name || tab.view_name === gridList.name">
