@@ -59,8 +59,8 @@
           <base-detail-grid
             v-if="tab.componentSetModel.style === 'grid'&&settings[tab.componentSetModel.dataset]"
             :tab="tab"
+            :dataLoaded="dataLoaded"
             :activeTab="activeTab"
-            :settings="settings[tab.componentSetModel.dataset]"
             :height="height"
             :componentSet="vDataView.getComponentSet(tab.componentSetModel.name)"
           />
@@ -295,11 +295,11 @@ export default {
                           fixedRowsTop: 0 // 冻结前n行
                         };
                         this.firstTabData = dpItem.currentTable;
-                        this.getSettings(
-                          this.settings[item.name],
-                          dpItem.currentTable,
-                          0
-                        );
+                        // this.getSettings(
+                        //   this.settings[item.name],
+                        //   dpItem.currentTable,
+                        //   0
+                        // );
                       }
                     }
                   );

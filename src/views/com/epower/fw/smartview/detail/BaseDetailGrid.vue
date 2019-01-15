@@ -67,6 +67,7 @@ export default {
   data: function() {
     return {
       root: 'test-hot',
+      settings: '',
       // settings: {
       //   data: [
       //     {id: 1, name: 'Ted Right', address: ''},
@@ -80,15 +81,49 @@ export default {
       // }
     }
   },
-  props: ['tab', 'activeTab', 'settings', 'height','componentSet'],
+  props: ['tab', 'activeTab', 'height','componentSet', 'dataLoaded'],
   components: {
     HotTable
   },
   mounted() {
     this.$nextTick(() => {
+      this.getSettings()
     })
   },
   methods: {
+    getSettings() {
+      this.settings = {
+        data: this.componentSet.dataList,
+        dataSchema: {},
+        colHeaders: [],
+        rowHeaders: false,
+        columns: [],
+        colWidths: [],
+        rowHeights: 55,
+        className: "htCenter htMiddle",
+        contextMenu: true,
+        manualColumnFreeze: true,
+        fixedColumnsLeft: 0, // 冻结前n列
+        fixedRowsTop: 0 // 冻结前n行
+      }
+      this.tab.componentSetModel.components.forEach(theader => {
+        this.settings.colHeaders.push(theader.label);
+        this.settings.dataSchema[theader.field] = null;
+        this.settings.colWidths.push(
+          theader.width > 1
+            ? theader.width
+            : theader.width > 0 && theader.width <= 1
+            ? theader.width * 100 + "%"
+            : ""
+        );
+        this.settings.columns.push({
+          type: "autocomplete",
+          allowHtml: true,
+          renderer: this.coverRenderer,
+          data: theader.field
+        });
+      });
+    },
     coverRenderer (instance, td, row, col, prop, value, cellProperties) {
       var escaped = Handsontable.helper.stringify(value),
         img;
@@ -102,6 +137,7 @@ export default {
         });
 
         Handsontable.dom.empty(td);
+        td.className = "htCenter htMiddle";
         td.appendChild(img);
       }
       else {
