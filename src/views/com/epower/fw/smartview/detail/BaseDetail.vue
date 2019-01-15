@@ -111,12 +111,12 @@ export default {
       height: 600, // 表头高度
       UIMeta: "",
       dataPackageResp: "",
-      DetailDataStore: {
-        // DetailDataStore.Datapackage = dataPackageResp.datapackage, detailDataStore.DataLists = agrid的返回List, detailDataStore.DataSetMetas = detailViewModel.datasetInfo
-        DataPackage: [],
-        DataLists: [],
-        DataSetMetas: []
-      },
+      // DetailDataStore: {
+      //   // DetailDataStore.Datapackage = dataPackageResp.datapackage, detailDataStore.DataLists = agrid的返回List, detailDataStore.DataSetMetas = detailViewModel.datasetInfo
+      //   DataPackage: [],
+      //   DataLists: [],
+      //   DataSetMetas: []
+      // },
       // masterPageData: [],disable by Max
       //firstTabData: [], disable by Max
       activeTab: "",
@@ -157,7 +157,7 @@ export default {
     // this.getUIapi().then(() => {
     this.getUIMeta().then(() => {
       this.UiLoaded = true;
-      this.DetailDataStore.DataSetMetas = this.UIMeta.detailViewModel.datasetInfo;
+     // this.DetailDataStore.DataSetMetas = this.UIMeta.detailViewModel.datasetInfo;
       this.getMultiData().then(() => {
         this.dataLoaded = true;
         // this.getSettings(this.detailpageSettings, this.firstTabData, 0)
@@ -252,10 +252,10 @@ export default {
         if (this.UIMeta.detailViewModel.actionUrl) {
           this.$http.get(this.UIMeta.detailViewModel.actionUrl).then(res => {
             this.dataPackageResp = res.data;
-            this.DetailDataStore.DataPackage = this.dataPackageResp.dataPackage;
+          //  this.DetailDataStore.DataPackage = this.dataPackageResp.dataPackage;
             this.vDataView.loadDataByPackage(this.dataPackageResp.dataPackage); //add by max
             this.vDataView.openAll(); //add by max
-
+            resolve("ok");
             //disable by max
             // this.DetailDataStore.DataPackage.dataSets.forEach((item, index) => {
             //   if (
@@ -266,52 +266,16 @@ export default {
             //   }
             // });
 
-            this.UIMeta.detailViewModel.datasetInfo.datasets.forEach(
-              (item, index) => {
-                // disable by Max
-                // if (item.datasource === "ajaxRequest") {
-                //   this.$http.get(item.actionMethod).then(res => {
-                //     this.DetailDataStore.DataLists[item.name] = [].concat(
-                //       res.data.resultList
-                //     );
-                //   });
-                // } else
-                if (item.datasource === "dataPackage") {
-                  this.DetailDataStore.DataPackage.dataSets.forEach(
-                    (dpItem, dpIndex) => {
-                      if (item.name === dpItem.name) {
-                        // this.settings[item.name] = {
-                        //   data: [],
-                        //   dataSchema: {},
-                        //   colHeaders: [],
-                        //   rowHeaders: false,
-                        //   columns: [],
-                        //   colWidths: [],
-                        //   rowHeights: 55,
-                        //   className: "htCenter htMiddle",
-                        //   contextMenu: true,
-                        //   manualColumnFreeze: true,
-                        //   fixedColumnsLeft: 0, // 冻结前n列
-                        //   fixedRowsTop: 0 // 冻结前n行
-                        // };
-                        this.firstTabData = dpItem.currentTable;
-                        // this.getSettings(
-                        //   this.settings[item.name],
-                        //   dpItem.currentTable,
-                        //   0
-                        // );
-                      }
-                    }
-                  );
-                }
-                if (
-                  index ===
-                  this.UIMeta.detailViewModel.datasetInfo.datasets.length - 1
-                ) {
-                  resolve("ok");
-                }
-              }
-            );
+            // this.UIMeta.detailViewModel.datasetInfo.datasets.forEach(
+            //   (item, index) => {
+            //     if (
+            //       index ===
+            //       this.UIMeta.detailViewModel.datasetInfo.datasets.length - 1
+            //     ) {
+            //       resolve("ok");
+            //     }
+            //   }
+            // );
 
             // todo----------------------------------------------------------------------------------
             // this.firstTabData = this.dataPackageResp.dataPackage.dataSets[1].currentTable
