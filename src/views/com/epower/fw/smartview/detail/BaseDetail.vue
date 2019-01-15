@@ -57,10 +57,10 @@
         </span>
         <div class="base-detail-container">
           <base-detail-grid
-            v-if="tab.componentSetModel.style === 'grid'&&settings[tab.componentSetModel.dataset]"
+            v-if="tab.componentSetModel.style === 'grid'"
             :tab="tab"
+            :dataLoaded="dataLoaded"
             :activeTab="activeTab"
-            :settings="settings[tab.componentSetModel.dataset]"
             :height="height"
             :componentSet="vDataView.getComponentSet(tab.componentSetModel.name)"
           />
@@ -120,7 +120,7 @@ export default {
       // masterPageData: [],disable by Max
       //firstTabData: [], disable by Max
       activeTab: "",
-      settings: [],
+      // settings: [],
       // settings: {
       //   data: [],
       //   dataSchema: {},
@@ -168,50 +168,50 @@ export default {
     console.log(this.$options.name, "this.$options.name------------basedetail");
   },
   methods: {
-    getSettings(settings, sourceData, index) {
-      settings.data = [].concat(sourceData);
-      this.UIMeta.detailViewModel.detailPages[
-        index
-      ].componentSetModel.components.forEach(theader => {
-        settings.colHeaders.push(theader.label);
-        settings.dataSchema[theader.field] = null;
-        settings.colWidths.push(
-          theader.width > 1
-            ? theader.width
-            : theader.width > 0 && theader.width <= 1
-            ? theader.width * 100 + "%"
-            : ""
-        );
-        settings.columns.push({
-          type: "autocomplete",
-          allowHtml: true,
-          renderer: this.coverRenderer,
-          data: theader.field
-        });
-      });
-    },
-    coverRenderer(instance, td, row, col, prop, value, cellProperties) {
-      const escaped = Handsontable.helper.stringify(value);
-      let img = null;
+    // getSettings(settings, sourceData, index) {
+    //   settings.data = [].concat(sourceData);
+    //   this.UIMeta.detailViewModel.detailPages[
+    //     index
+    //   ].componentSetModel.components.forEach(theader => {
+    //     settings.colHeaders.push(theader.label);
+    //     settings.dataSchema[theader.field] = null;
+    //     settings.colWidths.push(
+    //       theader.width > 1
+    //         ? theader.width
+    //         : theader.width > 0 && theader.width <= 1
+    //         ? theader.width * 100 + "%"
+    //         : ""
+    //     );
+    //     settings.columns.push({
+    //       type: "autocomplete",
+    //       allowHtml: true,
+    //       renderer: this.coverRenderer,
+    //       data: theader.field
+    //     });
+    //   });
+    // },
+    // coverRenderer(instance, td, row, col, prop, value, cellProperties) {
+    //   const escaped = Handsontable.helper.stringify(value);
+    //   let img = null;
 
-      if (escaped.indexOf("http") === 0) {
-        img = document.createElement("IMG");
-        img.src = value;
-        img.width = instance.getColWidth();
+    //   if (escaped.indexOf("http") === 0) {
+    //     img = document.createElement("IMG");
+    //     img.src = value;
+    //     img.width = instance.getColWidth();
 
-        Handsontable.dom.addEvent(img, "mousedown", function(event) {
-          event.preventDefault();
-        });
+    //     Handsontable.dom.addEvent(img, "mousedown", function(event) {
+    //       event.preventDefault();
+    //     });
 
-        Handsontable.dom.empty(td);
-        td.className = "htCenter htMiddle";
-        td.appendChild(img);
-      } else {
-        Handsontable.renderers.TextRenderer.apply(this, arguments);
-      }
+    //     Handsontable.dom.empty(td);
+    //     td.className = "htCenter htMiddle";
+    //     td.appendChild(img);
+    //   } else {
+    //     Handsontable.renderers.TextRenderer.apply(this, arguments);
+    //   }
 
-      return td;
-    },
+    //   return td;
+    // },
     calcTableHeight() {
       setTimeout(() => {
         this.height =
@@ -280,26 +280,26 @@ export default {
                   this.DetailDataStore.DataPackage.dataSets.forEach(
                     (dpItem, dpIndex) => {
                       if (item.name === dpItem.name) {
-                        this.settings[item.name] = {
-                          data: [],
-                          dataSchema: {},
-                          colHeaders: [],
-                          rowHeaders: false,
-                          columns: [],
-                          colWidths: [],
-                          rowHeights: 55,
-                          className: "htCenter htMiddle",
-                          contextMenu: true,
-                          manualColumnFreeze: true,
-                          fixedColumnsLeft: 0, // 冻结前n列
-                          fixedRowsTop: 0 // 冻结前n行
-                        };
+                        // this.settings[item.name] = {
+                        //   data: [],
+                        //   dataSchema: {},
+                        //   colHeaders: [],
+                        //   rowHeaders: false,
+                        //   columns: [],
+                        //   colWidths: [],
+                        //   rowHeights: 55,
+                        //   className: "htCenter htMiddle",
+                        //   contextMenu: true,
+                        //   manualColumnFreeze: true,
+                        //   fixedColumnsLeft: 0, // 冻结前n列
+                        //   fixedRowsTop: 0 // 冻结前n行
+                        // };
                         this.firstTabData = dpItem.currentTable;
-                        this.getSettings(
-                          this.settings[item.name],
-                          dpItem.currentTable,
-                          0
-                        );
+                        // this.getSettings(
+                        //   this.settings[item.name],
+                        //   dpItem.currentTable,
+                        //   0
+                        // );
                       }
                     }
                   );
