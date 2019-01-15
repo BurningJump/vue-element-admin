@@ -1,5 +1,5 @@
 <template>
-<div class="base-bill-detail-container">
+  <div class="base-bill-detail-container">
     <!-- <el-container v-if="UiLoaded&&dataLoaded">
       <el-header height="auto" id="qconHeader">
         <el-button-group>
@@ -36,59 +36,90 @@
           </el-form-item>
         </el-form>
       </el-main>
-    </el-container> -->
-    <base-detail-column v-if="UiLoaded&&dataLoaded" :tab="UIMeta.detailViewModel.masterPage" :inputData="masterPageData"/>
+
+    </el-container>
+
+    -->
+    <base-detail-column
+      v-if="UiLoaded&&dataLoaded"
+      :tab="UIMeta.detailViewModel.masterPage"
+      :componentSet="vDataView.getComponentSet(this.UIMeta.detailViewModel.masterPage.componentSetModel.name)"
+    />
     <el-tabs v-if="UiLoaded&&dataLoaded" v-model="activeTab" type="card" @tab-click="handleClick">
-      <el-tab-pane v-for="(tab,tabIndex) in UIMeta.detailViewModel.detailPages" :key="tab.name" :name="tab.name">
+      <el-tab-pane
+        v-for="(tab,tabIndex) in UIMeta.detailViewModel.detailPages"
+        :key="tab.name"
+        :name="tab.name"
+      >
         <span slot="label">
           <svg-icon :icon-class="`${tab.iconcls}`"/>
           {{tab.label}}
         </span>
         <div class="base-detail-container">
-          <base-detail-grid v-if="tab.componentSetModel.style === 'grid'&&settings[tab.componentSetModel.dataset]" :tab="tab" :activeTab="activeTab" :settings="settings[tab.componentSetModel.dataset]" :height="height"/>
-          <base-detail-a-grid v-else-if="tab.componentSetModel.style === 'aGrid'" :url="UIMeta.detailViewModel.datasetInfo.datasets[tabIndex].actionMethod" :tab="tab" :activeTab="activeTab" :listLoading="listLoading" :agridData="DetailDataStore.DataLists[tab.componentSetModel.dataset]" :height="height"/>
+          <base-detail-grid
+            v-if="tab.componentSetModel.style === 'grid'&&settings[tab.componentSetModel.dataset]"
+            :tab="tab"
+            :activeTab="activeTab"
+            :settings="settings[tab.componentSetModel.dataset]"
+            :height="height"
+          />
+          <base-detail-a-grid
+            v-else-if="tab.componentSetModel.style === 'aGrid'"
+            :url="UIMeta.detailViewModel.datasetInfo.datasets[tabIndex].actionMethod"
+            :tab="tab"
+            :activeTab="activeTab"
+            :listLoading="listLoading"
+            :agridData="DetailDataStore.DataLists[tab.componentSetModel.dataset]"
+            :height="height"
+            :componentSet="vDataView.getComponentSet(tab.componentSetModel.name)"
+          />
 
-          <!-- todo masterPageData要改成column的data -->
-          <base-detail-column v-else-if="tab.componentSetModel.style === 'column'" :tab="tab" :activeTab="activeTab" :inputData="masterPageData"/>
-          <!-- todo -->
-
+          <base-detail-column
+            v-else-if="tab.componentSetModel.style === 'column'"
+            :tab="tab"
+            :activeTab="activeTab"
+            :componentSet="vDataView.getComponentSet(tab.componentSetModel.name)"
+          />
         </div>
+
         <!-- <base-detail :url="UIMeta.detailViewModel.datasetInfo.datasets[tabIndex].actionMethod" :tab="tab" :activeTab="activeTab" :type="tab.componentSetModel.style" :settings="detailpageSettings" :height="height" :agridData="DetailDataStore.DataLists[tabIndex]"/> -->
       </el-tab-pane>
     </el-tabs>
   </div>
-  
 </template>
 
 <script>
-import { HotTable } from '@handsontable/vue'
-import Handsontable from 'handsontable';
-import BaseDetailAGrid from '@/views/com/epower/fw/smartview/detail/BaseDetailAGrid'
-import BaseDetailColumn from '@/views/com/epower/fw/smartview/detail/BaseDetailColumn'
-import BaseDetailGrid from '@/views/com/epower/fw/smartview/detail/BaseDetailGrid'
+import { HotTable } from "@handsontable/vue";
+import Handsontable from "handsontable";
+import BaseDetailAGrid from "@/views/com/epower/fw/smartview/detail/BaseDetailAGrid";
+import BaseDetailColumn from "@/views/com/epower/fw/smartview/detail/BaseDetailColumn";
+import BaseDetailGrid from "@/views/com/epower/fw/smartview/detail/BaseDetailGrid";
+import VDataView from "@/smartview/VDataView.js";
+import VComponentSet from "@/smartview/VComponentSet.js";
 export default {
   data() {
     return {
-      UIapi: '',
+      UIapi: "",
       options4: [],
       listLoading: false,
       defaultProps: {
-        children: 'children',
-        label: 'label'
+        children: "children",
+        label: "label"
       },
-      UiLoaded: false,  // UI获取完成
-      dataLoaded: false,  // 数据获取完成
+      UiLoaded: false, // UI获取完成
+      dataLoaded: false, // 数据获取完成
       height: 600, // 表头高度
-      UIMeta: '',
-      dataPackageResp: '',
-      DetailDataStore: {  // DetailDataStore.Datapackage = dataPackageResp.datapackage, detailDataStore.DataLists = agrid的返回List, detailDataStore.DataSetMetas = detailViewModel.datasetInfo
+      UIMeta: "",
+      dataPackageResp: "",
+      DetailDataStore: {
+        // DetailDataStore.Datapackage = dataPackageResp.datapackage, detailDataStore.DataLists = agrid的返回List, detailDataStore.DataSetMetas = detailViewModel.datasetInfo
         DataPackage: [],
         DataLists: [],
         DataSetMetas: []
       },
       masterPageData: [],
       firstTabData: [],
-      activeTab: '',
+      activeTab: "",
       settings: [],
       // settings: {
       //   data: [],
@@ -104,15 +135,16 @@ export default {
       //   fixedColumnsLeft: 0,    // 冻结前n列
       //   fixedRowsTop: 0,     // 冻结前n行
       // },
-      url: '',
+      url: "",
       tab: Object,
       agridData: Array,
-    }
+      vDataView: VDataView //add by max
+    };
   },
   components: {
     BaseDetailAGrid,
     BaseDetailColumn,
-    BaseDetailGrid,
+    BaseDetailGrid
   },
   mounted() {
     // Promise.all([this.getUIMeta(), this.getMultiData()]).then(() => {
@@ -123,49 +155,56 @@ export default {
     //   this.getSettings(this.detailpageSettings, this.firstTabData, 0)
     // })
     // this.getUIapi().then(() => {
-      this.getUIMeta().then(() => {
-        this.UiLoaded = true
-        this.DetailDataStore.DataSetMetas = this.UIMeta.detailViewModel.datasetInfo
-        this.getMultiData().then(() => {
-          this.dataLoaded = true
-          // this.getSettings(this.detailpageSettings, this.firstTabData, 0)
-        })
-      })
+    this.getUIMeta().then(() => {
+      this.UiLoaded = true;
+      this.DetailDataStore.DataSetMetas = this.UIMeta.detailViewModel.datasetInfo;
+      this.getMultiData().then(() => {
+        this.dataLoaded = true;
+        // this.getSettings(this.detailpageSettings, this.firstTabData, 0)
+      });
+    });
     // })
-    this.calcTableHeight()
-    console.log(this.$options.name,'this.$options.name------------basedetail');
-    
+    this.calcTableHeight();
+    console.log(this.$options.name, "this.$options.name------------basedetail");
   },
   methods: {
     getSettings(settings, sourceData, index) {
-      settings.data = [].concat(sourceData)
-      this.UIMeta.detailViewModel.detailPages[index].componentSetModel.components.forEach(theader => {
-        settings.colHeaders.push(theader.label)
-        settings.dataSchema[theader.field] = null
-        settings.colWidths.push(theader.width > 1 ? theader.width : theader.width > 0 && theader.width <= 1 ? theader.width*100 + '%' : '')
+      settings.data = [].concat(sourceData);
+      this.UIMeta.detailViewModel.detailPages[
+        index
+      ].componentSetModel.components.forEach(theader => {
+        settings.colHeaders.push(theader.label);
+        settings.dataSchema[theader.field] = null;
+        settings.colWidths.push(
+          theader.width > 1
+            ? theader.width
+            : theader.width > 0 && theader.width <= 1
+            ? theader.width * 100 + "%"
+            : ""
+        );
         settings.columns.push({
-          type: 'autocomplete',
+          type: "autocomplete",
           allowHtml: true,
           renderer: this.coverRenderer,
-          data: theader.field,
-        })
+          data: theader.field
+        });
       });
     },
-    coverRenderer (instance, td, row, col, prop, value, cellProperties) {
+    coverRenderer(instance, td, row, col, prop, value, cellProperties) {
       const escaped = Handsontable.helper.stringify(value);
       let img = null;
 
-      if (escaped.indexOf('http') === 0) {
-        img = document.createElement('IMG');
+      if (escaped.indexOf("http") === 0) {
+        img = document.createElement("IMG");
         img.src = value;
-        img.width = instance.getColWidth()
+        img.width = instance.getColWidth();
 
-        Handsontable.dom.addEvent(img, 'mousedown', function(event) {
+        Handsontable.dom.addEvent(img, "mousedown", function(event) {
           event.preventDefault();
         });
 
         Handsontable.dom.empty(td);
-        td.className = 'htCenter htMiddle'
+        td.className = "htCenter htMiddle";
         td.appendChild(img);
       } else {
         Handsontable.renderers.TextRenderer.apply(this, arguments);
@@ -175,9 +214,15 @@ export default {
     },
     calcTableHeight() {
       setTimeout(() => {
-        this.height = window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 190
+        this.height =
+          window.innerHeight -
+          parseInt(
+            window.getComputedStyle(document.getElementById("qconHeader"), null)
+              .height
+          ) -
+          190;
         // this.height = (window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 100) + 'px'
-      })
+      });
     },
     // getUIapi() {
     //   return new Promise((resolve, reject) => {
@@ -187,59 +232,84 @@ export default {
     // },
     getUIMeta() {
       return new Promise((resolve, reject) => {
-        this.$http.get(`http://root.yiuser.com:3001/getDetailUIMeta/${this.$options.name}`).then((res) => {
-          this.UIMeta = res.data
-          this.activeTab = this.UIMeta.detailViewModel.detailPages[0].name
-          resolve('ok')
-        })
-      })
+        this.$http
+          .get(
+            `http://root.yiuser.com:3001/getDetailUIMeta/${this.$options.name}`
+          )
+          .then(res => {
+            this.UIMeta = res.data;
+            this.activeTab = this.UIMeta.detailViewModel.detailPages[0].name;
+            this.vDataView = new VDataView(); //add by max
+            this.vDataView.initByDetail(res.data.detailViewModel); //add by max
+            resolve("ok");
+          });
+      });
     },
     // UIMeta.detailViewModel.datasetInfo.datasets.name = UIMeta.detailViewModel.detailPages.componentSetModel.dataset = dataPackageResp.dataPackage.dataSets.name
     // UIMeta.detailViewModel.detasetInfo.datasets.Datasource
     getMultiData() {
       return new Promise((resolve, reject) => {
         if (this.UIMeta.detailViewModel.actionUrl) {
-          this.$http.get(this.UIMeta.detailViewModel.actionUrl).then((res) => {
-            this.dataPackageResp = res.data
-            this.DetailDataStore.DataPackage = this.dataPackageResp.dataPackage
+          this.$http.get(this.UIMeta.detailViewModel.actionUrl).then(res => {
+            this.dataPackageResp = res.data;
+            this.DetailDataStore.DataPackage = this.dataPackageResp.dataPackage;
+            this.vDataView.loadDataByPackage(this.DetailDataStore.DataPackage); //add by max
+            this.vDataView.openAll(); //add by max
+
 
             this.DetailDataStore.DataPackage.dataSets.forEach((item, index) => {
-              if (item.name === this.UIMeta.detailViewModel.masterPage.componentSetModel.dataset) {
-                this.masterPageData = item.currentTable[0]
+              if (
+                item.name ===
+                this.UIMeta.detailViewModel.masterPage.componentSetModel.dataset
+              ) {
+                this.masterPageData = item.currentTable[0];
               }
-            })
+            });
 
-            this.UIMeta.detailViewModel.datasetInfo.datasets.forEach((item, index) => {
-              if (item.datasource === 'ajaxRequest') {
-                this.$http.get(item.actionMethod).then((res) => {
-                  this.DetailDataStore.DataLists[item.name] = [].concat(res.data.resultList)
-                })
-              } else if (item.datasource === 'dataPackage') {
-                this.DetailDataStore.DataPackage.dataSets.forEach((dpItem, dpIndex) => {
-                  if (item.name === dpItem.name) {
-                    this.settings[item.name] = {
-                      data: [],
-                      dataSchema: {},
-                      colHeaders: [],
-                      rowHeaders: false,
-                      columns: [],
-                      colWidths: [],
-                      rowHeights: 55,
-                      className: 'htCenter htMiddle',
-                      contextMenu: true,
-                      manualColumnFreeze: true,
-                      fixedColumnsLeft: 0,    // 冻结前n列
-                      fixedRowsTop: 0,     // 冻结前n行
+            this.UIMeta.detailViewModel.datasetInfo.datasets.forEach(
+              (item, index) => {
+                if (item.datasource === "ajaxRequest") {
+                  this.$http.get(item.actionMethod).then(res => {
+                    this.DetailDataStore.DataLists[item.name] = [].concat(
+                      res.data.resultList
+                    );
+                  });
+                } else if (item.datasource === "dataPackage") {
+                  this.DetailDataStore.DataPackage.dataSets.forEach(
+                    (dpItem, dpIndex) => {
+                      if (item.name === dpItem.name) {
+                        this.settings[item.name] = {
+                          data: [],
+                          dataSchema: {},
+                          colHeaders: [],
+                          rowHeaders: false,
+                          columns: [],
+                          colWidths: [],
+                          rowHeights: 55,
+                          className: "htCenter htMiddle",
+                          contextMenu: true,
+                          manualColumnFreeze: true,
+                          fixedColumnsLeft: 0, // 冻结前n列
+                          fixedRowsTop: 0 // 冻结前n行
+                        };
+                        this.firstTabData = dpItem.currentTable;
+                        this.getSettings(
+                          this.settings[item.name],
+                          dpItem.currentTable,
+                          0
+                        );
+                      }
                     }
-                    this.firstTabData = dpItem.currentTable
-                    this.getSettings(this.settings[item.name], dpItem.currentTable, 0)
-                  }
-                })
+                  );
+                }
+                if (
+                  index ===
+                  this.UIMeta.detailViewModel.datasetInfo.datasets.length - 1
+                ) {
+                  resolve("ok");
+                }
               }
-              if (index === this.UIMeta.detailViewModel.datasetInfo.datasets.length - 1) {
-                resolve('ok')
-              }
-            })
+            );
 
             // todo----------------------------------------------------------------------------------
             // this.firstTabData = this.dataPackageResp.dataPackage.dataSets[1].currentTable
@@ -264,15 +334,14 @@ export default {
             //     this.getSettings(this.settings[index], this.firstTabData, 0)
             //   }
             // })
-          })
+          });
         }
-        
-      })
+      });
     },
     remoteMethod() {},
     handleClick() {}
   }
-}
+};
 </script>
 
 <style lang="scss">
@@ -292,7 +361,9 @@ export default {
   .el-form-item {
     margin-bottom: 3px;
   }
-  .el-form-item, .el-select, .el-input {
+  .el-form-item,
+  .el-select,
+  .el-input {
     width: 100%;
   }
   .el-input__inner {
