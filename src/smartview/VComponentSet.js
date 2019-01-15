@@ -6,7 +6,7 @@ export default class VComponentSet {
     name;
     datasetName;
     dataList; // 保存可视数据列表
-    rowIndex = -1;// 当前数据展现行号 因为数组是从零开始
+    rowIndex = -1;// 当前数据展现行号,零代表第一行，因为js的数组是从零开始
     components=[];// 展示对象
 
     /**
