@@ -77,7 +77,7 @@
           </el-button-group>
         </div>
       </div>
-      <pagination v-show="list.length>0" :total="list.length" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList"/>
+      <pagination v-show="list[view.name].length>0" :total="list[view.name].length" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList"/>
     </el-footer>
   </div>
 </template>

@@ -14,6 +14,7 @@ export default {
     control: '控件组件',
     dpshoporder: '网店订单',
     DpShopOrderDetail: '网店订单明细',
+    DpShopOrderForsupplyList: '网店订单列表',
     directivePermission: '指令权限',
     icons: '图标',
     components: '组件',
