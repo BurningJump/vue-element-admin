@@ -23,7 +23,7 @@
         </div>
       </div>
       <el-table ref="multipleTable" :data="list[view.name]" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="height" :cell-style="cellStyle" :row-style="rowStyle">
-        <!-- <el-table-column type="selection" align="center"/> -->
+        <el-table-column type="selection" align="center"/>
         <el-table-column v-for="(header, index) in grid[view.name]" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="view.gridFixColumn > index" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
           <template slot-scope="scope">
             <img v-if="header.ctype === 'image'" :src="scope.row[header.prop]" :width="header.width">
