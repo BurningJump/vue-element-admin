@@ -50,7 +50,7 @@
       <el-main v-if="activeTab === tab.name">
         <div class="handson-table-container" :style="{height: height+'px'}">
           <div class="wrapper">
-            <hot-table :root="root" :settings="settings"></hot-table>
+            <hot-table v-if="settings" :root="root" :settings="settings"></hot-table>
           </div>
         </div>
       </el-main>
@@ -67,7 +67,7 @@ export default {
   data() {
     return {
       root: 'test-hot',
-      settings: '',
+      settings: null,
     }
   },
   props: ['tab', 'activeTab', 'height','componentSet', 'dataLoaded'],
@@ -95,21 +95,19 @@ export default {
         fixedColumnsLeft: 0, // 冻结前n列
         fixedRowsTop: 0 // 冻结前n行
       }
-      this.tab.componentSetModel.components.forEach(theader => {
+      this.componentSet.components.forEach(theader => {
         this.settings.colHeaders.push(theader.label);
-        this.settings.dataSchema[theader.field] = null;
+        this.settings.dataSchema[theader.fieldName] = null;
         this.settings.colWidths.push(
           theader.width > 1
             ? theader.width
-            : theader.width > 0 && theader.width <= 1
-            ? theader.width * 100 + "%"
             : ""
         );
         this.settings.columns.push({
           type: "autocomplete",
           allowHtml: true,
           renderer: this.coverRenderer,
-          data: theader.field
+          data: theader.fieldName
         });
       });
     },
@@ -120,6 +118,7 @@ export default {
       if (escaped.indexOf('http') === 0) {
         img = document.createElement('IMG');
         img.src = value;
+        img.width = instance.getColWidth()
 
         Handsontable.dom.addEvent(img, 'mousedown', function (e){
           e.preventDefault(); // prevent selection quirk
