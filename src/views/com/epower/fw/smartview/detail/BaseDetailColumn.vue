@@ -46,20 +46,6 @@
             v-if="input.ctype === 'textfield' || input.ctype === 'valuelistField' ||input.ctype === 'remoteComboBox' "
             v-model="input.value"
           />
-          <!--
-             <el-input v-if="input.ctype === 'textfield' || input.ctype === 'valuelistField'" v-model="inputData[input.field]"/>
-            <el-input v-if="input.ctype === 'textfield' || input.ctype === 'valuelistField'" v-model="components[input.field]"/>
-
-
-
-          <el-select v-else-if="input.ctype === 'remoteComboBox'" v-model="input.value" :remote-method="remoteMethod" multiple filterable remote reserve-keyword>
-            <el-option v-for="item in options4" :key="item.value" :label="item.label" :value="item.value"/>
-          </el-select>
-          -->
-
-
-
-
           <el-checkbox v-else-if="input.ctype === 'checkboxField'" v-model="input.value"/>
           <el-date-picker v-else-if="input.ctype === 'dateField'" v-model="input.value" type="date"/>
           <el-date-picker v-else-if="input.ctype === 'dateTimeField'" v-model="input.value" type="datetime"/>
@@ -68,7 +54,6 @@
           <el-select v-else-if="input.ctype === 'comboBox'" v-model="input.value" filterable>
             <el-option v-for="item in input.enumModel.items" :key="item.name" :label="item.label" :value="item.value"/>
           </el-select>
-
 
         </el-form-item>
       </el-form>

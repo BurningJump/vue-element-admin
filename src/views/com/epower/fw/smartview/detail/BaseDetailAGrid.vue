@@ -109,7 +109,6 @@ export default {
 
 
   mounted() {
-    console.log(this.$options.name, "this.$options.name------------agrid")
     this.getList();
   },
 

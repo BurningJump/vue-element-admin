@@ -73,103 +73,6 @@
                 {{tab.label}}
               </span>
               <base-list-grid v-for="view in UIMeta.listViewModel.dataView.views" v-if="view.viewType === 'grid' && tab.viewName === view.name" :view="view" :height="tableHeight" :list="list" :grid="grid"/>
-              <!-- <el-main style="padding:0;">
-                <div class="topToolbar">
-                  <div v-for="gridList in UIMeta.listViewModel.dataView.views" v-if="tab.viewName === gridList.name || tab.view_name === gridList.name">
-                    <el-button-group>
-                      <el-button v-for="btn in gridList.topToolbar.components" v-if="!btn.isMore" size="mini">
-                        <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
-                        <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
-                        <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
-                        <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
-                        {{btn.label}}
-                      </el-button>
-                      <el-dropdown v-if="gridList.topToolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
-                        <el-button size="mini">
-                          更多<i class="el-icon-arrow-down el-icon--right"></i>
-                        </el-button>
-                        <el-dropdown-menu slot="dropdown">
-                          <el-dropdown-item v-for="btn in gridList.topToolbar.components" v-if="btn.isMore">
-                            <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
-                            <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
-                            <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
-                            <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
-                            {{btn.label}}
-                          </el-dropdown-item>
-                        </el-dropdown-menu>
-                      </el-dropdown>
-                    </el-button-group>
-                  </div>
-                </div>
-                <el-table v-for="gridList in UIMeta.listViewModel.dataView.views" v-if="tab.viewName === gridList.name || tab.view_name === gridList.name" ref="multipleTable" :data="list[gridList.name]" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight" :cell-style="cellStyle" :row-style="rowStyle">
-                  <el-table-column type="selection" align="center"/>
-                  <el-table-column v-for="(header, index) in grid[gridList.name]" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="gridList.gridFixColumn > index" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
-                    <template slot-scope="scope">
-                      <img v-if="header.ctype === 'image'" :src="scope.row[header.prop]" :width="header.width">
-                      <div v-else-if="header.ctype === 'valuelistField'" v-html="scope.row[header.prop][header.valueListModel.displayField]"></div>
-                      <div v-else v-html="scope.row[header.prop]"></div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column fixed="right" label="操作" width="auto" align="center">
-                    <template slot-scope="scope">
-                      <el-button-group>
-                        <el-tooltip v-for="btn in gridList.rowToolbar.components" v-if="!btn.isMore" class="item" effect="dark" :content="btn.label" placement="top">
-                          <el-button @click="handleClick(scope.$index, scope.row, btn.fun)" size="mini">
-                            <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
-                            <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
-                            <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
-                            <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
-                          </el-button>
-                        </el-tooltip>
-                        <el-dropdown v-if="gridList.rowToolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
-                          <el-button size="mini">
-                            <i class="el-icon-arrow-down el-icon--right" style="margin-left:0;"></i>
-                          </el-button>
-                          <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item v-for="btn in gridList.rowToolbar.components" v-if="btn.isMore">
-                              <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
-                              <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
-                              <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
-                              <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
-                              {{btn.label}}
-                            </el-dropdown-item>
-                          </el-dropdown-menu>
-                        </el-dropdown>
-                      </el-button-group>
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </el-main> -->
-              <!-- <el-footer style="height:auto;">
-                <div class="footerToolbar">
-                  <div v-for="gridList in UIMeta.listViewModel.dataView.views" v-if="tab.viewName === gridList.name || tab.view_name === gridList.name">
-                    <el-button-group>
-                      <el-button v-for="btn in gridList.footerToolbar.components" v-if="!btn.isMore" size="mini">
-                        <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
-                        <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
-                        <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
-                        <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
-                        {{btn.label}}
-                      </el-button>
-                      <el-dropdown v-if="gridList.footerToolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
-                        <el-button size="mini">
-                          更多<i class="el-icon-arrow-down el-icon--right"></i>
-                        </el-button>
-                        <el-dropdown-menu slot="dropdown">
-                          <el-dropdown-item v-for="btn in gridList.footerToolbar.components" v-if="btn.isMore">
-                            <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
-                            <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
-                            <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
-                            <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
-                            {{btn.label}}
-                          </el-dropdown-item>
-                        </el-dropdown-menu>
-                      </el-dropdown>
-                    </el-button-group>
-                  </div>
-                </div>
-                <pagination v-show="list.length>0" :total="list.length" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList"/>
-              </el-footer> -->
             </el-tab-pane>
           </el-tabs>
         </el-main>
@@ -188,13 +91,11 @@
 <script>
 import BaseListGrid from '@/views/com/epower/fw/smartview/list/BaseListGrid'
 import BaseDetailCard from '@/views/com/epower/fw/smartview/list/BaseDetailCard'
-// import Pagination from '@/components/Pagination'
 export default{
   name: 'com.epower.fw.smartview.list.BaseList',
   components: {
     BaseListGrid,
     BaseDetailCard,
-    // Pagination,
   },
   // extends: {BaseListGrid,BaseDetailCard},
   data() {
@@ -219,7 +120,6 @@ export default{
       treeRoot: {},
       treeChild: {},
       treeGrandchild: {},
-      buttons: [],
       tree: [],
       grid: [],
       list: [],
@@ -227,7 +127,6 @@ export default{
         page: 1,
         limit: 20
       },
-      listGridData: '',
       multipleSelection: [],
       data: [
         {
@@ -361,7 +260,6 @@ export default{
           this.treeRoot = JSON.parse(JSON.stringify(res.data))
           this.$http.get(`http://root.yiuser.com:3001/${this.UIMeta.listViewModel.tree.actionUrl}/${this.UIMeta.listViewModel.tree.method}`).then((res) => {
             this.treeChild = JSON.parse(JSON.stringify(res.data))
-            // this.$http.get('http://root.yiuser.com:3001/openapi/treeGrandChild').then((res) => {
             this.$http.get(`http://root.yiuser.com:3001/${this.UIMeta.listViewModel.tree.actionUrl}/${this.UIMeta.listViewModel.tree.method}`).then((res) => {
               this.treeGrandchild = JSON.parse(JSON.stringify(res.data))
               resolve(true)
@@ -429,9 +327,8 @@ export default{
           this.UIMeta.listViewModel.querys.forEach((query, qIndex) => {
             if (view.queryName === query.name) {
               this.$http.get(`http://root.yiuser.com:3001/${query.actionUrl}/${query.queryMethod}`).then((res) => {
-                this.listGridData = res.data
                 this.list[view.name] = []
-                this.listGridData.resultList.forEach((item, index) => {
+                res.data.resultList.forEach((item, index) => {
                   this.list[view.name][index] = {}
                   this.grid[view.name].forEach((thead, tIndex) => {
                     this.list[view.name][index][thead.prop] = item[thead.prop]
@@ -456,46 +353,8 @@ export default{
       // console.log(data,node,ref)
     },
     handleNodeClick(data, node, ref) {
-    //   // 点击节点时获取子节点及表数据
+      // 点击节点时获取子节点及表数据
       console.log(data, node, ref)
-    //   if (data.children && data.children.length > 0) {
-    //     // 已加载过节点
-    //     return
-    //   }
-    //   if (data.children && data.children.length === 0) {
-    //     // 获取子节点
-    //     if (node.level === 1) {
-    //       this.treeChild.forEach((child) => {
-    //         if (!child.leaf) {
-    //           data.children.push({
-    //             label: child.text,
-    //             children: []
-    //           })
-    //         } else {
-    //           data.children.push({
-    //             label: child.text
-    //           })
-    //         }
-    //       })
-    //     } else if (node.level === 2) {
-    //       this.treeGrandchild.forEach((grandchild) => {
-    //         if (!grandchild.leaf) {
-    //           data.children.push({
-    //             label: grandchild.text,
-    //             children: []
-    //           })
-    //         } else {
-    //           data.children.push({
-    //             label: grandchild.text
-    //           })
-    //         }
-    //       })
-    //     }
-    //   }
-    //   if (node.isLeaf) {
-    //     // 叶节点，加载表数据
-    //     console.log('加载叶节点数据')
-    //   }
     },
     resetForm() {
       Object.keys(this.conditionForm).forEach(key => obj[key] = '');

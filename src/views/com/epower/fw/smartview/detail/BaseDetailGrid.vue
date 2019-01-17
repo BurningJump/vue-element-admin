@@ -64,21 +64,10 @@ import Handsontable from 'handsontable'
 
 export default {
   name: 'com.epower.fw.smartview.detail.BaseDetailGrid',
-  data: function() {
+  data() {
     return {
       root: 'test-hot',
       settings: '',
-      // settings: {
-      //   data: [
-      //     {id: 1, name: 'Ted Right', address: ''},
-      //     {id: 2, name: 'Frank Honest', address: ''},
-      //     {id: 3, name: 'Joan Well', address: ''},
-      //     {id: 4, name: 'Gail Polite', address: ''},
-      //     {id: 5, name: 'Michael Fair', address: ''},
-      //   ],
-      //   colHeaders: true,
-      //   rowHeaders: true,
-      // }
     }
   },
   props: ['tab', 'activeTab', 'height','componentSet', 'dataLoaded'],
