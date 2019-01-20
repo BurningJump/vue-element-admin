@@ -19,6 +19,9 @@ import './errorLog' // error log
 import './permission' // permission control
 // import './mock' // simulation data
 
+import VueBus from 'vue-bus';
+Vue.use(VueBus);
+
 import axios from 'axios'
 Vue.prototype.$http = axios;
 axios.defaults.baseURL = 'http://root.yiuser.com:3001/'

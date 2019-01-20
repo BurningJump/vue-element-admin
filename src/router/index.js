@@ -71,6 +71,15 @@ export const asyncRouterMap = [
           title: 'operationList',
           roles: ['admin'] // or you can only set roles in sub nav
         }
+      },
+      {
+        path: 'SelectList',
+        component: () => import('@/views/com/epower/am/operation/SelectList'),
+        name: 'com.epower.am.operation.SelectList',
+        meta: {
+          title: 'SelectList',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
       }
     ]
   },
