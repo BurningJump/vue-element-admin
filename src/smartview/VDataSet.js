@@ -7,6 +7,12 @@ export default class VDataSet {
   originalTable = null;// 原始记录
   updateLogs = null; // 更新记录
 
+
+  /**
+* 預設默認值集
+*/
+  defaultValueSet = [];
+
   constructor(datasetMeta) {
     this.init(datasetMeta)
   }
@@ -248,5 +254,55 @@ export default class VDataSet {
 
     result = true
     return result
+  }
+
+  /**
+	 * 設置默認值
+	 * @param datasetName
+	 * @param fieldName
+	 * @param value
+	 */
+  setDefaultValue(fieldName, value) {
+    this.defaultValueSet.push(
+      {
+        fieldName: fieldName,
+        value: value
+
+      })
+  }
+
+  /**
+ * 替代默認值
+ * @param datasetName
+ * @param dataObject
+ * @returns 替代後的dataObject
+ */
+  replaceDefaultValue(dataObject) {
+    for (var i = 0; i < this.defaultValueSet.length; i++) {
+      var value = null
+      if (typeof this.defaultValueSet[i].value === 'function') {
+        var fun = this.defaultValueSet[i].value
+        value = fun()
+      } else {
+        value = this.defaultValueSet[i].value
+      }
+      dataObject[this.defaultValueSet[i].fieldName] = value
+    }
+    return dataObject
+  }
+
+  isChanged() {
+    if (this.updateLogs !== null && this.updateLogs.length > 0) {
+      return true
+    }
+    var currDatas = this.currentTable
+    if (currDatas != null && currDatas.length > 0) {
+      for (var i = 0; i < currDatas.length; i++) {
+        if (currDatas[i].entityStatus === 'I' || currDatas[i].entityStatus === 'D') {
+          return true
+        }
+      }
+    }
+    return false
   }
 }

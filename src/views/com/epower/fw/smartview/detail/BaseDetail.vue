@@ -59,12 +59,12 @@ export default {
   data() {
     return {
       UIapi: "",
-      options4: [],
+     // options4: [],
       listLoading: false,
-      defaultProps: {
-        children: "children",
-        label: "label"
-      },
+      // defaultProps: {
+      //   children: "children",
+      //   label: "label"
+      // },
       UiLoaded: false, // UI获取完成
       dataLoaded: false, // 数据获取完成
       height: 600, // 表头高度
@@ -83,7 +83,7 @@ export default {
   mounted() {
     this.getUIMeta().then(() => {
       this.UiLoaded = true;
-      this.getMultiData().then(() => {
+      this.getDetailData().then(() => {
         this.dataLoaded = true;
       });
     });
@@ -119,7 +119,7 @@ export default {
     },
     // UIMeta.detailViewModel.datasetInfo.datasets.name = UIMeta.detailViewModel.detailPages.componentSetModel.dataset = dataPackageResp.dataPackage.dataSets.name
     // UIMeta.detailViewModel.detasetInfo.datasets.Datasource
-    getMultiData() {
+    getDetailData() {
       return new Promise((resolve, reject) => {
         if (this.UIMeta.detailViewModel.actionUrl) {
           this.$http.get(this.UIMeta.detailViewModel.actionUrl).then(res => {
