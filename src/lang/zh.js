@@ -6,7 +6,7 @@ export default {
     guide: '引导页',
     operation: '权限',
     operationList: '权限项列表',
-    SelectList: '选择-施工队',
+    SelectList: '施工队',
     pagePermission: '页面权限',
     edit: '编辑界面',
     invrequest: '物资申报单',

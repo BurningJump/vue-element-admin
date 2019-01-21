@@ -1,159 +1,170 @@
 <template>
   <div class="app-container">
-    <el-container v-if="UiLoaded">
-      <el-header height="auto" id="qconHeader">
-        <el-form :inline="true" :model="conditionForm" ref="conditionForm" class="demo-ruleForm" label-width="100px" size="mini">
-          <el-form-item v-for="condition in UIMeta.selectViewModel.qCondition.components" v-if="!condition.isMore" :key="condition.label" :style="{width: (condition.width <= 1 ? condition.width*100 + '%' : condition.width + 'px')}" :label="condition.label" :prop="conditionForm[condition.findField]">
-            <el-input v-model="conditionForm[condition.findField]"/>
-          </el-form-item>
-          <el-form-item v-for="condition in UIMeta.selectViewModel.qCondition.components" v-if="condition.isMore && showMoreCondition" :key="condition.label" :style="{width: (condition.width <= 1 ? condition.width*100 + '%' : condition.width + 'px')}" :label="condition.label" :prop="conditionForm[condition.findField]">
-            <el-input v-model="conditionForm[condition.findField]"/>
-          </el-form-item>
-          <el-form-item :style="{width: 'auto'}">
-            <el-button-group>
-              <el-button size="mini" icon="el-icon-search">查询</el-button>
-              <el-button size="mini" @click="resetForm()" icon="el-icon-close">重置</el-button>
-              <el-button size="mini" @click="showMoreCondition=!showMoreCondition;calcTableHeight()">
-                <span v-show="!showMoreCondition">更多</span>
-                <span v-show="showMoreCondition">收起</span>
-                <i v-if="!showMoreCondition" class="el-icon-arrow-down"></i>
-                <i v-if="showMoreCondition" class="el-icon-arrow-up"></i>
-              </el-button>
-            </el-button-group>
-          </el-form-item>
-        </el-form>
-      </el-header>
-      <el-container>
-        <el-aside width="200px" :style="{'height': treeHeight, 'padding': '0 5px'}">
-          <div class="tree-toolbar" v-if="UIMeta.selectViewModel.tree.toolbar">
-            <el-button-group>
-              <el-tooltip class="item" effect="dark" v-for="btn in UIMeta.selectViewModel.tree.toolbar.components" :content="btn.label" placement="top">
-                <el-button v-if="btn.fun === 'new'" size="mini" icon="el-icon-document"></el-button>
-                <el-button v-else-if="btn.fun === 'view'" size="mini" icon="el-icon-view"></el-button>
-              </el-tooltip>
-              <el-tooltip class="item" effect="dark" content="更多" placement="top">
-                <el-dropdown v-if="UIMeta.selectViewModel.tree.toolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
-                  <el-button size="mini">
+    <el-dialog
+      title=""
+      :visible.sync="dialogVisible"
+      width="100%"
+      :modal-append-to-body="false"
+      center>
+      <el-container v-if="UiLoaded">
+        <el-header height="auto" id="qconHeader">
+          <el-form :inline="true" :model="conditionForm" ref="conditionForm" class="demo-ruleForm" label-width="100px" size="mini">
+            <el-form-item v-for="condition in UIMeta.selectViewModel.qCondition.components" v-if="!condition.isMore" :key="condition.label" :style="{width: (condition.width <= 1 ? condition.width*100 + '%' : condition.width + 'px')}" :label="condition.label" :prop="conditionForm[condition.findField]">
+              <el-input v-model="conditionForm[condition.findField]"/>
+            </el-form-item>
+            <el-form-item v-for="condition in UIMeta.selectViewModel.qCondition.components" v-if="condition.isMore && showMoreCondition" :key="condition.label" :style="{width: (condition.width <= 1 ? condition.width*100 + '%' : condition.width + 'px')}" :label="condition.label" :prop="conditionForm[condition.findField]">
+              <el-input v-model="conditionForm[condition.findField]"/>
+            </el-form-item>
+            <el-form-item :style="{width: 'auto'}">
+              <el-button-group>
+                <el-button size="mini" icon="el-icon-search">查询</el-button>
+                <el-button size="mini" @click="resetForm()" icon="el-icon-close">重置</el-button>
+                <el-button size="mini" @click="showMoreCondition=!showMoreCondition;calcTableHeight()">
+                  <span v-show="!showMoreCondition">更多</span>
+                  <span v-show="showMoreCondition">收起</span>
+                  <i v-if="!showMoreCondition" class="el-icon-arrow-down"></i>
+                  <i v-if="showMoreCondition" class="el-icon-arrow-up"></i>
+                </el-button>
+              </el-button-group>
+            </el-form-item>
+          </el-form>
+        </el-header>
+        <el-container>
+          <el-aside width="200px" :style="{'height': treeHeight, 'padding': '0 5px'}">
+            <div class="tree-toolbar" v-if="UIMeta.selectViewModel.tree.toolbar">
+              <el-button-group>
+                <el-tooltip class="item" effect="dark" v-for="btn in UIMeta.selectViewModel.tree.toolbar.components" :content="btn.label" placement="top">
+                  <el-button v-if="btn.fun === 'new'" size="mini" icon="el-icon-document"></el-button>
+                  <el-button v-else-if="btn.fun === 'view'" size="mini" icon="el-icon-view"></el-button>
+                </el-tooltip>
+                <el-tooltip class="item" effect="dark" content="更多" placement="top">
+                  <el-dropdown v-if="UIMeta.selectViewModel.tree.toolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
+                    <el-button size="mini">
+                      <i class="el-icon-arrow-down el-icon--right" style="margin-left:0;"></i>
+                    </el-button>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item v-for="btn in UIMeta.selectViewModel.tree.toolbar.components" v-if="btn.isMore">
+                        <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
+                        <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
+                        <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
+                        <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
+                        {{btn.label}}
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                </el-tooltip>
+              </el-button-group>
+            </div>
+            <div class="tree-container">
+              <el-tree :data="tree" :props="defaultProps" highlight-current @node-expand="handleNodeExpand" @node-click="handleNodeClick">
+                <!-- <span class="custom-tree-node" slot-scope="{ node, data }">
+                  <span v-if="node.isLeaf">
+                    <i v-if="data.iconcls === 'table_add'" class="el-icon-plus"/>
+                    <i v-else-if="data.iconcls === 'table_delete'" class="el-icon-delete"/>
+                    <i v-else-if="data.iconcls === 'table_edit'" class="el-icon-edit"/>
+                    {{ node.label }}
+                  </span>
+                  <span v-if="!node.isLeaf">
+                    {{ node.label }}
+                  </span>
+                </span> -->
+              </el-tree>
+            </div>
+          </el-aside>
+          <el-container>
+            <el-header
+              v-if="UIMeta.selectViewModel.toolbar.components.length > 0"
+              height="35px" style="display: flex; justify-content: space-between;"
+            >
+              <el-button-group v-if="UIMeta.selectViewModel.toolbar.components.length > 0">
+                <el-button
+                  v-for="btn in UIMeta.selectViewModel.toolbar.components"
+                  v-if="UIMeta.selectViewModel.toolbar.components.length > 0 && !btn.isMore"
+                  :key="btn.label"
+                  size="mini"
+                >
+                  <svg-icon :icon-class="`${btn.iconcls}`"/>
+                  {{ btn.label }}
+                </el-button>
+                <el-dropdown
+                  v-if="UIMeta.selectViewModel.toolbar.showMoreButton"
+                  trigger="click"
+                  placement="bottom"
+                  szie="mini"
+                >
+                  <el-button size="mini">更多
                     <i class="el-icon-arrow-down el-icon--right" style="margin-left:0;"></i>
                   </el-button>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item v-for="btn in UIMeta.selectViewModel.tree.toolbar.components" v-if="btn.isMore">
-                      <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
-                      <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
-                      <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
-                      <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
+                    <el-dropdown-item v-for="btn in UIMeta.selectViewModel.toolbar.buttons" v-if="btn.isMore">
+                      <svg-icon :icon-class="`${btn.iconcls}`"/>
                       {{btn.label}}
                     </el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
-              </el-tooltip>
-            </el-button-group>
-          </div>
-          <div class="tree-container">
-            <el-tree :data="tree" :props="defaultProps" highlight-current @node-expand="handleNodeExpand" @node-click="handleNodeClick">
-              <!-- <span class="custom-tree-node" slot-scope="{ node, data }">
-                <span v-if="node.isLeaf">
-                  <i v-if="data.iconcls === 'table_add'" class="el-icon-plus"/>
-                  <i v-else-if="data.iconcls === 'table_delete'" class="el-icon-delete"/>
-                  <i v-else-if="data.iconcls === 'table_edit'" class="el-icon-edit"/>
-                  {{ node.label }}
-                </span>
-                <span v-if="!node.isLeaf">
-                  {{ node.label }}
-                </span>
-              </span> -->
-            </el-tree>
-          </div>
-        </el-aside>
-        <el-container>
-          <el-header
-            v-if="UIMeta.selectViewModel.toolbar.components.length > 0"
-            height="35px" style="display: flex; justify-content: space-between;"
-          >
-            <el-button-group v-if="UIMeta.selectViewModel.toolbar.components.length > 0">
-              <el-button
-                v-for="btn in UIMeta.selectViewModel.toolbar.components"
-                v-if="UIMeta.selectViewModel.toolbar.components.length > 0 && !btn.isMore"
-                :key="btn.label"
-                size="mini"
-              >
-                <svg-icon :icon-class="`${btn.iconcls}`"/>
-                {{ btn.label }}
-              </el-button>
-              <el-dropdown
-                v-if="UIMeta.selectViewModel.toolbar.showMoreButton"
-                trigger="click"
-                placement="bottom"
-                szie="mini"
-              >
-                <el-button size="mini">更多
-                  <i class="el-icon-arrow-down el-icon--right" style="margin-left:0;"></i>
-                </el-button>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item v-for="btn in UIMeta.selectViewModel.toolbar.buttons" v-if="btn.isMore">
-                    <svg-icon :icon-class="`${btn.iconcls}`"/>
-                    {{btn.label}}
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-            </el-button-group>
-            <pagination :total="list.length" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" style="margin-top: 0;"/>
-          </el-header>
-          <el-main>
-            <div class="base-select-container">
-              <el-table ref="multipleTable" :data="list" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="height" :cell-style="cellStyle" :row-style="rowStyle" @selection-change="handleSelectionChange">
-                <el-table-column type="selection" align="center"/>
-                <el-table-column v-for="(header, index) in grid" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="UIMeta.selectViewModel.view.gridFixColumn > index" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
-                  <template slot-scope="scope">
-                    <img v-if="header.ctype === 'image'" :src="scope.row[header.prop]" :width="header.width">
-                    <div v-else-if="header.ctype === 'valuelistField'" v-html="scope.row[header.prop][header.valueListModel.displayField]"></div>
-                    <div v-else v-html="scope.row[header.prop]"></div>
-                  </template>
-                </el-table-column>
-                <el-table-column fixed="right" label="操作" width="auto" align="center">
-                  <template slot-scope="scope">
-                    <el-tooltip class="item" effect="dark" content="下移" placement="top">
-                      <el-button @click="handleClick(scope.$index, scope.row, btn.fun)" size="mini">
-                        <i class="el-icon-arrow-down"></i>
-                      </el-button>
-                    </el-tooltip>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </div>
-            <el-button-group>
-              <el-button type="primary" icon="el-icon-arrow-down">下移选中</el-button>
-              <el-button type="primary" icon="el-icon-arrow-down">下移全部</el-button>
-              <el-button type="primary" icon="el-icon-arrow-up">上移选中</el-button>
-              <el-button type="primary" icon="el-icon-arrow-up">上移全部</el-button>
-            </el-button-group>
-            <div class="base-select-container" v-if="selectedList.length>0">
-              <el-table ref="multipleTable" :data="selectedList" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="'200px'" :cell-style="cellStyle" :row-style="rowStyle">
-                <el-table-column type="selection" align="center"/>
-                <el-table-column v-for="(header, index) in grid" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="UIMeta.selectViewModel.view.gridFixColumn > index" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
-                  <template slot-scope="scope">
-                    <img v-if="header.ctype === 'image'" :src="scope.row[header.prop]" :width="header.width">
-                    <div v-else-if="header.ctype === 'valuelistField'" v-html="scope.row[header.prop][header.valueListModel.displayField]"></div>
-                    <div v-else v-html="scope.row[header.prop]"></div>
-                  </template>
-                </el-table-column>
-                <el-table-column fixed="right" label="操作" width="auto" align="center">
-                  <template slot-scope="scope">
-                    <el-tooltip class="item" effect="dark" content="上移" placement="top">
-                      <el-button @click="handleClick(scope.$index, scope.row, btn.fun)" size="mini">
-                        <i class="el-icon-arrow-up"></i>
-                      </el-button>
-                    </el-tooltip>
-                  </template>
-                </el-table-column>
-              </el-table>
-              <el-button type="primary" @click="submit">确定</el-button>
-              <el-button @click="cancel">取消</el-button>
-            </div>
-          </el-main>
+              </el-button-group>
+              <pagination :total="list.length" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" style="margin-top: 0;"/>
+            </el-header>
+            <el-main>
+              <div class="base-select-container">
+                <el-table ref="multipleTable" :data="list" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="height" :cell-style="cellStyle" :row-style="rowStyle" @selection-change="handleSelectionChange">
+                  <el-table-column type="selection" align="center"/>
+                  <el-table-column v-for="(header, index) in grid" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="UIMeta.selectViewModel.view.gridFixColumn > index" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
+                    <template slot-scope="scope">
+                      <img v-if="header.ctype === 'image'" :src="scope.row[header.prop]" :width="header.width">
+                      <div v-else-if="header.ctype === 'valuelistField'" v-html="scope.row[header.prop][header.valueListModel.displayField]"></div>
+                      <div v-else v-html="scope.row[header.prop]"></div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column fixed="right" label="操作" width="auto" align="center">
+                    <template slot-scope="scope">
+                      <el-tooltip class="item" effect="dark" content="下移" placement="top">
+                        <el-button @click="handleClick(scope.$index, scope.row, btn.fun)" size="mini">
+                          <i class="el-icon-arrow-down"></i>
+                        </el-button>
+                      </el-tooltip>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </div>
+              <el-button-group>
+                <el-button type="primary" icon="el-icon-arrow-down">下移选中</el-button>
+                <el-button type="primary" icon="el-icon-arrow-down">下移全部</el-button>
+                <el-button type="primary" icon="el-icon-arrow-up">上移选中</el-button>
+                <el-button type="primary" icon="el-icon-arrow-up">上移全部</el-button>
+              </el-button-group>
+              <div class="base-select-container" v-if="selectedList.length>0">
+                <el-table ref="multipleTable" :data="selectedList" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="'200px'" :cell-style="cellStyle" :row-style="rowStyle">
+                  <el-table-column type="selection" align="center"/>
+                  <el-table-column v-for="(header, index) in grid" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="UIMeta.selectViewModel.view.gridFixColumn > index" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
+                    <template slot-scope="scope">
+                      <img v-if="header.ctype === 'image'" :src="scope.row[header.prop]" :width="header.width">
+                      <div v-else-if="header.ctype === 'valuelistField'" v-html="scope.row[header.prop][header.valueListModel.displayField]"></div>
+                      <div v-else v-html="scope.row[header.prop]"></div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column fixed="right" label="操作" width="auto" align="center">
+                    <template slot-scope="scope">
+                      <el-tooltip class="item" effect="dark" content="上移" placement="top">
+                        <el-button @click="handleClick(scope.$index, scope.row, btn.fun)" size="mini">
+                          <i class="el-icon-arrow-up"></i>
+                        </el-button>
+                      </el-tooltip>
+                    </template>
+                  </el-table-column>
+                </el-table>
+                <!-- <el-button type="primary" @click="submit">确定</el-button>
+                <el-button @click="cancel">取消</el-button> -->
+              </div>
+            </el-main>
+          </el-container>
         </el-container>
       </el-container>
-    </el-container>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -161,6 +172,7 @@ import Pagination from '@/components/Pagination'
 export default {
   data() {
     return {
+      dialogVisible: true,
       UiLoaded: false,
       dataLoaded: false,
       UIMeta: '',
