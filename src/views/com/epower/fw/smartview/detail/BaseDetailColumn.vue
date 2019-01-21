@@ -47,12 +47,12 @@
             v-model="input.inputValue" :disabled="!input.enable"  :readonly="input.readOnly"  clearable
             @blur = "input.saveInputValue()"
           />
-          <el-checkbox v-else-if="input.ctype === 'checkboxField'" v-model="input.value" />
-          <el-date-picker v-else-if="input.ctype === 'dateField'" v-model="input.value" type="date" />
-          <el-date-picker v-else-if="input.ctype === 'dateTimeField'" v-model="input.value" type="datetime" />
-          <el-input v-else-if="input.ctype === 'numberfield'" v-model="input.value" type="number" />
+          <el-checkbox v-else-if="input.ctype === 'checkboxField'" v-model="input.value" :disabled="!input.enable"   />
+          <el-date-picker v-else-if="input.ctype === 'dateField'" v-model="input.value" type="date" :disabled="!input.enable"  />
+          <el-date-picker v-else-if="input.ctype === 'dateTimeField'" v-model="input.value" type="datetime" :disabled="!input.enable"   />
+          <el-input v-else-if="input.ctype === 'numberfield'" v-model="input.value" type="number" :disabled="!input.enable"   />
 
-          <el-select v-else-if="input.ctype === 'comboBox'" v-model="input.value" filterable >
+          <el-select v-else-if="input.ctype === 'comboBox'" v-model="input.value" filterable :disabled="!input.enable"  >
             <el-option v-for="item in input.enumModel.items" :key="item.name" :label="item.label" :value="item.value"/>
           </el-select>
 
