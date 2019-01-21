@@ -73,8 +73,6 @@
                 {{tab.label}}
               </span>
               <base-list-grid v-for="view in UIMeta.listViewModel.dataView.views" v-if="view.viewType === 'grid' && tab.viewName === view.name" :view="view" :height="tableHeight" :list="list" :grid="grid"/>
-              <!-- <base-select :selectedList="selectedList"></base-select> -->
-              <base-select v-for="view in UIMeta.listViewModel.dataView.views" v-if="view.viewType === 'grid' && tab.viewName === view.name" :view="view" :grid="grid[view.name]"/>
             </el-tab-pane>
           </el-tabs>
         </el-main>
