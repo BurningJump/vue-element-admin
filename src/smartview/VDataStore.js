@@ -20,6 +20,13 @@ export default class VDataStore {
     return null
   }
 
+  isChanged() {
+    for (const ds of this.datasets) {
+      if  ( ds.isChanged() === true ) return true
+    }
+    return false
+  }
+
   getDataSetData(dataSetName, filter = null) {
     for (var j = 0; j < this.datasets.length; j++) {
       if (this.datasets[j].name === dataSetName) {
@@ -50,6 +57,17 @@ export default class VDataStore {
         ds.loadList(list)
       }
     }
+  }
+
+  /**
+	 * 設置默認值
+	 * @param datasetName
+	 * @param fieldName
+	 * @param value
+	 */
+  setDefaultValue(datasetName, fieldName, value) {
+    const ds = this.getDataSet(datasetName)
+    if (ds !== null) ds.defaultValue(fieldName, value)
   }
 
   // 修改DataPackage的Dataset数据

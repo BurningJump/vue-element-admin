@@ -7,7 +7,7 @@ export default class VComponentSet {
     datasetName;
     dataList; // 保存可视数据列表
     rowIndex = -1;// 当前数据展现行号,零代表第一行，因为js的数组是从零开始
-    components=[];// 展示对象
+    components=[];// 存储字段
 
     /**
      * 构造函数
@@ -37,6 +37,16 @@ export default class VComponentSet {
         return null
       }
       return this.dataList.length()
+    }
+
+  /**
+     * 获取当前记录
+     */
+    getRecord() {
+      if (this.dataList == null || this.dataList === undefined) {
+        return null
+      }
+      return this.dataList[this.rowIndex]
     }
 
     /**
@@ -145,6 +155,38 @@ export default class VComponentSet {
 
     loadDataToDataSet(list) {
       this.dataView.loadDataByList(this.datasetName, list)
+    }
+
+    getCmpByName(cmpName) {
+      var result = null
+      for (const cs of this.components) {
+        if (cs.componentName === cmpName) {
+          result = cs
+          break
+        }
+      }
+      return result
+    }
+
+    setReadOnly(isReadOnly) {
+      for (const cs of this.components) {
+        cs.setReadOnly(isReadOnly)
+      }
+    }
+    setEnable(isEnable) {
+      for (const cs of this.components) {
+        cs.setEnable(isEnable)
+      }
+    }
+    setDefaultReadOnly(isReadOnly) {
+      for (const cs of this.components) {
+        cs.setDefaultReadOnly()
+      }
+    }
+    setDefaultHidden(isHidden) {
+      for (const cs of this.components) {
+        cs.setDefaultHidden()
+      }
     }
 }
 

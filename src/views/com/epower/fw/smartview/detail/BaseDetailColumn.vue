@@ -44,14 +44,15 @@
         <el-form-item :label="input.label" :required="!Boolean(input.allowBlank)">
           <el-input
             v-if="input.ctype === 'textfield' || input.ctype === 'valuelistField' ||input.ctype === 'remoteComboBox' "
-            v-model="input.value"
+            v-model="input.inputValue" :disabled="!input.enable"  :readonly="input.readOnly"  clearable
+            @blur = "input.saveInputValue()"
           />
-          <el-checkbox v-else-if="input.ctype === 'checkboxField'" v-model="input.value"/>
-          <el-date-picker v-else-if="input.ctype === 'dateField'" v-model="input.value" type="date"/>
-          <el-date-picker v-else-if="input.ctype === 'dateTimeField'" v-model="input.value" type="datetime"/>
-          <el-input v-else-if="input.ctype === 'numberfield'" v-model="input.value" type="number"/>
+          <el-checkbox v-else-if="input.ctype === 'checkboxField'" v-model="input.value" />
+          <el-date-picker v-else-if="input.ctype === 'dateField'" v-model="input.value" type="date" />
+          <el-date-picker v-else-if="input.ctype === 'dateTimeField'" v-model="input.value" type="datetime" />
+          <el-input v-else-if="input.ctype === 'numberfield'" v-model="input.value" type="number" />
 
-          <el-select v-else-if="input.ctype === 'comboBox'" v-model="input.value" filterable>
+          <el-select v-else-if="input.ctype === 'comboBox'" v-model="input.value" filterable >
             <el-option v-for="item in input.enumModel.items" :key="item.name" :label="item.label" :value="item.value"/>
           </el-select>
 
