@@ -25,11 +25,12 @@
       </el-header>
       <el-container>
         <el-aside width="200px" :style="{'height': treeHeight, 'padding': '0 5px'}">
-          <div class="tree-toolbar">
+          <div class="tree-toolbar" v-if="UIMeta.listViewModel.tree.toolbar">
             <el-button-group>
               <el-tooltip class="item" effect="dark" v-for="btn in UIMeta.listViewModel.tree.toolbar.components" :content="btn.label" placement="top">
-                <el-button v-if="btn.fun === 'new'" size="mini" icon="el-icon-document"></el-button>
-                <el-button v-else-if="btn.fun === 'view'" size="mini" icon="el-icon-view"></el-button>
+                <el-button size="mini">
+                  <svg-icon :icon-class="`${btn.iconcls}`"/>
+                </el-button>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="更多" placement="top">
                 <el-dropdown v-if="UIMeta.listViewModel.tree.toolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
@@ -38,10 +39,7 @@
                   </el-button>
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item v-for="btn in UIMeta.listViewModel.tree.toolbar.components" v-if="btn.isMore">
-                      <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
-                      <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
-                      <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
-                      <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
+                      <svg-icon :icon-class="`${btn.iconcls}`"/>
                       {{btn.label}}
                     </el-dropdown-item>
                   </el-dropdown-menu>
@@ -53,9 +51,7 @@
             <el-tree :data="tree" :props="defaultProps" highlight-current @node-expand="handleNodeExpand" @node-click="handleNodeClick">
               <!-- <span class="custom-tree-node" slot-scope="{ node, data }">
                 <span v-if="node.isLeaf">
-                  <i v-if="data.iconcls === 'table_add'" class="el-icon-plus"/>
-                  <i v-else-if="data.iconcls === 'table_delete'" class="el-icon-delete"/>
-                  <i v-else-if="data.iconcls === 'table_edit'" class="el-icon-edit"/>
+                  <svg-icon :icon-class="`${data.iconcls}`"/>
                   {{ node.label }}
                 </span>
                 <span v-if="!node.isLeaf">
@@ -66,13 +62,17 @@
           </div>
         </el-aside>
         <el-main>
-          <el-tabs v-model="activeTab" @tab-click="handleTabClick">
+          <el-tabs v-if="UIMeta.listViewModel.dataType" v-model="activeTab" @tab-click="handleTabClick">
             <el-tab-pane v-for="tab in UIMeta.listViewModel.dataType.types" :name="tab.name">
               <span slot="label">
                 <svg-icon :icon-class="`${tab.iconcls}`"/>
                 {{tab.label}}
               </span>
               <base-list-grid v-for="view in UIMeta.listViewModel.dataView.views" v-if="view.viewType === 'grid' && tab.viewName === view.name" :view="view" :height="tableHeight" :list="list" :grid="grid"/>
+            </el-tab-pane>
+          </el-tabs>
+          <el-tabs v-else>
+            <el-tab-pane name="">
             </el-tab-pane>
           </el-tabs>
         </el-main>
@@ -90,13 +90,13 @@
 
 <script>
 import BaseListGrid from '@/views/com/epower/fw/smartview/list/BaseListGrid'
-import BaseDetailCard from '@/views/com/epower/fw/smartview/list/BaseDetailCard'
+import BaseListCard from '@/views/com/epower/fw/smartview/list/BaseListCard'
 import BaseSelect from '@/views/com/epower/fw/smartview/select/BaseSelect'
 export default{
   name: 'com.epower.fw.smartview.list.BaseList',
   components: {
     BaseListGrid,
-    BaseDetailCard,
+    BaseListCard,
     BaseSelect,
   },
   // extends: {BaseListGrid,BaseDetailCard},
@@ -243,7 +243,7 @@ export default{
       return new Promise((resolve,reject) => {
         this.$http.get(`http://root.yiuser.com:3001/getListUIMeta/${this.$options.name}`).then((res) => {
           this.UIMeta = res.data
-          this.activeTab = this.UIMeta.listViewModel.dataType.default
+          this.activeTab = this.UIMeta.listViewModel.dataType ? this.UIMeta.listViewModel.dataType.default : ''
           this.UIMeta.listViewModel.dataView.views.forEach((item, index) => {
             this.grid[item.name] = []
             item.components.forEach((thead) => {

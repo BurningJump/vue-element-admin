@@ -34,8 +34,9 @@
             <div class="tree-toolbar" v-if="UIMeta.selectViewModel.tree.toolbar">
               <el-button-group>
                 <el-tooltip class="item" effect="dark" v-for="btn in UIMeta.selectViewModel.tree.toolbar.components" :content="btn.label" placement="top">
-                  <el-button v-if="btn.fun === 'new'" size="mini" icon="el-icon-document"></el-button>
-                  <el-button v-else-if="btn.fun === 'view'" size="mini" icon="el-icon-view"></el-button>
+                  <el-button size="mini">
+                    <svg-icon :icon-class="`${btn.iconcls}`"/>
+                  </el-button>
                 </el-tooltip>
                 <el-tooltip class="item" effect="dark" content="更多" placement="top">
                   <el-dropdown v-if="UIMeta.selectViewModel.tree.toolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
@@ -44,10 +45,7 @@
                     </el-button>
                     <el-dropdown-menu slot="dropdown">
                       <el-dropdown-item v-for="btn in UIMeta.selectViewModel.tree.toolbar.components" v-if="btn.isMore">
-                        <i v-if="btn.iconcls === 'table_add'" class="el-icon-plus"/>
-                        <i v-else-if="btn.iconcls === 'table'" class="el-icon-view"/>
-                        <i v-else-if="btn.iconcls === 'table_edit'" class="el-icon-edit"/>
-                        <i v-else-if="btn.iconcls === 'table_delete'" class="el-icon-delete"/>
+                        <svg-icon :icon-class="`${btn.iconcls}`"/>
                         {{btn.label}}
                       </el-dropdown-item>
                     </el-dropdown-menu>
@@ -59,9 +57,7 @@
               <el-tree :data="tree" :props="defaultProps" highlight-current @node-expand="handleNodeExpand" @node-click="handleNodeClick">
                 <!-- <span class="custom-tree-node" slot-scope="{ node, data }">
                   <span v-if="node.isLeaf">
-                    <i v-if="data.iconcls === 'table_add'" class="el-icon-plus"/>
-                    <i v-else-if="data.iconcls === 'table_delete'" class="el-icon-delete"/>
-                    <i v-else-if="data.iconcls === 'table_edit'" class="el-icon-edit"/>
+                    <svg-icon :icon-class="`${data.iconcls}`"/>
                     {{ node.label }}
                   </span>
                   <span v-if="!node.isLeaf">
