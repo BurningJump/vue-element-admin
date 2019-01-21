@@ -91,11 +91,13 @@
 <script>
 import BaseListGrid from '@/views/com/epower/fw/smartview/list/BaseListGrid'
 import BaseDetailCard from '@/views/com/epower/fw/smartview/list/BaseDetailCard'
+import BaseSelect from '@/views/com/epower/fw/smartview/select/BaseSelect'
 export default{
   name: 'com.epower.fw.smartview.list.BaseList',
   components: {
     BaseListGrid,
     BaseDetailCard,
+    BaseSelect,
   },
   // extends: {BaseListGrid,BaseDetailCard},
   data() {
@@ -170,7 +172,8 @@ export default{
         children: 'children',
         label: 'label'
       },
-      conditionForm: {}
+      conditionForm: {},
+      selectedList: []
     }
   },
   computed: {
@@ -209,7 +212,7 @@ export default{
   methods: {
     calcTableHeight() {
       setTimeout(() => {
-        this.tableHeight = window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 190
+        this.tableHeight = window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 190 - 200
         this.treeHeight = (window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 100) + 'px'
       })
     },
