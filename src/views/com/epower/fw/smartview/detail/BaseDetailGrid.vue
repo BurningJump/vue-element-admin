@@ -82,7 +82,7 @@ export default {
   methods: {
     getSettings() {
       this.settings = {
-        data: this.componentSet.dataList,
+        data: this.componentSet.dataSource.dataList,
         dataSchema: {},
         colHeaders: [],
         rowHeaders: false,
@@ -95,7 +95,7 @@ export default {
         fixedColumnsLeft: 0, // 冻结前n列
         fixedRowsTop: 0 // 冻结前n行
       }
-      this.componentSet.components.forEach(theader => {
+      this.componentSet.children.forEach(theader => {
         this.settings.colHeaders.push(theader.label);
         this.settings.dataSchema[theader.fieldName] = null;
         this.settings.colWidths.push(

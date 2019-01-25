@@ -3,7 +3,7 @@
     <base-detail-column
       v-if="UiLoaded&&dataLoaded"
       :tab="UIMeta.detailViewModel.masterPage"
-      :componentSet="vDataView.getComponentSet(this.UIMeta.detailViewModel.masterPage.componentSetModel.name)"
+      :componentSet="vDataView.getCmpByName(this.UIMeta.detailViewModel.masterPage.componentSetModel.name)"
     />
     <el-tabs v-if="UiLoaded&&dataLoaded" v-model="activeTab" type="card" @tab-click="handleClick">
       <el-tab-pane
@@ -22,7 +22,7 @@
             :dataLoaded="dataLoaded"
             :activeTab="activeTab"
             :height="height"
-            :componentSet="vDataView.getComponentSet(tab.componentSetModel.name)"
+            :componentSet="vDataView.getCmpByName(tab.componentSetModel.name)"
           />
           <base-detail-a-grid
             v-else-if="tab.componentSetModel.style === 'aGrid'"
@@ -31,17 +31,16 @@
             :activeTab="activeTab"
             :listLoading="listLoading"
             :height="height"
-            :componentSet="vDataView.getComponentSet(tab.componentSetModel.name)"
+            :componentSet="vDataView.getCmpByName(tab.componentSetModel.name)"
           />
 
           <base-detail-column
             v-else-if="tab.componentSetModel.style === 'column'"
             :tab="tab"
             :activeTab="activeTab"
-            :componentSet="vDataView.getComponentSet(tab.componentSetModel.name)"
+            :componentSet="vDataView.getCmpByName(tab.componentSetModel.name)"
           />
         </div>
-
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -54,12 +53,12 @@ import BaseDetailAGrid from "@/views/com/epower/fw/smartview/detail/BaseDetailAG
 import BaseDetailColumn from "@/views/com/epower/fw/smartview/detail/BaseDetailColumn";
 import BaseDetailGrid from "@/views/com/epower/fw/smartview/detail/BaseDetailGrid";
 import VDataView from "@/smartview/VDataView.js";
-import VComponentSet from "@/smartview/VComponentSet.js";
+import VComponentSet from "@/smartview/component/VComponentSet.js";
 export default {
   data() {
     return {
       UIapi: "",
-     // options4: [],
+      // options4: [],
       listLoading: false,
       // defaultProps: {
       //   children: "children",
@@ -88,6 +87,7 @@ export default {
       });
     });
     this.calcTableHeight();
+    this.bizInit();
   },
   methods: {
     calcTableHeight() {
@@ -107,12 +107,11 @@ export default {
         this.$http
           .get(
             `http://root.yiuser.com:3001/getDetailUIMeta/${this.$options.name}`
-          )
+                 )
           .then(res => {
             this.UIMeta = res.data;
             this.activeTab = this.UIMeta.detailViewModel.detailPages[0].name;
-            this.vDataView = new VDataView(); //add by max
-            this.vDataView.initByDetail(res.data.detailViewModel); //add by max
+            this.vDataView = VDataView.newDetailInstant(res.data.detailViewModel); //add by max
             resolve("ok");
           });
       });
@@ -125,14 +124,40 @@ export default {
           this.$http.get(this.UIMeta.detailViewModel.actionUrl).then(res => {
             this.dataPackageResp = res.data;
             this.vDataView.loadDataByPackage(this.dataPackageResp.dataPackage); //add by max
-            this.vDataView.openAll(); //add by max
+            this.vDataView.showDetailForm(this.$options.name); //add by max
             resolve("ok");
           });
         }
       });
     },
     remoteMethod() {},
-    handleClick() {}
+    handleClick() {},
+
+    bizInit() {
+      //可用依赖
+      this.setFormEnableDependence();
+      //值依赖
+      this.setFormValueDependence();
+      //默认值依赖
+      this.setFormDefaultValue();
+      //唯一依赖
+      this.setFormUniqueDependence();
+      //必填依赖
+      this.setFormRequireDependence();
+      //只读依赖
+      this.setFormReadOnlyDependence();
+      //可手输入依赖
+      this.setFormEditableDependence();
+    },
+    setFormEnableDependence() {},
+    setFormButton() {},
+    setFormValueDependence() {},
+    setFormValueListFilter() {},
+    setFormDefaultValue() {},
+    setFormUniqueDependence() {},
+    setFormRequireDependence(){},
+    setFormReadOnlyDependence(){},
+    setFormEditableDependence(){}
   }
 };
 </script>

@@ -1,4 +1,4 @@
-import VDataSet from '@/smartview/VDataSet.js'
+import VDataSet from '@/smartview/db/VDataSet.js'
 
 export default class VDataStore {
   // 数据存放
@@ -11,7 +11,7 @@ export default class VDataStore {
     this.init(datastoreMeta)
   }
 
-  getDataSet(datasetName) {
+  getDataset(datasetName) {
     for (var j = 0; j < this.datasets.length; j++) {
       if (this.datasets[j].name === datasetName) {
         return this.datasets[j]
@@ -22,15 +22,15 @@ export default class VDataStore {
 
   isChanged() {
     for (const ds of this.datasets) {
-      if  ( ds.isChanged() === true ) return true
+      if (ds.isChanged() === true) return true
     }
     return false
   }
 
-  getDataSetData(dataSetName, filter = null) {
+  getDatasetData(dataSetName, filter = null) {
     for (var j = 0; j < this.datasets.length; j++) {
       if (this.datasets[j].name === dataSetName) {
-        return this.datasets[j].getDataSetData(filter)
+        return this.datasets[j].getDatasetData(filter)
       }
     }
   }
@@ -66,7 +66,7 @@ export default class VDataStore {
 	 * @param value
 	 */
   setDefaultValue(datasetName, fieldName, value) {
-    const ds = this.getDataSet(datasetName)
+    const ds = this.getDataset(datasetName)
     if (ds !== null) ds.defaultValue(fieldName, value)
   }
 

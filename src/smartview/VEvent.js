@@ -15,12 +15,10 @@ export default class VEvent {
     }
   }
 
-
   fire(type, params = null) {
     try {
       const target = this.handleFunc[type]
-      if (target === null || target === undefined)
-        return true
+      if (target === null || target === undefined) { return true }
       const count = target.length
       for (var i = 0; i < count; i++) {
         target[i](params)

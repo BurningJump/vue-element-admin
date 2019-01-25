@@ -1,12 +1,12 @@
 export default class VDataSet {
+  name;// 名称
   dataStore = null; // 数据仓库
   bizClassName = null;// 对应的类名
-  name = null; // 名称
-  datasource = null; // dataPackage / ajaxRequest
+  dataFrom = null; // 名称
+  source = null; // dataPackage / ajaxRequest
   currentTable = null;// 当前记录
   originalTable = null;// 原始记录
   updateLogs = null; // 更新记录
-
 
   /**
 * 預設默認值集
@@ -91,7 +91,7 @@ export default class VDataSet {
         this.currentTable = ADataPackage.dataSets[j].originalTable// 当前记录
         this.originalTable = ADataPackage.dataSets[j].originalTable// 原始记录
         this.updateLogs = [] // 更新记录
-        this.datasource = 'dataPackage'
+        this.dataFrom = 'dataPackage'
         break
       }
     }
@@ -102,14 +102,14 @@ export default class VDataSet {
     this.currentTable = dataList// 当前记录
     this.originalTable = dataList// 原始记录
     this.updateLogs = [] // 更新记录
-    this.datasource = 'ajaxRequest'
+    this.dataFrom = 'ajaxRequest'
   }
 
   /**
    * 根据filter过滤当前数据
    * @param {*} filter
    */
-  getDataSetData(filter = null) {
+  getDatasetData(filter = null) {
     var result = []
     for (const record of this.currentTable) {
       if (filter != null) {

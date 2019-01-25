@@ -8,7 +8,7 @@
         <el-button
           v-for="btn in tab.toolbarModel.buttons"
           v-if="tab.toolbarModel.buttons.length > 0 && !btn.isMore"
-          :key="btn.label"
+          :key="btn.name"
           size="mini"
         >
           <svg-icon :icon-class="`${btn.iconcls}`"/>
@@ -34,25 +34,24 @@
     </el-header>
     <el-main>
       <el-form
-        v-for="input in componentSet.components"
+        v-for="input in componentSet.children"
         :key="input.componentName"
         :style="{width: input.width*100 + '%'}"
         class="demo-ruleForm"
         label-width="100px"
         size="mini"
       >
-        <el-form-item :label="input.label" :required="!Boolean(input.allowBlank)">
+        <el-form-item :label="input.label" :required="!input.allowBlank">
           <el-input
             v-if="input.ctype === 'textfield' || input.ctype === 'valuelistField' ||input.ctype === 'remoteComboBox' "
             v-model="input.inputValue" :disabled="!input.enable"  :readonly="input.readOnly"  clearable
             @blur = "input.saveInputValue()"
           />
-          <el-checkbox v-else-if="input.ctype === 'checkboxField'" v-model="input.value" :disabled="!input.enable"   />
-          <el-date-picker v-else-if="input.ctype === 'dateField'" v-model="input.value" type="date" :disabled="!input.enable"  />
-          <el-date-picker v-else-if="input.ctype === 'dateTimeField'" v-model="input.value" type="datetime" :disabled="!input.enable"   />
-          <el-input v-else-if="input.ctype === 'numberfield'" v-model="input.value" type="number" :disabled="!input.enable"   />
-
-          <el-select v-else-if="input.ctype === 'comboBox'" v-model="input.value" filterable :disabled="!input.enable"  >
+          <el-checkbox v-else-if="input.ctype === 'checkboxField'" v-model="input.inputValue" :disabled="!input.enable "   @blur = "input.saveInputValue()" />
+          <el-date-picker v-else-if="input.ctype === 'dateField'" v-model="input.inputValue" type="date" :disabled="!input.enable"  @blur = "input.saveInputValue()" />
+          <el-date-picker v-else-if="input.ctype === 'dateTimeField'" v-model="input.inputValue" type="datetime" :disabled="!input.enable"    @blur = "input.saveInputValue()"/>
+          <el-input v-else-if="input.ctype === 'numberfield'" v-model="input.inputValue" type="number" :disabled="!input.enable"    @blur = "input.saveInputValue()" />
+          <el-select v-else-if="input.ctype === 'comboBox'" v-model="input.inputValue" filterable :disabled="!input.enable"  @blur = "input.saveInputValue()"  >
             <el-option v-for="item in input.enumModel.items" :key="item.name" :label="item.label" :value="item.value"/>
           </el-select>
 
