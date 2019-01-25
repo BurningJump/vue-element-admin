@@ -24,7 +24,7 @@
         </el-form>
       </el-header>
       <el-container>
-        <el-aside width="200px" :style="{'height': treeHeight, 'padding': '0 5px'}">
+        <el-aside v-if="UIMeta.listViewModel.tree" width="200px" :style="{'height': treeHeight, 'padding': '0 5px'}">
           <div class="tree-toolbar" v-if="UIMeta.listViewModel.tree.toolbar">
             <el-button-group>
               <el-tooltip class="item" effect="dark" v-for="btn in UIMeta.listViewModel.tree.toolbar.components" :content="btn.label" placement="top">
@@ -71,8 +71,13 @@
               <base-list-grid v-for="view in UIMeta.listViewModel.dataView.views" v-if="view.viewType === 'grid' && tab.viewName === view.name" :view="view" :height="tableHeight" :list="list" :grid="grid"/>
             </el-tab-pane>
           </el-tabs>
-          <el-tabs v-else>
-            <el-tab-pane name="">
+          <el-tabs v-else v-model="activeTab" @tab-click="handleTabClick">
+            <el-tab-pane v-for="tab in UIMeta.listViewModel.dataView.views" :name="tab.name">
+              <span slot="label">
+                <svg-icon :icon-class="`${tab.iconcls}`"/>
+                {{tab.name}}
+              </span>
+              <base-list-grid v-for="view in UIMeta.listViewModel.dataView.views" v-if="view.viewType === 'grid'" :view="view" :height="tableHeight" :list="list" :grid="grid"/>
             </el-tab-pane>
           </el-tabs>
         </el-main>
@@ -173,7 +178,6 @@ export default{
         label: 'label'
       },
       conditionForm: {},
-      selectedList: []
     }
   },
   computed: {
@@ -200,19 +204,21 @@ export default{
   mounted() {
     this.getUIMeta().then(() => {
       this.UiLoaded = true
+      console.log(this.grid,'this.grid[item.name]-------207')
       this.getTree().then(() => {
-        this.renderTree()
         this.calcTableHeight()
+        this.renderTree()
       })
       this.getListData().then(() => {
         this.dataLoaded = true
+        console.log(this.grid,'this.grid[item.name]-------214')
       })
     })
   },
   methods: {
     calcTableHeight() {
       setTimeout(() => {
-        this.tableHeight = window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 190 - 200
+        this.tableHeight = window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 190
         this.treeHeight = (window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 100) + 'px'
       })
     },
@@ -243,7 +249,9 @@ export default{
       return new Promise((resolve,reject) => {
         this.$http.get(`http://root.yiuser.com:3001/getListUIMeta/${this.$options.name}`).then((res) => {
           this.UIMeta = res.data
-          this.activeTab = this.UIMeta.listViewModel.dataType ? this.UIMeta.listViewModel.dataType.default : ''
+          this.activeTab = this.UIMeta.listViewModel.dataType
+          ? this.UIMeta.listViewModel.dataType.default
+          : this.UIMeta.listViewModel.dataView.defaultView
           this.UIMeta.listViewModel.dataView.views.forEach((item, index) => {
             this.grid[item.name] = []
             item.components.forEach((thead) => {
@@ -252,6 +260,7 @@ export default{
                 label: thead.label
               })
             })
+            console.log(this.grid,'this.grid[item.name]-------261')
           })
           resolve(true)
         })
@@ -259,6 +268,9 @@ export default{
     },
     getTree() {
       return new Promise((resolve,reject) => {
+        if (!this.UIMeta.listViewModel.tree) {
+          resolve('notree')
+        }
         this.$http.get(`http://root.yiuser.com:3001/${this.UIMeta.listViewModel.tree.initUrl}/${this.UIMeta.listViewModel.tree.initMethod}`).then((res) => {
           this.treeRoot = JSON.parse(JSON.stringify(res.data))
           this.$http.get(`http://root.yiuser.com:3001/${this.UIMeta.listViewModel.tree.actionUrl}/${this.UIMeta.listViewModel.tree.method}`).then((res) => {
@@ -275,6 +287,7 @@ export default{
     },
     // 生成目录树
     renderTree() {
+      if (!this.UIMeta.listViewModel.tree) return
       if (!this.treeRoot.treeRoot.leaf) {
         this.tree.push({
           iconcls: this.treeRoot.treeRoot.iconcls,
@@ -337,11 +350,13 @@ export default{
                     this.list[view.name][index][thead.prop] = item[thead.prop]
                   })
                 })
+                if (vIndex === this.UIMeta.listViewModel.dataView.views.length-1 && qIndex === this.UIMeta.listViewModel.querys.length-1) {
+                  resolve('ok')
+                }
               })
             }
           })
         })
-        
       })
     },
     getList() {

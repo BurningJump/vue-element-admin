@@ -1,11 +1,11 @@
 <template>
   <div class="app-container">
     <el-dialog
-      title=""
+      title="施工队"
       :visible.sync="dialogVisible"
-      width="100%"
+      :width="UIMeta.selectViewModel.width > 1 ? UIMeta.selectViewModel.width + 'px' : UIMeta.selectViewModel.width*100 + '%'"
       :modal-append-to-body="false"
-      center>
+      center :style="{height: UIMeta.selectViewModel.height > 1 ? UIMeta.selectViewModel.height + 'px' : UIMeta.selectViewModel.height*100 + '%'}">
       <el-container v-if="UiLoaded">
         <el-header height="auto" id="qconHeader">
           <el-form :inline="true" :model="conditionForm" ref="conditionForm" class="demo-ruleForm" label-width="100px" size="mini">
@@ -123,14 +123,14 @@
                   </el-table-column>
                 </el-table>
               </div>
-              <el-button-group>
+              <el-button-group v-show="selectType!=='single'" style="display:flex;justify-content:flex-end;margin:3px 0;">
                 <el-button type="primary" icon="el-icon-arrow-down">下移选中</el-button>
                 <el-button type="primary" icon="el-icon-arrow-down">下移全部</el-button>
                 <el-button type="primary" icon="el-icon-arrow-up">上移选中</el-button>
                 <el-button type="primary" icon="el-icon-arrow-up">上移全部</el-button>
               </el-button-group>
-              <div class="base-select-container" v-if="selectedList.length>0">
-                <el-table ref="multipleTable" :data="selectedList" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="'200px'" :cell-style="cellStyle" :row-style="rowStyle">
+              <div class="base-select-container" v-show="selectType!=='single'">
+                <el-table ref="multipleTable" :data="selectedList" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="height*2/3" :cell-style="cellStyle" :row-style="rowStyle">
                   <el-table-column type="selection" align="center"/>
                   <el-table-column v-for="(header, index) in grid" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="UIMeta.selectViewModel.view.gridFixColumn > index" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
                     <template slot-scope="scope">
@@ -168,13 +168,14 @@ import Pagination from '@/components/Pagination'
 export default {
   data() {
     return {
+      selectType: 'multi',
       dialogVisible: true,
       UiLoaded: false,
       dataLoaded: false,
       UIMeta: '',
       selectedList: [],
       list: [],
-      height: 400,
+      height: 300,
       showMoreCondition: false,
       treeHeight: '600px',
       conditionForm: {},
@@ -219,6 +220,10 @@ export default {
     }
   },
   mounted() {
+    // this.$bus.emit('showWorkTeamDialog', {formMeta:data,selectType:single})
+    this.$bus.on('showWorkTeamDialog', data => {
+      this.selectType = data.selectType
+    })
     this.$bus.on('listSelectionChange', data => {
       console.log(data, 'this.$bus.emit(listSelectionChange, val)');
       this.selectedList = data
