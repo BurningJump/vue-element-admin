@@ -1,4 +1,4 @@
-import VDetailForm from '../component/VDetailForm.js'
+import VDetailForm from '../bizform/VDetailForm.js'
 import VComponentSet from '../component/VComponentSet.js'
 import VDBComponent from '../component/VDBComponent.js'
 

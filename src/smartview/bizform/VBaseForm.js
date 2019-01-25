@@ -1,5 +1,5 @@
 import { basicConstant } from '@/smartview/VBasicConstant.js'
-import VForm from './VForm'
+import VForm from '../component/VForm'
 
 export default class VBaseForm extends VForm {
   // dataSource
