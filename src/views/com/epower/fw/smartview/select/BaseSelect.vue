@@ -1,13 +1,12 @@
 <template>
-  <div class="app-container">
+  <div class="app-container" v-if="UiLoaded">
     <el-dialog
       title="施工队"
       :visible.sync="dialogVisible"
       :width="UIMeta.selectViewModel.width > 1 ? UIMeta.selectViewModel.width + 'px' : UIMeta.selectViewModel.width*100 + '%'"
-      :modal-append-to-body="false"
-      center :style="{height: UIMeta.selectViewModel.height > 1 ? UIMeta.selectViewModel.height + 'px' : UIMeta.selectViewModel.height*100 + '%'}">
+      :modal-append-to-body="false" center>
       <el-container v-if="UiLoaded">
-        <el-header height="auto" id="qconHeader">
+        <el-header height="auto" id="select-qCon">
           <el-form :inline="true" :model="conditionForm" ref="conditionForm" class="demo-ruleForm" label-width="100px" size="mini">
             <el-form-item v-for="condition in UIMeta.selectViewModel.qCondition.components" v-if="!condition.isMore" :key="condition.label" :style="{width: (condition.width <= 1 ? condition.width*100 + '%' : condition.width + 'px')}" :label="condition.label" :prop="conditionForm[condition.findField]">
               <el-input v-model="conditionForm[condition.findField]"/>
@@ -19,7 +18,7 @@
               <el-button-group>
                 <el-button size="mini" icon="el-icon-search">查询</el-button>
                 <el-button size="mini" @click="resetForm()" icon="el-icon-close">重置</el-button>
-                <el-button size="mini" @click="showMoreCondition=!showMoreCondition;calcTableHeight()">
+                <el-button size="mini" @click="showMoreCondition=!showMoreCondition;calcHeight();setBodyHeight()">
                   <span v-show="!showMoreCondition">更多</span>
                   <span v-show="showMoreCondition">收起</span>
                   <i v-if="!showMoreCondition" class="el-icon-arrow-down"></i>
@@ -103,7 +102,7 @@
             </el-header>
             <el-main>
               <div class="base-select-container">
-                <el-table ref="multipleTable" :data="list" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="height" :cell-style="cellStyle" :row-style="rowStyle" @selection-change="handleSelectionChange">
+                <el-table ref="multipleTable" :data="list" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight1" :cell-style="cellStyle" :row-style="rowStyle" @selection-change="handleSelectionChange">
                   <el-table-column type="selection" align="center"/>
                   <el-table-column v-for="(header, index) in grid" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="UIMeta.selectViewModel.view.gridFixColumn > index" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
                     <template slot-scope="scope">
@@ -130,7 +129,7 @@
                 <el-button type="primary" icon="el-icon-arrow-up">上移全部</el-button>
               </el-button-group>
               <div class="base-select-container" v-show="selectType!=='single'">
-                <el-table ref="multipleTable" :data="selectedList" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="height*2/3" :cell-style="cellStyle" :row-style="rowStyle">
+                <el-table ref="multipleTable" :data="selectedList" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight2" :cell-style="cellStyle" :row-style="rowStyle">
                   <el-table-column type="selection" align="center"/>
                   <el-table-column v-for="(header, index) in grid" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="UIMeta.selectViewModel.view.gridFixColumn > index" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
                     <template slot-scope="scope">
@@ -192,6 +191,10 @@ export default {
         children: 'children',
         label: 'label'
       },
+      tableHeight1: 0,
+      tableHeight2: 0,
+      index1: 0.6,
+      index2: 0.4
     }
   },
   components: {
@@ -219,10 +222,25 @@ export default {
       }
     }
   },
+  watch: {
+    selectType(val) {
+      if (val === 'multi') {
+        this.index1 = 0.6
+        this.index2 = 0.4
+      } else {
+        this.index1 = 1
+        this.index2 = 0
+      }
+    }
+  },
   mounted() {
     // this.$bus.emit('showWorkTeamDialog', {formMeta:data,selectType:single})
     this.$bus.on('showWorkTeamDialog', data => {
+      this.dialogVisible = true
       this.selectType = data.selectType
+      this.setDialogHeight()
+      this.setBodyHeight()
+      this.calcHeight()
     })
     this.$bus.on('listSelectionChange', data => {
       console.log(data, 'this.$bus.emit(listSelectionChange, val)');
@@ -232,7 +250,9 @@ export default {
       this.UiLoaded = true
       this.getTree().then(() => {
         this.renderTree()
-        this.calcTableHeight()
+        this.setDialogHeight()
+        this.setBodyHeight()
+        this.calcHeight()
       })
       this.getListData().then(() => {
         this.dataLoaded = true
@@ -240,6 +260,38 @@ export default {
     })
   },
   methods: {
+    setDialogHeight() {
+      document.getElementsByClassName('el-dialog')[0].style.height = this.UIMeta.selectViewModel.height > 1 ? this.UIMeta.selectViewModel.height + 'px' : this.UIMeta.selectViewModel.height*100 + '%'
+    },
+    setBodyHeight() {
+      document.getElementsByClassName('el-dialog__body')[0].style.height = parseInt(window.getComputedStyle(document.getElementsByClassName('el-dialog')[0], null).height)
+                                                                           - parseInt(window.getComputedStyle(document.getElementsByClassName('el-dialog__header')[0], null).height)
+                                                                           - parseInt(window.getComputedStyle(document.getElementsByClassName('el-dialog__footer')[0], null).height)
+                                                                           + 'px'
+    },
+    calcHeight() { // 计算弹窗各部分高度
+      let footer = document.getElementsByClassName('el-dialog__footer')[0],
+          header = document.getElementsByClassName('el-dialog__header')[0],
+          qCon = document.getElementById('select-qCon'),
+          elDialog = document.getElementsByClassName('el-dialog')[0]
+
+      if (this.selectType === 'multi') {
+        this.index1 = 0.6
+        this.index2 = 0.4
+      } else {
+        this.index1 = 1
+        this.index2 = 0
+      }
+
+      this.tableHeight1 = this.index1 * (parseInt(window.getComputedStyle(elDialog, null).height)
+                          - parseInt(window.getComputedStyle(header, null).height)
+                          - parseInt(window.getComputedStyle(footer, null).height))
+                          - 35
+      this.tableHeight2 = this.index2 * (parseInt(window.getComputedStyle(elDialog, null).height)
+                          - parseInt(window.getComputedStyle(header, null).height)
+                          - parseInt(window.getComputedStyle(footer, null).height))
+                          - 41
+    },
     submit() {},
     cancel() {},
     getList() {},
@@ -357,4 +409,13 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.el-dialog__wrapper {
+  overflow: hidden;
+}
+.el-dialog__body {
+  overflow: hidden;
+}
+</style>
 
