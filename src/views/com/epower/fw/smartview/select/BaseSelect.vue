@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container" v-if="UiLoaded">
+  <!-- <div class="app-container" v-if="UiLoaded"> -->
     <el-dialog
       title="施工队"
       :visible.sync="dialogVisible"
@@ -18,7 +18,7 @@
               <el-button-group>
                 <el-button size="mini" icon="el-icon-search">查询</el-button>
                 <el-button size="mini" @click="resetForm()" icon="el-icon-close">重置</el-button>
-                <el-button size="mini" @click="showMoreCondition=!showMoreCondition;calcHeight();setBodyHeight()">
+                <el-button size="mini" @click="showMoreCondition=!showMoreCondition;calcHeight()">
                   <span v-show="!showMoreCondition">更多</span>
                   <span v-show="showMoreCondition">收起</span>
                   <i v-if="!showMoreCondition" class="el-icon-arrow-down"></i>
@@ -160,7 +160,7 @@
         <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
       </span>
     </el-dialog>
-  </div>
+  <!-- </div> -->
 </template>
 <script>
 import Pagination from '@/components/Pagination'
@@ -285,10 +285,14 @@ export default {
 
       this.tableHeight1 = this.index1 * (parseInt(window.getComputedStyle(elDialog, null).height)
                           - parseInt(window.getComputedStyle(header, null).height)
+                          - parseInt(window.getComputedStyle(qCon, null).height)
+                          - 25 - 30
                           - parseInt(window.getComputedStyle(footer, null).height))
                           - 35
       this.tableHeight2 = this.index2 * (parseInt(window.getComputedStyle(elDialog, null).height)
                           - parseInt(window.getComputedStyle(header, null).height)
+                          - parseInt(window.getComputedStyle(qCon, null).height)
+                          - 25 - 30
                           - parseInt(window.getComputedStyle(footer, null).height))
                           - 41
     },
