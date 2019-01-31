@@ -273,7 +273,8 @@ export default {
       let footer = document.getElementsByClassName('el-dialog__footer')[0],
           header = document.getElementsByClassName('el-dialog__header')[0],
           qCon = document.getElementById('select-qCon'),
-          elDialog = document.getElementsByClassName('el-dialog')[0]
+          elDialog = document.getElementsByClassName('el-dialog')[0],
+          body = document.getElementsByClassName('el-dialog__body')[0]
 
       if (this.selectType === 'multi') {
         this.index1 = 0.6
@@ -295,6 +296,10 @@ export default {
                           - 25 - 30
                           - parseInt(window.getComputedStyle(footer, null).height))
                           - 41
+      this.treeHeight = parseInt(window.getComputedStyle(body, null).height)
+                        - 25 - 30
+                        - parseInt(window.getComputedStyle(qCon, null).height)
+                        + 'px'
     },
     submit() {},
     cancel() {},
