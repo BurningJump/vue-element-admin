@@ -102,7 +102,7 @@
             </el-header>
             <el-main class="table-container">
               <div class="base-select-container">
-                <el-table ref="originTable" :data="list" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight1" :cell-style="cellStyle" :row-style="rowStyle" @selection-change="handleOriginSelectionChange">
+                <el-table ref="originTable" :data="list" element-loading-text="拼命加载中" border fit stripe :highlight-current-row="selectType === 'single'" :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight1" :cell-style="cellStyle" :row-style="rowStyle" @selection-change="handleOriginSelectionChange" @row-click="handleOriginRowClick" @select="handleSelect">
                   <el-table-column type="selection" align="center"/>
                   <el-table-column v-for="(header, index) in grid" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="UIMeta.selectViewModel.view.gridFixColumn > index" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
                     <template slot-scope="scope">
@@ -129,7 +129,7 @@
                 <el-button type="primary" icon="el-icon-arrow-up" @click="toggleSelection(null, 'selectedTable')">上移全部</el-button>
               </el-button-group>
               <div class="base-select-container" v-show="selectType!=='single'">
-                <el-table ref="selectedTable" :data="selectedList" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight2" :cell-style="cellStyle" :row-style="rowStyle" @selection-change="handleSelectedSelectionChange">
+                <el-table ref="selectedTable" :data="selectedList" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight2" :cell-style="cellStyle" :row-style="rowStyle" @selection-change="handleSelectedSelectionChange" @row-click="handleSelectedRowClick">
                   <el-table-column type="selection" align="center"/>
                   <el-table-column v-for="(header, index) in grid" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="UIMeta.selectViewModel.view.gridFixColumn > index" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
                     <template slot-scope="scope">
@@ -260,6 +260,25 @@ export default {
     })
   },
   methods: {
+    handleSelect(selection, row) {
+      if (this.selectType === 'single') {
+        // 单选模式下， 只能选中一条，一旦选中其中一条，之前选中的数据取消选中
+        this.$refs.originTable.clearSelection();
+        this.$refs.originTable.toggleRowSelection(row, true);
+      }
+    },
+    handleOriginRowClick(row, event, column) {
+      // 点击行数据=选中行数据，选中框勾选上
+      if (this.selectType === 'single') {
+        // 单选模式下， 只能选中一条，一旦选中其中一条，之前选中的数据取消选中
+        this.$refs.originTable.clearSelection();
+      }
+      this.$refs.originTable.toggleRowSelection(row, true);
+    },
+    handleSelectedRowClick(row, event, column) {
+      // 点击行数据=选中行数据，选中框勾选上
+      this.$refs.selectedTable.toggleRowSelection(row, true);
+    },
     addToSelectedTable(index, row) {
       // 下移
       this.$refs.originTable.toggleRowSelection(row, true);
@@ -479,10 +498,15 @@ export default {
   text-align: left;
   padding: 0;
   margin-bottom: 3px;
+  border-bottom: 1px solid #d8dce5;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 0 3px 0 rgba(0, 0, 0, 0.04);
 }
 .el-dialog__title {
   margin-left: 10px;
   line-height: 40px;
+}
+#select-qCon {
+  border-bottom: 1px solid #e4e7ed;
 }
 .el-dialog__footer {
   padding: 0 0 10px 0;
