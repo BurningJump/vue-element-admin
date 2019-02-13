@@ -111,7 +111,7 @@
                       <div v-else v-html="scope.row[header.prop]"></div>
                     </template>
                   </el-table-column>
-                  <el-table-column fixed="right" label="操作" width="auto" align="center">
+                  <el-table-column v-if="selectType === 'multi'" fixed="right" label="操作" width="auto" align="center">
                     <template slot-scope="scope">
                       <el-tooltip class="item" effect="dark" content="下移" placement="top">
                         <el-button @click="addToSelectedTable(scope.$index, scope.row)" size="mini">
