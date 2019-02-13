@@ -148,8 +148,6 @@
                     </template>
                   </el-table-column>
                 </el-table>
-                <!-- <el-button type="primary" @click="submit">确定</el-button>
-                <el-button @click="cancel">取消</el-button> -->
               </div>
             </el-main>
           </el-container>
@@ -265,6 +263,11 @@ export default {
     addToSelectedTable(index, row) {
       // 下移
       this.$refs.originTable.toggleRowSelection(row, true);
+      for (let i = 0, len = this.selectedList.length; i < len; i++) {
+        if (JSON.stringify(this.selectedList[i]) === JSON.stringify(row)) {
+          return
+        }
+      }
       this.selectedList.push(row)
     },
     toggleSelection(rows, tableName) {
@@ -351,8 +354,6 @@ export default {
                         - parseInt(window.getComputedStyle(qCon, null).height)
                         + 'px'
     },
-    submit() {},
-    cancel() {},
     getList() {},
     handleOriginSelectionChange(val) {
       this.originSelecttion = val;
@@ -477,6 +478,7 @@ export default {
   overflow: hidden;
 }
 .el-dialog__header {
+  text-align: left;
   padding-bottom: 3px;
 }
 .el-dialog__footer {
