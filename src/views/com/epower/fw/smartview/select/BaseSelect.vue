@@ -165,7 +165,7 @@ import Pagination from '@/components/Pagination'
 export default {
   data() {
     return {
-      selectType: 'single',
+      selectType: 'multi',
       dialogVisible: true,
       UiLoaded: false,
       dataLoaded: false,
