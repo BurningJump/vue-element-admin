@@ -100,7 +100,7 @@
               </el-button-group>
               <pagination :total="list.length" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" style="margin-top: 0;"/>
             </el-header>
-            <el-main>
+            <el-main class="table-container">
               <div class="base-select-container">
                 <el-table ref="originTable" :data="list" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight1" :cell-style="cellStyle" :row-style="rowStyle" @selection-change="handleOriginSelectionChange">
                   <el-table-column type="selection" align="center"/>
@@ -165,7 +165,7 @@ import Pagination from '@/components/Pagination'
 export default {
   data() {
     return {
-      selectType: 'multi',
+      selectType: 'single',
       dialogVisible: true,
       UiLoaded: false,
       dataLoaded: false,
@@ -318,8 +318,8 @@ export default {
     },
     setBodyHeight() {
       document.getElementsByClassName('el-dialog__body')[0].style.height = parseInt(window.getComputedStyle(document.getElementsByClassName('el-dialog')[0], null).height)
-                                                                           - parseInt(window.getComputedStyle(document.getElementsByClassName('el-dialog__header')[0], null).height)
-                                                                           - parseInt(window.getComputedStyle(document.getElementsByClassName('el-dialog__footer')[0], null).height)
+                                                                           - parseInt(window.getComputedStyle(document.getElementsByClassName('el-dialog__header')[0], null).height) - 3
+                                                                           - parseInt(window.getComputedStyle(document.getElementsByClassName('el-dialog__footer')[0], null).height) - 3
                                                                            + 'px'
     },
     calcHeight() { // 计算弹窗各部分高度
@@ -338,16 +338,14 @@ export default {
       }
 
       this.tableHeight1 = this.index1 * (parseInt(window.getComputedStyle(elDialog, null).height)
-                          - parseInt(window.getComputedStyle(header, null).height)
+                          - parseInt(window.getComputedStyle(header, null).height) - 3
                           - parseInt(window.getComputedStyle(qCon, null).height)
-                          // - 25 - 30
-                          - parseInt(window.getComputedStyle(footer, null).height))
+                          - parseInt(window.getComputedStyle(footer, null).height) - 3)
                           - 35
       this.tableHeight2 = this.index2 * (parseInt(window.getComputedStyle(elDialog, null).height)
-                          - parseInt(window.getComputedStyle(header, null).height)
+                          - parseInt(window.getComputedStyle(header, null).height) - 3
                           - parseInt(window.getComputedStyle(qCon, null).height)
-                          // - 25 - 30
-                          - parseInt(window.getComputedStyle(footer, null).height))
+                          - parseInt(window.getComputedStyle(footer, null).height) - 3)
                           - 41
       this.treeHeight = parseInt(window.getComputedStyle(body, null).height)
                         // - 25 - 30
@@ -479,10 +477,16 @@ export default {
 }
 .el-dialog__header {
   text-align: left;
-  padding-bottom: 3px;
+  padding: 0;
+  margin-bottom: 3px;
+}
+.el-dialog__title {
+  margin-left: 10px;
+  line-height: 40px;
 }
 .el-dialog__footer {
-  padding-top: 3px;
+  padding: 0 0 10px 0;
+  margin-top: 3px;
 }
 .el-dialog--center .el-dialog__body {
   padding: 0;
@@ -490,6 +494,9 @@ export default {
 .el-dialog__body {
   overflow: hidden;
   padding: 0;
+}
+.table-container {
+  padding: 0 20px;
 }
 .el-form {
   display: flex;
