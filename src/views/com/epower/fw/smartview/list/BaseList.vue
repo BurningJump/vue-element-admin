@@ -219,7 +219,7 @@ export default{
     calcTableHeight() {
       setTimeout(() => {
         this.tableHeight = window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 190
-        this.treeHeight = (window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 100) + 'px'
+        this.treeHeight = (window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) -12-50-34) + 'px'
       })
     },
     renderContent(h, { node, data, store }) {
@@ -446,7 +446,7 @@ body .el-table colgroup.gutter{
   background-color: #fff;
 }
 .tree-container {
-  height: calc(100% - 41px);
+  height: calc(100% - 42px);
   overflow: auto;
 }
 .pagination-container {
