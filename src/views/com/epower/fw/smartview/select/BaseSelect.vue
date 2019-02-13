@@ -102,7 +102,7 @@
             </el-header>
             <el-main>
               <div class="base-select-container">
-                <el-table ref="multipleTable" :data="list" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight1" :cell-style="cellStyle" :row-style="rowStyle" @selection-change="handleSelectionChange">
+                <el-table ref="originTable" :data="list" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight1" :cell-style="cellStyle" :row-style="rowStyle" @selection-change="handleOriginSelectionChange">
                   <el-table-column type="selection" align="center"/>
                   <el-table-column v-for="(header, index) in grid" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="UIMeta.selectViewModel.view.gridFixColumn > index" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
                     <template slot-scope="scope">
@@ -114,7 +114,7 @@
                   <el-table-column fixed="right" label="操作" width="auto" align="center">
                     <template slot-scope="scope">
                       <el-tooltip class="item" effect="dark" content="下移" placement="top">
-                        <el-button @click="handleClick(scope.$index, scope.row, btn.fun)" size="mini">
+                        <el-button @click="addToSelectedTable(scope.$index, scope.row)" size="mini">
                           <i class="el-icon-arrow-down"></i>
                         </el-button>
                       </el-tooltip>
@@ -123,13 +123,13 @@
                 </el-table>
               </div>
               <el-button-group v-show="selectType!=='single'" style="display:flex;justify-content:flex-end;margin:3px 0;">
-                <el-button type="primary" icon="el-icon-arrow-down">下移选中</el-button>
-                <el-button type="primary" icon="el-icon-arrow-down">下移全部</el-button>
-                <el-button type="primary" icon="el-icon-arrow-up">上移选中</el-button>
-                <el-button type="primary" icon="el-icon-arrow-up">上移全部</el-button>
+                <el-button type="primary" icon="el-icon-arrow-down" @click="toggleSelection(originSelecttion, 'originTable')">下移选中</el-button>
+                <el-button type="primary" icon="el-icon-arrow-down" @click="toggleSelection(null, 'originTable')">下移全部</el-button>
+                <el-button type="primary" icon="el-icon-arrow-up"  @click="toggleSelection(selectedSelecttion, 'selectedTable')">上移选中</el-button>
+                <el-button type="primary" icon="el-icon-arrow-up" @click="toggleSelection(null, 'selectedTable')">上移全部</el-button>
               </el-button-group>
               <div class="base-select-container" v-show="selectType!=='single'">
-                <el-table ref="multipleTable" :data="selectedList" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight2" :cell-style="cellStyle" :row-style="rowStyle">
+                <el-table ref="selectedTable" :data="selectedList" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="tableHeight2" :cell-style="cellStyle" :row-style="rowStyle" @selection-change="handleSelectedSelectionChange">
                   <el-table-column type="selection" align="center"/>
                   <el-table-column v-for="(header, index) in grid" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="UIMeta.selectViewModel.view.gridFixColumn > index" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
                     <template slot-scope="scope">
@@ -141,7 +141,7 @@
                   <el-table-column fixed="right" label="操作" width="auto" align="center">
                     <template slot-scope="scope">
                       <el-tooltip class="item" effect="dark" content="上移" placement="top">
-                        <el-button @click="handleClick(scope.$index, scope.row, btn.fun)" size="mini">
+                        <el-button @click="deleteRow(scope.$index, selectedList)" size="mini">
                           <i class="el-icon-arrow-up"></i>
                         </el-button>
                       </el-tooltip>
@@ -172,8 +172,8 @@ export default {
       UiLoaded: false,
       dataLoaded: false,
       UIMeta: '',
-      selectedList: [],
-      list: [],
+      selectedList: [], // 下表数据
+      list: [],  // 上表数据
       height: 300,
       showMoreCondition: false,
       treeHeight: '600px',
@@ -194,7 +194,9 @@ export default {
       tableHeight1: 0,
       tableHeight2: 0,
       index1: 0.6,
-      index2: 0.4
+      index2: 0.4,
+      originSelecttion: [], // 上表选中数据
+      selectedSelecttion: []  // 下表选中数据
     }
   },
   components: {
@@ -260,6 +262,54 @@ export default {
     })
   },
   methods: {
+    addToSelectedTable(index, row) {
+      // 下移
+      this.$refs.originTable.toggleRowSelection(row, true);
+      this.selectedList.push(row)
+    },
+    toggleSelection(rows, tableName) {
+      switch (tableName) {
+        case 'originTable':
+          if (rows) {
+            // 下移选中
+            rows.forEach(row => {
+              this.$refs.originTable.toggleRowSelection(row, true);
+            });
+            this.selectedList = [...this.originSelecttion]
+          } else {
+            // 下移全部
+            this.list.forEach(row => {
+              this.$refs.originTable.toggleRowSelection(row, true);
+            });
+            this.selectedList = [...this.list]
+          }
+          break;
+        case 'selectedTable':
+          if (rows) {
+            // 上移选中
+            for (let i = 0; i < this.$refs.selectedTable.selection.length; i++) {
+              for (let j = 0; j < this.selectedList.length; j++) {
+                if (JSON.stringify(this.$refs.selectedTable.selection[i]) === JSON.stringify(this.selectedList[j])) {
+                  // 删除相同数据
+                  this.selectedList.splice(j, 1)
+                  break;
+                }
+              }
+            }
+          } else {
+            // 上移全部
+            this.$refs.selectedTable.clearSelection();
+            this.selectedList = []
+          }
+          break;
+      }
+      
+      
+    },
+    deleteRow(index, rows) {
+      // 上移
+      rows.splice(index, 1);
+    },
     setDialogHeight() {
       document.getElementsByClassName('el-dialog')[0].style.height = this.UIMeta.selectViewModel.height > 1 ? this.UIMeta.selectViewModel.height + 'px' : this.UIMeta.selectViewModel.height*100 + '%'
     },
@@ -287,25 +337,28 @@ export default {
       this.tableHeight1 = this.index1 * (parseInt(window.getComputedStyle(elDialog, null).height)
                           - parseInt(window.getComputedStyle(header, null).height)
                           - parseInt(window.getComputedStyle(qCon, null).height)
-                          - 25 - 30
+                          // - 25 - 30
                           - parseInt(window.getComputedStyle(footer, null).height))
                           - 35
       this.tableHeight2 = this.index2 * (parseInt(window.getComputedStyle(elDialog, null).height)
                           - parseInt(window.getComputedStyle(header, null).height)
                           - parseInt(window.getComputedStyle(qCon, null).height)
-                          - 25 - 30
+                          // - 25 - 30
                           - parseInt(window.getComputedStyle(footer, null).height))
                           - 41
       this.treeHeight = parseInt(window.getComputedStyle(body, null).height)
-                        - 25 - 30
+                        // - 25 - 30
                         - parseInt(window.getComputedStyle(qCon, null).height)
                         + 'px'
     },
     submit() {},
     cancel() {},
     getList() {},
-    handleSelectionChange(val) {
-      this.selectedList = val
+    handleOriginSelectionChange(val) {
+      this.originSelecttion = val;
+    },
+    handleSelectedSelectionChange(val) {
+      this.selectedSelecttion = val
     },
     getUIMeta() {
       return new Promise((resolve,reject) => {
@@ -423,8 +476,18 @@ export default {
 .el-dialog__wrapper {
   overflow: hidden;
 }
+.el-dialog__header {
+  padding-bottom: 3px;
+}
+.el-dialog__footer {
+  padding-top: 3px;
+}
+.el-dialog--center .el-dialog__body {
+  padding: 0;
+}
 .el-dialog__body {
   overflow: hidden;
+  padding: 0;
 }
 .el-form {
   display: flex;
