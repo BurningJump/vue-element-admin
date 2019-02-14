@@ -507,6 +507,7 @@ export default {
 }
 #select-qCon {
   border-bottom: 1px solid #e4e7ed;
+  background-color: #fafafa;
 }
 .el-dialog__footer {
   padding: 0 0 10px 0;

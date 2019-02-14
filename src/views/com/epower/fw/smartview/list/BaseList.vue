@@ -385,6 +385,10 @@ body .el-table th.gutter{
 body .el-table colgroup.gutter{
   display: table-cell!important;
 }
+#qconHeader {
+  padding-top: 6px;
+  background-color: #fafafa;
+}
 .el-form {
   display: flex;
   flex-wrap: wrap;

@@ -6,6 +6,7 @@ export default{
   components: {},
   data() {
     return {
+      selectType: 'multi',
     }
   },
   mounted() {},
