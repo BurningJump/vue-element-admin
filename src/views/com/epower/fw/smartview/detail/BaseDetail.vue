@@ -106,7 +106,7 @@ export default {
       return new Promise((resolve, reject) => {
         this.$http
           .get(
-            `http://root.yiuser.com:3001/getDetailUIMeta/${this.$options.name}`
+            `/api/getDetailUIMeta/${this.$options.name}`
           )
           .then(res => {
             this.UIMeta = res.data;
@@ -122,7 +122,7 @@ export default {
     getDetailData() {
       return new Promise((resolve, reject) => {
         if (this.UIMeta.detailViewModel.actionUrl) {
-          this.$http.get(this.UIMeta.detailViewModel.actionUrl).then(res => {
+          this.$http.get(`/api/${this.UIMeta.detailViewModel.actionUrl}`).then(res => {
             this.dataPackageResp = res.data;
             this.vDataView.loadDataByPackage(this.dataPackageResp.dataPackage); //add by max
             this.vDataView.openAll(); //add by max

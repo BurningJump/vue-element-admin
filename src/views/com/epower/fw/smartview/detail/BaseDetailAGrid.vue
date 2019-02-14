@@ -115,7 +115,7 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      this.$http.get(this.url).then((res) => {
+      this.$http.get(`/api/${this.url}`).then((res) => {
         this.listLoading = false
         this.componentSet.loadDataToDataSet(res.data.resultList);
         this.componentSet.open();

@@ -245,7 +245,7 @@ export default{
     },
     getUIMeta() {
       return new Promise((resolve,reject) => {
-        this.$http.get(`http://root.yiuser.com:3001/getListUIMeta/${this.$options.name}`).then((res) => {
+        this.$http.get(`/api/getListUIMeta/${this.$options.name}`).then((res) => {
           this.UIMeta = res.data
           this.activeTab = this.UIMeta.listViewModel.dataType
           ? this.UIMeta.listViewModel.dataType.default
@@ -268,11 +268,11 @@ export default{
         if (!this.UIMeta.listViewModel.tree) {
           resolve('notree')
         }
-        this.$http.get(`http://root.yiuser.com:3001/${this.UIMeta.listViewModel.tree.initUrl}/${this.UIMeta.listViewModel.tree.initMethod}`).then((res) => {
+        this.$http.get(`/api/${this.UIMeta.listViewModel.tree.initUrl}/${this.UIMeta.listViewModel.tree.initMethod}`).then((res) => {
           this.treeRoot = JSON.parse(JSON.stringify(res.data))
-          this.$http.get(`http://root.yiuser.com:3001/${this.UIMeta.listViewModel.tree.actionUrl}/${this.UIMeta.listViewModel.tree.method}`).then((res) => {
+          this.$http.get(`/api/${this.UIMeta.listViewModel.tree.actionUrl}/${this.UIMeta.listViewModel.tree.method}`).then((res) => {
             this.treeChild = JSON.parse(JSON.stringify(res.data))
-            this.$http.get(`http://root.yiuser.com:3001/${this.UIMeta.listViewModel.tree.actionUrl}/${this.UIMeta.listViewModel.tree.method}`).then((res) => {
+            this.$http.get(`/api/${this.UIMeta.listViewModel.tree.actionUrl}/${this.UIMeta.listViewModel.tree.method}`).then((res) => {
               this.treeGrandchild = JSON.parse(JSON.stringify(res.data))
               resolve(true)
             }).catch((err) => {
@@ -339,7 +339,7 @@ export default{
         this.UIMeta.listViewModel.dataView.views.forEach((view, vIndex) => {
           this.UIMeta.listViewModel.querys.forEach((query, qIndex) => {
             if (view.queryName === query.name) {
-              this.$http.get(`http://root.yiuser.com:3001/${query.actionUrl}/${query.queryMethod}`).then((res) => {
+              this.$http.get(`/api/${query.actionUrl}/${query.queryMethod}`).then((res) => {
                 this.list[view.name] = []
                 res.data.resultList.forEach((item, index) => {
                   this.list[view.name][index] = {}

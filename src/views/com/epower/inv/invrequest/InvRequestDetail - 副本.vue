@@ -163,7 +163,7 @@ export default {
     },
     getUIdata() {
       return new Promise((resolve, reject) => {
-        this.$http.get('http://root.yiuser.com:3001/openapi/invRequestDetailUI').then((res) => {
+        this.$http.get('/api/openapi/invRequestDetailUI').then((res) => {
           this.UIMeta = res.data
           this.UiLoaded = true
           resolve('ok')
@@ -172,7 +172,7 @@ export default {
     },
     getSupplyData() {
       return new Promise((resolve, reject) => {
-        this.$http.get('http://root.yiuser.com:3001/openapi/invRequestDetailData').then((res) => {
+        this.$http.get('/api/openapi/invRequestDetailData').then((res) => {
           this.supplyData = res.data
           this.dataLoaded = true
           resolve('ok')

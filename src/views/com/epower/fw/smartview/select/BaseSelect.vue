@@ -380,7 +380,7 @@ export default {
     },
     getUIMeta() {
       return new Promise((resolve,reject) => {
-        this.$http.get('http://root.yiuser.com:3001/getSelectUIMeta/com.epower.abd.abdworkteam.AbdWorkTeamList').then((res) => {
+        this.$http.get('/api/getSelectUIMeta/com.epower.abd.abdworkteam.AbdWorkTeamList').then((res) => {
           this.UIMeta = res.data
           this.grid = []
           this.UIMeta.selectViewModel.view.components.forEach((item, index) => {
@@ -397,7 +397,7 @@ export default {
     },
     getListData() {
       return new Promise((resolve,reject) => {
-        this.$http.get('http://root.yiuser.com:3001/openapi/workTeamListData').then((res) => {
+        this.$http.get('/api/openapi/workTeamListData').then((res) => {
           this.list = []
           res.data.resultList.forEach((item, index) => {
             this.list[index] = {}
@@ -410,11 +410,11 @@ export default {
     },
     getTree() {
       return new Promise((resolve,reject) => {
-        this.$http.get(`http://root.yiuser.com:3001/${this.UIMeta.selectViewModel.tree.initUrl}/${this.UIMeta.selectViewModel.tree.initMethod}`).then((res) => {
+        this.$http.get(`/api/${this.UIMeta.selectViewModel.tree.initUrl}/${this.UIMeta.selectViewModel.tree.initMethod}`).then((res) => {
           this.treeRoot = JSON.parse(JSON.stringify(res.data))
-          this.$http.get(`http://root.yiuser.com:3001/${this.UIMeta.selectViewModel.tree.actionUrl}/${this.UIMeta.selectViewModel.tree.method}`).then((res) => {
+          this.$http.get(`/api/${this.UIMeta.selectViewModel.tree.actionUrl}/${this.UIMeta.selectViewModel.tree.method}`).then((res) => {
             this.treeChild = JSON.parse(JSON.stringify(res.data))
-            this.$http.get(`http://root.yiuser.com:3001/${this.UIMeta.selectViewModel.tree.actionUrl}/${this.UIMeta.selectViewModel.tree.method}`).then((res) => {
+            this.$http.get(`/api/${this.UIMeta.selectViewModel.tree.actionUrl}/${this.UIMeta.selectViewModel.tree.method}`).then((res) => {
               this.treeGrandchild = JSON.parse(JSON.stringify(res.data))
               resolve(true)
             }).catch((err) => {
