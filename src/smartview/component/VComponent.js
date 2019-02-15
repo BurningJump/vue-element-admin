@@ -19,8 +19,8 @@ export default class VComponent {
 
   constructor(parent = null) {
     this.parent = parent
-    if (this.parent == null || this.parent === undefined) {}
-    else {
+    if (this.parent == null || this.parent === undefined) {} else {
+      // 如果有添加子组件的方法，执行添加子组件
       if (typeof parent.addChild === 'function') {
         parent.addChild(this)
       }

@@ -27,7 +27,7 @@ export default class VForm extends VComponent {
   }
 
   addChild(component) {
-    super.addChild(component)
     this.addComponent(component)
+    super.addChild(component)
   }
 }

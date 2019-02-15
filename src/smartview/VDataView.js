@@ -10,15 +10,10 @@ export default class VDataView {
   dataStore;
 
   // 窗体
-  forms = new Map()
+  forms = [];
 
   // 数据源
   dataSources = new Map()
-  // // 数据UI
-  // // componentSets = [];
-
-  // // componentSet的数据过滤函数
-  // fielters = new Map();
 
   // 事件处理中心
   eventBus = new VEvent();
@@ -76,7 +71,7 @@ export default class VDataView {
 
   addDetailForm(detailFormMeta) {
     var detalForm = VDetailFormFactory.createInstant(this, detailFormMeta)
-    this.forms.set(detalForm.componentName, detalForm)
+    this.forms.push(detalForm)
   }
 
   /**
@@ -260,7 +255,7 @@ export default class VDataView {
 
   getCmpByName(componentName) {
     var result = null
-    for (const form of this.forms.values()) {
+    for (const form of this.forms) {
       result = form.getComponent(componentName)
       if (result !== null) {
         return result
@@ -406,7 +401,7 @@ export default class VDataView {
       if (findit === true) {
         var isRequired = true
         var record
-        if (ds.cmp.dataSource === null || ds.cmp.dataSource === undefined ) {
+        if (ds.cmp.dataSource === null || ds.cmp.dataSource === undefined) {
           record = null
         } else {
           record = ds.cmp.dataSource.getRecord()
@@ -427,12 +422,20 @@ export default class VDataView {
   }
 
   findDetailForm(formName) {
-    var form = this.forms.get(formName)
+    var form = this.findForm(formName)
     if (form == null || form === undefined) return null
     if (form.ctype === basicConstant.FORMTYPE_DETAIL) {
       return form
     } else {
       return null
+    }
+  }
+
+  findForm(formName) {
+    for (var form of this.forms) {
+      if (form.componentName === formName) {
+        return form
+      }
     }
   }
 }

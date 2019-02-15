@@ -38,7 +38,9 @@ export default class VDataStore {
   init(dataStoreMeta) {
     for (var j = 0; j < dataStoreMeta.datasets.length; j++) {
       if (dataStoreMeta.datasets[j]) {
-        this.datasets.push(new VDataSet(dataStoreMeta.datasets[j]))
+        var dataset = new VDataSet(dataStoreMeta.datasets[j])
+        dataset.dataStore = this
+        this.datasets.push(dataset)
       }
     }
   }

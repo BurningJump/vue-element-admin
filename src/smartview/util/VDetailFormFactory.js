@@ -111,7 +111,7 @@ export default class VDetailFormFactory {
     }
 
     // 添加form的组件
-    form.addComponent(this)
+    form.addComponent(component)
   }
 
   /**

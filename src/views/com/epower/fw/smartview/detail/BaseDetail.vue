@@ -71,6 +71,7 @@ export default {
       dataPackageResp: "",
       activeTab: "",
       tab: Object,
+      test: Object,
       dataView: null //add by max
     };
   },
@@ -116,6 +117,8 @@ export default {
             this.dataView = VDataView.newDetailInstant(
               res.data.detailViewModel
             ); //add by max
+           // this.test = this.dataView.getCmpByName('componentset');
+         //   this.test = this.dataView.findForm('com.epower.dp.dpshoporder.DpShopOrderDetail').getComponentCount();
             resolve("ok");
           });
       });

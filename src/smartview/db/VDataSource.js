@@ -14,7 +14,7 @@ export default class VDataSource {
    * 构造函数
    * @param {*} componentSetMeta
    */
-  constructor(name,dataset) {
+  constructor(name, dataset) {
     // this.dataStore = dataStore
     // this.datasetName = datasetName
     this.name = name
@@ -99,7 +99,7 @@ export default class VDataSource {
    */
   _clearComponentData() {
     for (const component of this.components) {
-      if (component.fieldName !== undefined ) {
+      if (component.fieldName !== undefined) {
         component.clearData()
       }
     }
