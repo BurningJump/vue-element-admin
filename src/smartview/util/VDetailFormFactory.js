@@ -23,7 +23,7 @@ export default class VDetailFormFactory {
     VDetailFormFactory._initToolbar(detailForm, toolbar, formMeta.masterPage.toolbarModel)
     // 建立detialpage视图
 
-    for ( var page of formMeta.detailPages) {
+    for (var page of formMeta.detailPages) {
       // 建立视图
       var detailPanel = new VPanel(detailForm)
       VDetailFormFactory._initPanel(detailForm, detailPanel, page)
@@ -43,7 +43,6 @@ export default class VDetailFormFactory {
   static _initPanel(detailForm, panel, panelMeta) {
     VDetailFormFactory._initComponent(detailForm, panel, panelMeta)
   }
-
 
   /**
    * 初始化ComponentSet
@@ -111,7 +110,7 @@ export default class VDetailFormFactory {
       form.addRefDataSource(toolbar.dataSource)
     }
 
-    //添加form的组件
+    // 添加form的组件
     form.addComponent(this)
   }
 
