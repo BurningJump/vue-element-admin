@@ -43,7 +43,7 @@
       >
         <el-form-item :label="input.label" :required="!input.allowBlank">
           <el-input
-            v-if="input.ctype === 'textfield' || input.ctype === 'valuelistField' ||input.ctype === 'remoteComboBox' "
+            v-if="  ( input.ctype === 'textfield' || input.ctype === 'valuelistField' ||input.ctype === 'remoteComboBox' ) "
             v-model="input.inputValue" :disabled="!input.enable"  :readonly="input.readOnly"  clearable
             @blur = "input.saveInputValue()"
           />

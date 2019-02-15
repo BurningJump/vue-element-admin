@@ -31,6 +31,6 @@ export default class VBaseForm extends VForm {
   }
 
   addRefDataSource(dataSource) {
-    this.refDataSources.set(dataSource.name , dataSource)
+    this.refDataSources.set(dataSource.name, dataSource)
   }
 }

@@ -3,7 +3,7 @@
     <base-detail-column
       v-if="UiLoaded&&dataLoaded"
       :tab="UIMeta.detailViewModel.masterPage"
-      :componentSet="vDataView.getCmpByName(this.UIMeta.detailViewModel.masterPage.componentSetModel.name)"
+      :componentSet="dataView.getCmpByName(this.UIMeta.detailViewModel.masterPage.componentSetModel.name)"
     />
     <el-tabs v-if="UiLoaded&&dataLoaded" v-model="activeTab" type="card" @tab-click="handleClick">
       <el-tab-pane
@@ -22,7 +22,7 @@
             :dataLoaded="dataLoaded"
             :activeTab="activeTab"
             :height="height"
-            :componentSet="vDataView.getCmpByName(tab.componentSetModel.name)"
+            :componentSet="dataView.getCmpByName(tab.componentSetModel.name)"
           />
           <base-detail-a-grid
             v-else-if="tab.componentSetModel.style === 'aGrid'"
@@ -31,14 +31,14 @@
             :activeTab="activeTab"
             :listLoading="listLoading"
             :height="height"
-            :componentSet="vDataView.getCmpByName(tab.componentSetModel.name)"
+            :componentSet="dataView.getCmpByName(tab.componentSetModel.name)"
           />
 
           <base-detail-column
             v-else-if="tab.componentSetModel.style === 'column'"
             :tab="tab"
             :activeTab="activeTab"
-            :componentSet="vDataView.getCmpByName(tab.componentSetModel.name)"
+            :componentSet="dataView.getCmpByName(tab.componentSetModel.name)"
           />
         </div>
       </el-tab-pane>
@@ -47,8 +47,8 @@
 </template>
 
 <script>
-import { HotTable } from "@handsontable/vue";
-import Handsontable from "handsontable";
+// import { HotTable } from "@handsontable/vue";
+// import Handsontable from "handsontable";
 import BaseDetailAGrid from "@/views/com/epower/fw/smartview/detail/BaseDetailAGrid";
 import BaseDetailColumn from "@/views/com/epower/fw/smartview/detail/BaseDetailColumn";
 import BaseDetailGrid from "@/views/com/epower/fw/smartview/detail/BaseDetailGrid";
@@ -71,7 +71,7 @@ export default {
       dataPackageResp: "",
       activeTab: "",
       tab: Object,
-      vDataView: VDataView //add by max
+      dataView: null //add by max
     };
   },
   components: {
@@ -84,10 +84,12 @@ export default {
       this.UiLoaded = true;
       this.getDetailData().then(() => {
         this.dataLoaded = true;
+        this.bizInit();
+        this.dataView.showDetailForm(this.$options.name); //add by max
       });
     });
     this.calcTableHeight();
-    this.bizInit();
+
   },
   methods: {
     calcTableHeight() {
@@ -107,11 +109,13 @@ export default {
         this.$http
           .get(
             `http://root.yiuser.com:3001/getDetailUIMeta/${this.$options.name}`
-                 )
+          )
           .then(res => {
             this.UIMeta = res.data;
             this.activeTab = this.UIMeta.detailViewModel.detailPages[0].name;
-            this.vDataView = VDataView.newDetailInstant(res.data.detailViewModel); //add by max
+            this.dataView = VDataView.newDetailInstant(
+              res.data.detailViewModel
+            ); //add by max
             resolve("ok");
           });
       });
@@ -123,8 +127,7 @@ export default {
         if (this.UIMeta.detailViewModel.actionUrl) {
           this.$http.get(this.UIMeta.detailViewModel.actionUrl).then(res => {
             this.dataPackageResp = res.data;
-            this.vDataView.loadDataByPackage(this.dataPackageResp.dataPackage); //add by max
-            this.vDataView.showDetailForm(this.$options.name); //add by max
+            this.dataView.loadDataByPackage(this.dataPackageResp.dataPackage); //add by max
             resolve("ok");
           });
         }
@@ -132,6 +135,68 @@ export default {
     },
     remoteMethod() {},
     handleClick() {},
+
+    getDataSet(dataSetName) {
+      return this.dataView.getDataSet(dataSetName);
+    },
+
+    setEnableDependence(cmpName, condition) {
+      return  this.dataView.setEnableDependence(cmpName, condition);
+    },
+    /**
+     * 设置可见依赖
+     * @param cmpName
+     * @param condition/condition()
+     */
+    setEditableDependence(cmpName, condition) {
+      this.dataView.setEditableDependence(cmpName, condition);
+    },
+
+    /**
+     * 设置编辑依赖
+     * @param cmpName
+     * @param condition/condition()
+     */
+    setReadOnlyDependence(cmpName, condition) {
+      this.dataView.setReadOnlyDependence(cmpName, condition);
+    },
+
+    /**
+     * 设置必填依赖
+     * @param cmpName
+     * @param conditionFun
+     */
+    setRequiredDependence(cmpName, condition) {
+      this.dataView.setRequiredDependence(cmpName, condition);
+    },
+
+    /**
+     * 设置隐藏
+     * @param cmpName
+     * @param conditionFun
+     */
+    setHiddenDependence(cmpName, condition) {
+      this.dataView.setHiddenDependence(cmpName, condition);
+    },
+
+    /**
+     * 设置唯一性依赖
+     * @param cmpName
+     * @param conditionFun
+     */
+    setUniqueDependence(cmpName, condition) {
+      this.dataView.setUniqueDependence(cmpName, condition);
+    },
+    /**
+     * 设置值依赖
+     * @param String targetCmpName
+     * @param String[] dependenceFields
+     * @param Boolean/function condition
+     * @param value/function value
+     */
+    setValueDependence(targetCmpName, dependenceCmpNames, condition, value) {
+      this.dataView.setValueDependence(cmpName, condition);
+    },
 
     bizInit() {
       //可用依赖
@@ -155,9 +220,9 @@ export default {
     setFormValueListFilter() {},
     setFormDefaultValue() {},
     setFormUniqueDependence() {},
-    setFormRequireDependence(){},
-    setFormReadOnlyDependence(){},
-    setFormEditableDependence(){}
+    setFormRequireDependence() {},
+    setFormReadOnlyDependence() {},
+    setFormEditableDependence() {}
   }
 };
 </script>

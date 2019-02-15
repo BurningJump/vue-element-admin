@@ -10,7 +10,7 @@ export default class VDetailForm extends VBaseForm {
     this.ctype = basicConstant.FORMTYPE_DETAIL
   }
   /**
- * 设置DataView的UI状态
+ * 设置UI状态
  * @param {状态} state
  */
   setUIState(state) {
@@ -26,29 +26,42 @@ export default class VDetailForm extends VBaseForm {
       for (const component of this.components.values()) {
         component.setDefaultEnable()
         component.setDefaultHidden()
-        if (typeof component.setReadOnly === 'function') {
-          component.setReadOnly(true)// 查看模式下只可以查看
-        }
-
         // 执行可用依赖
         this.parent.enableDependenceControl(component)
         // 执行隐藏依赖
         this.parent.hiddenDependenceControl(component)
+
+        if (typeof component.setReadOnly === 'function') {
+          component.setReadOnly(true)// 查看模式下只可以查看
+        }
+        if (typeof component.setDefaultAllowBlank === 'function') {
+          component.setDefaultAllowBlank()
+          // 执行必填依赖
+          this.parent.requiredDependenceControl(component)
+        }
       }
     } else { // 新增和修改模式
       // 设置默认状态
       for (const component of this.components.values()) {
         component.setDefaultEnable()
         component.setDefaultHidden()
-        if (typeof component.setDefaultReadOnly === 'function') {
-          component.setDefaultReadOnly()
-        }
         // 执行可用依赖
         this.parent.enableDependenceControl(component)
-        // 执行只读依赖
-        this.parent.readOnlyDependenceControl(component)
         // 执行隐藏依赖
         this.parent.hiddenDependenceControl(component)
+
+        // 只读处理
+        if (typeof component.setDefaultReadOnly === 'function') {
+          component.setDefaultReadOnly()
+          // 执行只读依赖
+          this.parent.readOnlyDependenceControl(component)
+        }
+
+        if (typeof component.setDefaultAllowBlank === 'function') {
+          component.setDefaultAllowBlank()
+          // 执行必填依赖
+          this.parent.requiredDependenceControl(component)
+        }
       }
     }
   }

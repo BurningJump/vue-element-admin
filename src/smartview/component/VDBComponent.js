@@ -1,4 +1,4 @@
-import VComponent from '@/smartview/component/VComponent.js'
+import VComponent from './VComponent.js'
 
 export default class VDBComponent extends VComponent {
   fieldName;
@@ -69,7 +69,11 @@ export default class VDBComponent extends VComponent {
       this.editable = isEditable
     }
   }
-
+  setAllowBlank(isAllowBlank) {
+    if (this.allowBlank !== isAllowBlank) {
+      this.allowBlank = isAllowBlank
+    }
+  }
   /**
    * 装载数据
    * @param {*} aValue
@@ -94,6 +98,10 @@ export default class VDBComponent extends VComponent {
 
   setDefaultReadOnly() {
     this.setReadOnly(this.originalReadOnly)
+  }
+
+  setDefaultAllowBlank() {
+    this.setAllowBlank(this.originalAllowBlank)
   }
 
   saveInputValue() {

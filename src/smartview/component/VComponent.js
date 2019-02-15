@@ -17,8 +17,14 @@ export default class VComponent {
   hidden;
   originalHidden;
 
-  constructor(parent) {
+  constructor(parent = null) {
     this.parent = parent
+    if (this.parent == null || this.parent === undefined) {}
+    else {
+      if (typeof parent.addChild === 'function') {
+        parent.addChild(this)
+      }
+    }
   }
 
   dataList() {

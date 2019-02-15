@@ -1,6 +1,9 @@
 import VDetailForm from '../bizform/VDetailForm.js'
 import VComponentSet from '../component/VComponentSet.js'
 import VDBComponent from '../component/VDBComponent.js'
+import VButton from '../component/VButton.js'
+import VToolbar from '../component/VToolbar.js'
+import VPanel from '../component/VPanel.js'
 
 export default class VDetailFormFactory {
   static createInstant(dataView, formMeta) {
@@ -8,37 +11,51 @@ export default class VDetailFormFactory {
     detailForm.componentName = formMeta.id
 
     // 建立Master视图
-    // 1.建立componentSet
-    var mComponentSet = new VComponentSet(detailForm)
-    VDetailFormFactory._initComponentSet(detailForm, mComponentSet, formMeta.masterPage.componentSetModel)
-    detailForm.addChild(mComponentSet)
-    // TODO 2.建立toolbar
+    var masterPanel = new VPanel(detailForm)
+    VDetailFormFactory._initPanel(detailForm, masterPanel, formMeta.masterPage)
 
+    // 1.建立componentSet
+    var mComponentSet = new VComponentSet(masterPanel)
+    VDetailFormFactory._initComponentSet(detailForm, mComponentSet, formMeta.masterPage.componentSetModel)
+
+    // 2.建立toolbar
+    var toolbar = new VToolbar(masterPanel)
+    VDetailFormFactory._initToolbar(detailForm, toolbar, formMeta.masterPage.toolbarModel)
     // 建立detialpage视图
-    for (var j = 0; j < formMeta.detailPages.length; j++) {
-      var dComponentSet = new VComponentSet(detailForm)
-      VDetailFormFactory._initComponentSet(detailForm, dComponentSet, formMeta.detailPages[j].componentSetModel)
-      detailForm.addChild(dComponentSet)
+
+    for ( var page of formMeta.detailPages) {
+      // 建立视图
+      var detailPanel = new VPanel(detailForm)
+      VDetailFormFactory._initPanel(detailForm, detailPanel, page)
+
+      // 1.建立componentSet
+      var dComponentSet = new VComponentSet(detailPanel)
+      VDetailFormFactory._initComponentSet(detailForm, dComponentSet, page.componentSetModel)
+
+      //  2.建立toolbar
+      var dToolbar = new VToolbar(detailPanel)
+      VDetailFormFactory._initToolbar(detailForm, dToolbar, page.toolbarModel)
     }
-    //
+
     return detailForm
   }
+
+  static _initPanel(detailForm, panel, panelMeta) {
+    VDetailFormFactory._initComponent(detailForm, panel, panelMeta)
+  }
+
+
   /**
    * 初始化ComponentSet
      *  @param {*} componentSetMeta 元数据
      */
   static _initComponentSet(detailForm, componentSet, componentSetMeta) {
-    VDetailFormFactory._initComponent(componentSet, componentSetMeta)
-    componentSet.componentName = componentSetMeta.name
-    var ds = detailForm.parent.getDefaultDataSource(componentSetMeta.dataset)
-    componentSet.dataSource = ds
-    detailForm.addRefDataSource(componentSet.dataSource)
+    VDetailFormFactory._initComponent(detailForm, componentSet, componentSetMeta)
+
     for (var j = 0; j < componentSetMeta.components.length; j++) {
       var cmp = new VDBComponent(componentSet)
+      VDetailFormFactory._initDBComponent(detailForm, cmp, componentSetMeta.components[j])
       cmp.dataSource = componentSet.dataSource
-      VDetailFormFactory._initDBComponent(cmp, componentSetMeta.components[j])
-      componentSet.addChild(cmp)
-      detailForm.addComponent(cmp)
     }
   }
 
@@ -47,9 +64,9 @@ export default class VDetailFormFactory {
    * @param {*} component
    * @param {*} aComponentMeta
    */
-  static _initDBComponent(component, aComponentMeta) {
-    VDetailFormFactory._initComponent(component, aComponentMeta)
-    component.componentName = aComponentMeta.name
+  static _initDBComponent(form, component, aComponentMeta) {
+    VDetailFormFactory._initComponent(form, component, aComponentMeta)
+
     component.fieldName = aComponentMeta.field
 
     component.editable = (aComponentMeta.editable === undefined) ? true : (aComponentMeta.editable === 'true')
@@ -64,11 +81,20 @@ export default class VDetailFormFactory {
   }
 
   // 初始化
-  static _initComponent(component, aComponentMeta) {
+  static _initComponent(form, component, aComponentMeta) {
     component.componentName = aComponentMeta.name
-    component.label = aComponentMeta.label
-    component.width = aComponentMeta.width
-    component.ctype = aComponentMeta.ctype
+
+    if (aComponentMeta.label !== undefined) {
+      component.label = aComponentMeta.label
+    }
+
+    if (aComponentMeta.width !== undefined) {
+      component.width = aComponentMeta.width
+    }
+
+    if (component.ctype !== undefined) {
+      component.ctype = aComponentMeta.ctype
+    }
 
     // 可用特性
     component.enable = (aComponentMeta.enable === undefined || aComponentMeta.enable === null) ? true : (aComponentMeta.enable === 'true')
@@ -77,5 +103,38 @@ export default class VDetailFormFactory {
     // 可视特性
     component.hidden = (aComponentMeta.hidden === undefined || aComponentMeta.hidden === null) ? false : (aComponentMeta.hidden === 'true')
     component.originalHidden = component.hidden
+
+    // 数据连接
+    if (aComponentMeta.dataset !== undefined) {
+      var ds = form.parent.getDataSource(aComponentMeta.dataset)
+      component.dataSource = ds
+      form.addRefDataSource(toolbar.dataSource)
+    }
+
+    //添加form的组件
+    form.addComponent(this)
+  }
+
+  /**
+   * 初始化ComponentSet
+     *  @param {*} componentSetMeta 元数据
+     */
+  static _initToolbar(detailForm, toolbar, toolbarMeta) {
+    VDetailFormFactory._initComponent(detailForm, toolbar, toolbarMeta)
+    toolbar.showMoreButton = toolbarMeta.showMoreButton
+    for (var buttonMeta of toolbarMeta.buttons) {
+      var cmp = new VButton(toolbar)
+      VDetailFormFactory._initToolbarButton(detailForm, cmp, buttonMeta)
+    }
+  }
+  /**
+   * 初始化按钮
+     *  @param {*} componentSetMeta 元数据
+     */
+  static _initToolbarButton(form, cmp, cmpMeta) {
+    VDetailFormFactory._initComponent(form, cmp, cmpMeta)
+    cmp.fun = cmpMeta.fun
+    cmp.iconcls = cmpMeta.iconcls
+    cmp.panelType = cmpMeta.panelType
   }
 }

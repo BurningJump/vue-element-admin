@@ -38,10 +38,6 @@ export default class VDataView {
   // 值依赖依赖
   valueDependenceSet = [];
 
-  getDefaultDataSource(datasetName) {
-    return this.dataSources.get(datasetName)
-  }
-
   /**
    * 添加监听
    * @param {*} type
@@ -100,21 +96,6 @@ export default class VDataView {
     this.fireEvent(vEventType.afterLoadDataList)
   }
 
-  // /**
-  //  * 根据名称获取一个数据视图
-  //  * @param {} componentSetName
-  //  */
-  // getComponentSet(componentSetName) {
-  //   var result = null
-  //   for (const cs of this.componentSets) {
-  //     if (cs.name === componentSetName) {
-  //       result = cs
-  //       break
-  //     }
-  //   }
-  //   return result
-  // }
-
   /**
    * 返回数据是否修改过 curd
    */
@@ -126,58 +107,9 @@ export default class VDataView {
     return this.dataStore.getDataset(datasetName)
   }
 
-  // openAll() {
-  //   const datasetNames = new Set()
-  //   for (const cs of this.componentSets) {
-  //     if (datasetNames.has(cs.dataSetName) === false) {
-  //       datasetNames.add(cs.dataSetName)
-  //     }
-  //   }
-  //   for (const cs of this.componentSets) {
-  //     this.open(cs.datasetName)
-  //   }
-  // }
-  /**
-  //  * 装载视图的数据集合
-  //  * @param {*} dataSetName
-  //  * @param {*} filter
-  //  */
-  // open(dataSetName, filter = null) {
-  //   var list
-  //   this.fielters.set(dataSetName, filter)
-  //   for (const ds of this.dataStore.datasets) {
-  //     if (ds.name === dataSetName) {
-  //       list = ds.getDatasetData(filter)
-  //     }
-  //   }
-
-  //   for (const cs of this.componentSets) {
-  //     if (cs.datasetName === dataSetName) {
-  //       cs.openByData(list)
-  //     }
-  //   }
-  // }
-
-  //   /**
-  //  * 装载视图的数据集合
-  //  * @param {*} dataSetName
-  //  * @param {*} filter
-  //  */
-  //   refresh(dataSetName) {
-  //     var list
-  //     for (var j = 0; j < this.dataStore.datasets.length; j++) {
-  //       if (this.dataStore.datasets[j].name === dataSetName) {
-  //         list = this.dataStore.datasets[j].getDatasetData(this.fielters.get(dataSetName))
-  //         break
-  //       }
-  //     }
-
-  //     for (const cs of this.componentSets) {
-  //       if (cs.datasetName === dataSetName) {
-  //         cs.refresh(list)
-  //       }
-  //     }
-  //   }
+  getDataSource(datasourceName) {
+    return this.dataSources.get(datasourceName)
+  }
 
   /**
    * 设置可用依赖
@@ -186,23 +118,25 @@ export default class VDataView {
    */
   setEnableDependence(cmpName, condition) {
     var cmp = this.getCmpByName(cmpName)
-    if (cmp !== null || cmp !== undefined) {
+    if (cmp !== null && cmp !== undefined) {
       this.enableDependenceSet.push({
         cmpName: cmpName,
         cmp: cmp,
         condition: condition
       })
+      return true
     }
+    return false
   }
 
   /**
-  * 设置可见依赖
+  * 设置可编辑依赖
   * @param cmpName
   * @param condition/condition()
   */
   setEditableDependence(cmpName, condition) {
     var cmp = this.getCmpByName(cmpName)
-    if (cmp !== null || cmp !== undefined) {
+    if (cmp !== null && cmp !== undefined) {
       this.editableDependenceSet.push({
         cmpName: cmpName,
         cmp: cmp,
@@ -218,7 +152,7 @@ export default class VDataView {
   */
   setReadOnlyDependence(cmpName, condition) {
     var cmp = this.getCmpByName(cmpName)
-    if (cmp !== null || cmp !== undefined) {
+    if (cmp !== null && cmp !== undefined) {
       this.readOnlyDependenceSet.push({
         cmpName: cmpName,
         cmp: cmp,
@@ -233,7 +167,7 @@ export default class VDataView {
    */
   setRequiredDependence(cmpName, condition) {
     var cmp = this.getCmpByName(cmpName)
-    if (cmp !== null || cmp !== undefined) {
+    if (cmp !== null && cmp !== undefined) {
       this.requiredDependenceSet.push({
         cmpName: cmpName,
         cmp: cmp,
@@ -249,7 +183,7 @@ export default class VDataView {
   */
   setHiddenDependence(cmpName, condition) {
     var cmp = this.getCmpByName(cmpName)
-    if (cmp !== null || cmp !== undefined) {
+    if (cmp !== null && cmp !== undefined) {
       this.hiddenDependenceSet.push({
         cmpName: cmpName,
         cmp: cmp,
@@ -265,7 +199,7 @@ export default class VDataView {
    */
   setUniqueDependence(cmpName, condition) {
     var cmp = this.getCmpByName(cmpName)
-    if (cmp !== null || cmp !== undefined) {
+    if (cmp !== null && cmp !== undefined) {
       this.uniqueDependenceSet.push({
         cmpName: cmpName,
         cmp: cmp,
@@ -352,13 +286,13 @@ export default class VDataView {
       if (findit === true) {
         var isEditable = true
         var record = null
-        if (ds.cmp.dataSoure !== null) {
-          record = ds.cmp.dataSoure.getRecord()
+        if (ds.cmp.dataSource !== null) {
+          record = ds.cmp.dataSource.getRecord()
         }
-        if (typeof this.ds.condition === 'function') {
-          isEditable = this.ds.condition({ record: record, cmp: ds.cmp })
+        if (typeof ds.condition === 'function') {
+          isEditable = ds.condition({ record: record, cmp: ds.cmp })
         } else {
-          isEditable = this.ds.condition
+          isEditable = ds.condition
         }
         ds.cmp.setEnable(isEditable)
       }
@@ -382,13 +316,13 @@ export default class VDataView {
       if (findit === true) {
         var isReadOnly = true
         var record = null
-        if (ds.cmp.dataSoure !== null) {
-          record = ds.cmp.dataSoure.getRecord()
+        if (ds.cmp.dataSource !== null) {
+          record = ds.cmp.dataSource.getRecord()
         }
-        if (typeof this.ds.condition === 'function') {
-          isReadOnly = this.ds.condition({ record: record, cmp: ds.cmp })
+        if (typeof ds.condition === 'function') {
+          isReadOnly = ds.condition({ record: record, cmp: ds.cmp })
         } else {
-          isReadOnly = this.ds.condition
+          isReadOnly = ds.condition
         }
         ds.cmp.setReadOnly(!isReadOnly)
       }
@@ -412,13 +346,13 @@ export default class VDataView {
       if (findit === true) {
         var isEnable = true
         var record = null
-        if (ds.cmp.dataSoure !== null) {
-          record = ds.cmp.dataSoure.getRecord()
+        if (ds.cmp.dataSource !== null) {
+          record = ds.cmp.dataSource.getRecord()
         }
-        if (typeof this.ds.condition === 'function') {
-          isEnable = this.ds.condition({ record: record, cmp: ds.cmp })
+        if (typeof ds.condition === 'function') {
+          isEnable = ds.condition({ record: record, cmp: ds.cmp })
         } else {
-          isEnable = this.ds.condition
+          isEnable = ds.condition
         }
         ds.cmp.setEnable(isEnable)
       }
@@ -442,15 +376,47 @@ export default class VDataView {
       if (findit === true) {
         var isHidden = true
         var record = null
-        if (ds.cmp.dataSoure !== null) {
-          record = ds.cmp.dataSoure.getRecord()
+        if (ds.cmp.dataSource !== null) {
+          record = ds.cmp.dataSource.getRecord()
         }
-        if (typeof this.ds.condition === 'function') {
-          isHidden = this.ds.condition({ record: record, cmp: ds.cmp })
+        if (typeof ds.condition === 'function') {
+          isHidden = ds.condition({ record: record, cmp: ds.cmp })
         } else {
-          isHidden = this.ds.condition
+          isHidden = ds.condition
         }
         ds.cmp.setHidden(isHidden)
+      }
+    }
+  }
+
+  /**
+ * 隐藏依赖处理
+ */
+  requiredDependenceControl(component) {
+    var findit = false
+    for (const ds of this.requiredDependenceSet) {
+      if (component === null) {
+        findit = true
+      } else {
+        if (findit === true) break
+        if (ds.cmp === component) {
+          findit = true
+        }
+      }
+      if (findit === true) {
+        var isRequired = true
+        var record
+        if (ds.cmp.dataSource === null || ds.cmp.dataSource === undefined ) {
+          record = null
+        } else {
+          record = ds.cmp.dataSource.getRecord()
+        }
+        if (typeof ds.condition === 'function') {
+          isRequired = ds.condition({ record: record, cmp: ds.cmp })
+        } else {
+          isRequired = ds.condition
+        }
+        ds.cmp.setAllowBlank(!isRequired)
       }
     }
   }

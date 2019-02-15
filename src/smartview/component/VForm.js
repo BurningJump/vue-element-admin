@@ -1,5 +1,5 @@
-import VComponent from '@/smartview/component/VComponent.js'
-import { basicConstant } from '@/smartview/VBasicConstant.js'
+import VComponent from './VComponent.js'
+import { basicConstant } from '../VBasicConstant.js'
 
 export default class VForm extends VComponent {
   // form上面的所有组件
