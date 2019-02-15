@@ -204,14 +204,12 @@ export default{
   mounted() {
     this.getUIMeta().then(() => {
       this.UiLoaded = true
-      console.log(this.grid,'this.grid[item.name]-------207')
       this.getTree().then(() => {
         this.calcTableHeight()
         this.renderTree()
       })
       this.getListData().then(() => {
         this.dataLoaded = true
-        console.log(this.grid,'this.grid[item.name]-------214')
       })
     })
   },
@@ -219,7 +217,7 @@ export default{
     calcTableHeight() {
       setTimeout(() => {
         this.tableHeight = window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 190
-        this.treeHeight = (window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 100) + 'px'
+        this.treeHeight = (window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 96) + 'px'
       })
     },
     renderContent(h, { node, data, store }) {
@@ -247,7 +245,7 @@ export default{
     },
     getUIMeta() {
       return new Promise((resolve,reject) => {
-        this.$http.get(`http://root.yiuser.com:3001/getListUIMeta/${this.$options.name}`).then((res) => {
+        this.$http.get(`/api/getListUIMeta/${this.$options.name}`).then((res) => {
           this.UIMeta = res.data
           this.activeTab = this.UIMeta.listViewModel.dataType
           ? this.UIMeta.listViewModel.dataType.default
@@ -260,7 +258,6 @@ export default{
                 label: thead.label
               })
             })
-            console.log(this.grid,'this.grid[item.name]-------261')
           })
           resolve(true)
         })
@@ -271,11 +268,11 @@ export default{
         if (!this.UIMeta.listViewModel.tree) {
           resolve('notree')
         }
-        this.$http.get(`http://root.yiuser.com:3001/${this.UIMeta.listViewModel.tree.initUrl}/${this.UIMeta.listViewModel.tree.initMethod}`).then((res) => {
+        this.$http.get(`/api/${this.UIMeta.listViewModel.tree.initUrl}/${this.UIMeta.listViewModel.tree.initMethod}`).then((res) => {
           this.treeRoot = JSON.parse(JSON.stringify(res.data))
-          this.$http.get(`http://root.yiuser.com:3001/${this.UIMeta.listViewModel.tree.actionUrl}/${this.UIMeta.listViewModel.tree.method}`).then((res) => {
+          this.$http.get(`/api/${this.UIMeta.listViewModel.tree.actionUrl}/${this.UIMeta.listViewModel.tree.method}`).then((res) => {
             this.treeChild = JSON.parse(JSON.stringify(res.data))
-            this.$http.get(`http://root.yiuser.com:3001/${this.UIMeta.listViewModel.tree.actionUrl}/${this.UIMeta.listViewModel.tree.method}`).then((res) => {
+            this.$http.get(`/api/${this.UIMeta.listViewModel.tree.actionUrl}/${this.UIMeta.listViewModel.tree.method}`).then((res) => {
               this.treeGrandchild = JSON.parse(JSON.stringify(res.data))
               resolve(true)
             }).catch((err) => {
@@ -342,7 +339,7 @@ export default{
         this.UIMeta.listViewModel.dataView.views.forEach((view, vIndex) => {
           this.UIMeta.listViewModel.querys.forEach((query, qIndex) => {
             if (view.queryName === query.name) {
-              this.$http.get(`http://root.yiuser.com:3001/${query.actionUrl}/${query.queryMethod}`).then((res) => {
+              this.$http.get(`/api/${query.actionUrl}/${query.queryMethod}`).then((res) => {
                 this.list[view.name] = []
                 res.data.resultList.forEach((item, index) => {
                   this.list[view.name][index] = {}
@@ -387,6 +384,10 @@ body .el-table th.gutter{
 }
 body .el-table colgroup.gutter{
   display: table-cell!important;
+}
+#qconHeader {
+  padding-top: 6px;
+  background-color: #fafafa;
 }
 .el-form {
   display: flex;
@@ -446,7 +447,7 @@ body .el-table colgroup.gutter{
   background-color: #fff;
 }
 .tree-container {
-  height: calc(100% - 41px);
+  height: calc(100% - 42px);
   overflow: auto;
 }
 .pagination-container {
