@@ -8,9 +8,9 @@ export default {
     return {};
   },
   methods: {
-    setFormEnableDependence() {
+    setFormEnableDependence(form) {
       var canGenStockBillFun = function(e) {
-        var ds = this.getDataset("dpShopOrder");
+        var ds = form.getDataset("dpShopOrder");
         if (ds == null) return false;
         if (ds != null) {
           var rs = ds.currentTable[0].rstatus;
@@ -18,7 +18,7 @@ export default {
         }
 
         if (
-          this.state == basicConstant.VIEWSTATE_VIEW &&
+          form.state == basicConstant.VIEWSTATE_VIEW &&
           rs == 1 &&
           (bs == 1 || bs == 2)
         ) {
@@ -27,13 +27,13 @@ export default {
           return false;
         }
       };
-      this.setEnableDependence("newStockOrder", canGenStockBillFun);
+    //  form.setEnableDependence("newStockOrder", canGenStockBillFun);
 
       var isNeedFun = function(e){
          return true
       }
 
-      this.setRequiredDependence("SellerNick",isNeedFun);
+    //  form.setRequiredDependence("SellerNick",isNeedFun);
     }
   }
 };

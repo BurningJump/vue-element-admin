@@ -71,8 +71,8 @@ export default {
       dataPackageResp: "",
       activeTab: "",
       tab: Object,
-      test: Object,
       dataView: null //add by max
+
     };
   },
   components: {
@@ -90,7 +90,6 @@ export default {
       });
     });
     this.calcTableHeight();
-
   },
   methods: {
     calcTableHeight() {
@@ -139,8 +138,8 @@ export default {
     remoteMethod() {},
     handleClick() {},
 
-    getDataSet(dataSetName) {
-      return this.dataView.getDataSet(dataSetName);
+    getDataset(dataSetName) {
+      return this.dataView.getDataset(dataSetName);
     },
 
     setEnableDependence(cmpName, condition) {
@@ -202,30 +201,31 @@ export default {
     },
 
     bizInit() {
+      var form = this;
       //可用依赖
-      this.setFormEnableDependence();
+      this.setFormEnableDependence(form);
       //值依赖
-      this.setFormValueDependence();
+      this.setFormValueDependence(form);
       //默认值依赖
-      this.setFormDefaultValue();
+      this.setFormDefaultValue(form);
       //唯一依赖
-      this.setFormUniqueDependence();
+      this.setFormUniqueDependence(form);
       //必填依赖
-      this.setFormRequireDependence();
+      this.setFormRequireDependence(form);
       //只读依赖
-      this.setFormReadOnlyDependence();
+      this.setFormReadOnlyDependence(form);
       //可手输入依赖
-      this.setFormEditableDependence();
+      this.setFormEditableDependence(form);
     },
-    setFormEnableDependence() {},
-    setFormButton() {},
-    setFormValueDependence() {},
-    setFormValueListFilter() {},
-    setFormDefaultValue() {},
-    setFormUniqueDependence() {},
-    setFormRequireDependence() {},
-    setFormReadOnlyDependence() {},
-    setFormEditableDependence() {}
+    setFormEnableDependence(form) {},
+    setFormButton(form) {},
+    setFormValueDependence(form) {},
+    setFormValueListFilter(form) {},
+    setFormDefaultValue(form) {},
+    setFormUniqueDependence(form) {},
+    setFormRequireDependence(form) {},
+    setFormReadOnlyDependence(form) {},
+    setFormEditableDependence(form) {}
   }
 };
 </script>

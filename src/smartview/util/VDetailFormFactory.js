@@ -91,7 +91,7 @@ export default class VDetailFormFactory {
       component.width = aComponentMeta.width
     }
 
-    if (component.ctype !== undefined) {
+    if (aComponentMeta.ctype !== undefined) {
       component.ctype = aComponentMeta.ctype
     }
 
