@@ -2,8 +2,10 @@ import { basicConstant } from '@/smartview/VBasicConstant.js'
 import VForm from '../component/VForm'
 
 export default class VBaseForm extends VForm {
-  // dataSource
+  // 所有有关的数据源
   refDataSources = new Map();
+  // form的源数据定义
+  formMeta;
 
   constructor(parent) {
     super(parent)

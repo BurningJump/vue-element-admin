@@ -9,6 +9,7 @@ export default class VDetailFormFactory {
   static createInstant(dataView, formMeta) {
     var detailForm = new VDetailForm(dataView)
     detailForm.componentName = formMeta.id
+    detailForm.formMeta = formMeta
 
     // 建立Master视图
     var masterPanel = new VPanel(detailForm)

@@ -55,6 +55,8 @@ import BaseDetailColumn from "@/views/com/epower/fw/smartview/detail/BaseDetailC
 import BaseDetailGrid from "@/views/com/epower/fw/smartview/detail/BaseDetailGrid";
 import VDataView from "@/smartview/VDataView.js";
 import VComponentSet from "@/smartview/component/VComponentSet.js";
+import * as cf from "@/smartview/util/commonFun.js";
+
 export default {
   data() {
     return {
@@ -135,10 +137,15 @@ export default {
     handleTabClick() {},
     handleButtonClick(params){
         console.log(params.component.fun);
+        // var btnFun	= cf.parseFunctionName(params.component.fun);
+				// var params= cf.parseFunctionParams(params.component.fun);
+        // if (btnFun!=null) btnFun = btnFun.toLocaleLowerCase();
+        this.delete()
+
         // if (this.hasOwnProperty(params.component.fun)){
         //   this[params.component.fun]();
         // }
-        this.delete();
+
     },
 
     getDataset(dataSetName) {
@@ -205,6 +212,8 @@ export default {
 
     bizInit() {
       var form = this;
+      //增加标准依赖
+
       //可用依赖
       this.setFormEnableDependence(form);
       //值依赖
