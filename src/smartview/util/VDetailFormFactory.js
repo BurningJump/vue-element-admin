@@ -15,29 +15,28 @@ export default class VDetailFormFactory {
     var masterPanel = new VPanel(detailForm)
     VDetailFormFactory._initPanel(detailForm, masterPanel, formMeta.masterPage)
 
-    // 1.建立componentSet
+    // 1.视图中建立componentSet
     var mComponentSet = new VComponentSet(masterPanel)
     VDetailFormFactory._initComponentSet(detailForm, mComponentSet, formMeta.masterPage.componentSetModel)
 
-    // 2.建立toolbar
-    var toolbar = new VToolbar(masterPanel)
-    VDetailFormFactory._initToolbar(detailForm, toolbar, formMeta.masterPage.toolbarModel)
-    // 建立detialpage视图
+    // 2.视图中建立toolbar
+    var mToolbar = new VToolbar(masterPanel)
+    VDetailFormFactory._initToolbar(detailForm, mToolbar, formMeta.masterPage.toolbarModel)
 
+    // 3.建立detialpage视图
     for (var page of formMeta.detailPages) {
-      // 建立视图
+      // 建立Detail视图
       var detailPanel = new VPanel(detailForm)
       VDetailFormFactory._initPanel(detailForm, detailPanel, page)
 
-      // 1.建立componentSet
+      // 1.视图中建立componentSet
       var dComponentSet = new VComponentSet(detailPanel)
       VDetailFormFactory._initComponentSet(detailForm, dComponentSet, page.componentSetModel)
 
-      //  2.建立toolbar
+      //  2.视图中建立toolbar
       var dToolbar = new VToolbar(detailPanel)
       VDetailFormFactory._initToolbar(detailForm, dToolbar, page.toolbarModel)
     }
-
     return detailForm
   }
 

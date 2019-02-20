@@ -4,7 +4,7 @@ import VForm from '../component/VForm'
 export default class VBaseForm extends VForm {
   // 所有有关的数据源
   refDataSources = new Map();
-  // form的源数据定义
+  // form的元数据定义
   formMeta;
 
   constructor(parent) {
