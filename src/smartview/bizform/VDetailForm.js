@@ -71,4 +71,5 @@ export default class VDetailForm extends VBaseForm {
     this.openALLDataSource()
     this.setUIState(state)
   }
+
 }

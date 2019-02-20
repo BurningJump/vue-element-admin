@@ -40,7 +40,7 @@ export default class VComponent {
 
   findChild(cmpName) {
     var result = null
-    for (const cs of this.components) {
+    for (const cs of this.children) {
       if (cs.componentName === cmpName) {
         result = cs
         break

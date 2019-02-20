@@ -1,21 +1,24 @@
 <template>
   <el-container class="base-detail-column-container">
     <el-header
-      v-if="tab.toolbarModel.buttons.length > 0 || tab.componentSetModel.style === 'aGrid'"
+      v-if="toolbar.children.length > 0 "
       height="35px"
     >
-      <el-button-group v-if="tab.toolbarModel.buttons.length > 0">
+      <el-button-group v-if="toolbar.children.length > 0">
         <el-button
-          v-for="btn in tab.toolbarModel.buttons"
-          v-if="tab.toolbarModel.buttons.length > 0 && !btn.isMore"
-          :key="btn.name"
+          v-for="btn in toolbar.children"
+          v-if=" !btn.hidden && !btn.isMore"
+          :key="btn.componentName"
+          :disabled="!btn.enable"
+          @click="onClickButton(btn)"
           size="mini"
         >
           <svg-icon :icon-class="`${btn.iconcls}`"/>
           {{ btn.label }}
         </el-button>
+
         <el-dropdown
-          v-if="tab.toolbarModel.showMoreButton"
+          v-if="toolbar.showMoreButton"
           trigger="click"
           placement="bottom"
           szie="mini"
@@ -24,7 +27,7 @@
             <i class="el-icon-arrow-down el-icon--right" style="margin-left:0;"></i>
           </el-button>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item v-for="btn in tab.toolbarModel.buttons" v-if="btn.isMore">
+            <el-dropdown-item v-for="btn in toolbar.children" v-if="btn.isMore">
               <svg-icon :icon-class="`${btn.iconcls}`"/>
               {{btn.label}}
             </el-dropdown-item>
@@ -43,7 +46,7 @@
       >
         <el-form-item :label="input.label" :required="!input.allowBlank">
           <el-input
-            v-if="   input.ctype === 'textfield' || input.ctype === 'valuelistField' ||input.ctype === 'remoteComboBox'  "
+            v-if=" input.ctype === 'textfield' || input.ctype === 'valuelistField' ||input.ctype === 'remoteComboBox'  "
             v-model="input.inputValue" :disabled="!input.enable"  :readonly="input.readOnly"  clearable
             @blur = "input.saveInputValue()"
           />
@@ -54,7 +57,6 @@
           <el-select v-else-if="input.ctype === 'comboBox'" v-model="input.inputValue" filterable :disabled="!input.enable"  @blur = "input.saveInputValue()"  >
             <el-option v-for="item in input.enumModel.items" :key="item.name" :label="item.label" :value="item.value"/>
           </el-select>
-
         </el-form-item>
       </el-form>
     </el-main>
@@ -65,9 +67,19 @@
 export default {
   name: "com.epower.fw.smartview.detail.BaseDetailColumn",
   data() {
-    return {};
+    return {
+      componentSet:this.page.findChild(this.tab.componentSetModel.name),
+      toolbar:this.page.findChild(this.tab.toolbarModel.name)
+    };
   },
-  props: ["tab", "componentSet"]
+  computed:{
+  },
+  methods: {
+    onClickButton:function(button){
+       this.$emit('onButtonClick',{component:button});  //使用$emit()引入父组件中的方法
+    }
+   },
+  props: ["tab", "page"]
 };
 </script>
 

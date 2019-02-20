@@ -3,9 +3,10 @@
     <base-detail-column
       v-if="UiLoaded&&dataLoaded"
       :tab="UIMeta.detailViewModel.masterPage"
-      :componentSet="dataView.getCmpByName(this.UIMeta.detailViewModel.masterPage.componentSetModel.name)"
+      :page ="dataView.getCmpByName(UIMeta.detailViewModel.masterPage.name)"
+      @onButtonClick = "handleButtonClick"
     />
-    <el-tabs v-if="UiLoaded&&dataLoaded" v-model="activeTab" type="card" @tab-click="handleClick">
+    <el-tabs v-if="UiLoaded&&dataLoaded" v-model="activeTab" type="card" @tab-click="handleTabClick">
       <el-tab-pane
         v-for="(tab,tabIndex) in UIMeta.detailViewModel.detailPages"
         :key="tab.name"
@@ -38,7 +39,8 @@
             v-else-if="tab.componentSetModel.style === 'column'"
             :tab="tab"
             :activeTab="activeTab"
-            :componentSet="dataView.getCmpByName(tab.componentSetModel.name)"
+            :page ="dataView.getCmpByName(tab.name)"
+            @buttonOnClick = "handleButtonClick"
           />
         </div>
       </el-tab-pane>
@@ -47,8 +49,7 @@
 </template>
 
 <script>
-// import { HotTable } from "@handsontable/vue";
-// import Handsontable from "handsontable";
+
 import BaseDetailAGrid from "@/views/com/epower/fw/smartview/detail/BaseDetailAGrid";
 import BaseDetailColumn from "@/views/com/epower/fw/smartview/detail/BaseDetailColumn";
 import BaseDetailGrid from "@/views/com/epower/fw/smartview/detail/BaseDetailGrid";
@@ -58,12 +59,7 @@ export default {
   data() {
     return {
       UIapi: "",
-      // options4: [],
       listLoading: false,
-      // defaultProps: {
-      //   children: "children",
-      //   label: "label"
-      // },
       UiLoaded: false, // UI获取完成
       dataLoaded: false, // 数据获取完成
       height: 600, // 表头高度
@@ -72,7 +68,6 @@ export default {
       activeTab: "",
       tab: Object,
       dataView: null //add by max
-
     };
   },
   components: {
@@ -116,8 +111,6 @@ export default {
             this.dataView = VDataView.newDetailInstant(
               res.data.detailViewModel
             ); //add by max
-           // this.test = this.dataView.getCmpByName('componentset');
-         //   this.test = this.dataView.findForm('com.epower.dp.dpshoporder.DpShopOrderDetail').getComponentCount();
             resolve("ok");
           });
       });
@@ -135,8 +128,18 @@ export default {
         }
       });
     },
+    delete(){
+      console.log('BasedoDelete');
+    },
     remoteMethod() {},
-    handleClick() {},
+    handleTabClick() {},
+    handleButtonClick(params){
+        console.log(params.component.fun);
+        // if (this.hasOwnProperty(params.component.fun)){
+        //   this[params.component.fun]();
+        // }
+        this.delete();
+    },
 
     getDataset(dataSetName) {
       return this.dataView.getDataset(dataSetName);

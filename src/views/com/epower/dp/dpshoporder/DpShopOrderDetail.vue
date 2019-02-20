@@ -1,12 +1,15 @@
 <script>
 import BaseBillDetail from "@/views/com/epower/fw/smartview/detail/BaseBillDetail";
+import BaseDetail from "@/views/com/epower/fw/smartview/detail/BaseDetail";
 import { basicConstant } from '@/smartview/VBasicConstant.js';
+import { longStackSupport } from 'q';
 export default {
   name: "com.epower.dp.dpshoporder.DpShopOrderDetail",
   extends: BaseBillDetail,
   data() {
     return {};
   },
+
   methods: {
     setFormEnableDependence(form) {
       var canGenStockBillFun = function(e) {
@@ -27,14 +30,18 @@ export default {
           return false;
         }
       };
-    //  form.setEnableDependence("newStockOrder", canGenStockBillFun);
+      form.setEnableDependence("newStockOrder", canGenStockBillFun);
 
       var isNeedFun = function(e){
          return true
       }
 
-    //  form.setRequiredDependence("SellerNick",isNeedFun);
-    }
+      form.setRequiredDependence("SellerNick",isNeedFun);
+    },
+  delete(){
+      super.delete();
+      console.log('ShopOrderDelete');
+  }
   }
 };
 </script>
