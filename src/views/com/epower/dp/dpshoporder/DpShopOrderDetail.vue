@@ -39,7 +39,9 @@ export default {
       form.setRequiredDependence("SellerNick",isNeedFun);
     },
   delete(){
-      super.delete();
+    //  var masterToolbar = this.dataView.getCmpByName("toolbar");
+    //  var dToolbar = this.dataView.getCmpByName("spmi_toolbar");
+     // super.delete();
       console.log('ShopOrderDelete');
   }
   }

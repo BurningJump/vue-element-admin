@@ -4,7 +4,6 @@ import {
   basicConstant
 } from '@/smartview/VBasicConstant.js'
 
-
 export default class VDetailForm extends VBaseForm {
   // 当前状态
   state = basicConstant.VIEWSTATE_VIEW;
@@ -14,11 +13,15 @@ export default class VDetailForm extends VBaseForm {
     this.ctype = basicConstant.FORMTYPE_DETAIL
   }
 
+  initBiz() {
+    this.createBizDependence()
+  }
   /**
    * 获取Master Table的数据记录
    */
   getMasterRecord() {
-    // todo
+    // TODO  获取主数据
+    return  null
   }
 
   /**
@@ -80,13 +83,20 @@ export default class VDetailForm extends VBaseForm {
 
   show(state) {
     super.show()
-    this.openALLDataSource()
+    this.loadData()
     this.setUIState(state)
   }
 
-
   setEnableDependence(cmpName, condition) {
-    this.parent.setEnableDependence(cmpName, condition)
+    var cmp = this.getComponent(cmpName)
+    if (cmp !== null && cmp !== undefined) {
+      this.setComponentEnableDependence(cmp, condition)
+    }
+    return false
+  }
+
+  setComponentEnableDependence(component, condition) {
+    this.parent.setComponentEnableDependence(component, condition)
   }
 
   createBizDependence() {
@@ -94,17 +104,41 @@ export default class VDetailForm extends VBaseForm {
   }
 
   _createEnableDependence() {
-    // 添加可用依赖
-    // var btnFun	= cf.parseFunctionName(cmp.fun)
-    // if (btnFun != null) btnFun = btnFun.toLocaleLowerCase()
+    // 处理masterpage上的按钮
+    var masterToolbar =
+      this.getComponent(this.formMeta.masterPage.toolbarModel.name)
+    for (var button of masterToolbar.children) {
+      this._addButtonDependence(button)
+    }
 
+    // Detail的处理是否可用状态依赖设置
+    var detailPages = this.formMeta.detailPages
+    for (var j = 0; j < detailPages.length; j++) {
+      // 页面的按钮处理
+      var detailToolbar = this.getComponent(detailPages[j].toolbarModel.name)
+      for (const button of detailToolbar.children) {
+        this._addButtonDependence(button)
+      }
+
+      //  聚合页面的处理
+      if (detailPages[j].componentSetModel != null && detailPages[j].componentSetModel.style === basicConstant.AGRID) {
+        var conditionFun = function() {
+          if (this.state === basicConstant.VIEWSTATE_NEW || this.state === basicConstant.VIEWSTATE_MODIFY) {
+            return false
+          } else {
+            return true
+          }
+        }
+        this.setEnableDependence(detailPages[j].name, conditionFun)
+      }
+    }
   }
 
   _addButtonDependence(button) {
     var btnFun = cf.parseFunctionName(button.fun)
     var params = cf.parseFunctionParams(button.fun)
-    var btnName = button.componentName
     var conditionFun
+    var vForm = this
     if (btnFun !== null) btnFun = btnFun.toLocaleLowerCase()
     switch (btnFun) {
       case 'new':
@@ -117,7 +151,7 @@ export default class VDetailForm extends VBaseForm {
             return true
           }
         }
-        this.setEnableDependence(btnName, conditionFun)
+        this.setComponentEnableDependence(button, conditionFun)
         return
       case 'save':
         conditionFun = function() {
@@ -127,7 +161,7 @@ export default class VDetailForm extends VBaseForm {
             return true
           }
         }
-        this.setEnableDependence(btnName, conditionFun)
+        this.setComponentEnableDependence(button, conditionFun)
 
         return
 
@@ -136,14 +170,14 @@ export default class VDetailForm extends VBaseForm {
           if (this.state === basicConstant.VIEWSTATE_NEW) {
             return false
           } else {
-            var masterData = this.getMasterRecord()
-            if (masterData.rstatus === 2 && (masterData.sys == null || masterData.sys === 0)) {
+            var masterData = vForm.getMasterRecord()
+            if (masterData !== null && masterData.rstatus === 2 && (masterData.sys == null || masterData.sys === 0)) {
               return true
             }
             return false
           }
         }
-        this.setEnableDependence(btnName, conditionFun)
+        this.setComponentEnableDependence(button, conditionFun)
 
         return
       case 'attachmentmanage':
@@ -154,7 +188,7 @@ export default class VDetailForm extends VBaseForm {
             return true
           }
         }
-        this.setEnableDependence(btnName, conditionFun)
+        this.setComponentEnableDependence(button, conditionFun)
 
         return
 
@@ -166,7 +200,7 @@ export default class VDetailForm extends VBaseForm {
             return true
           }
         }
-        this.setEnableDependence(btnName, conditionFun)
+        this.setComponentEnableDependence(button, conditionFun)
 
         return
 
@@ -178,7 +212,7 @@ export default class VDetailForm extends VBaseForm {
             return true
           }
         }
-        this.setEnableDependence(btnName, conditionFun)
+        this.setComponentEnableDependence(button, conditionFun)
 
         return
 
@@ -191,13 +225,13 @@ export default class VDetailForm extends VBaseForm {
             return true
           }
         }
-        this.setEnableDependence(btnName, conditionFun)
+        this.setComponentEnableDependence(button, conditionFun)
         return
       case 'approvetxn':
         conditionFun = function() {
           if (this.state === basicConstant.VIEWSTATE_VIEW) {
-            var masterData = this.getMasterRecord()
-            if (masterData.rstatus === 1 || masterData.rstatus === 0) {
+            var masterData = vForm.getMasterRecord()
+            if (masterData !== null  && (masterData.rstatus === 1 || masterData.rstatus === 0)) {
               return false
             }
             return true
@@ -205,13 +239,13 @@ export default class VDetailForm extends VBaseForm {
             return false
           }
         }
-        this.setEnableDependence(btnName, conditionFun)
+        this.setComponentEnableDependence(button, conditionFun)
         return
       case 'unapprovetxn':
         conditionFun = function() {
           if (this.state === basicConstant.VIEWSTATE_VIEW) {
-            var masterData = this.getMasterRecord()
-            if (masterData.rstatus === 1) {
+            var masterData = vForm.getMasterRecord()
+            if (masterData !== null  && masterData.rstatus === 1) {
               return true
             }
             return false
@@ -219,13 +253,13 @@ export default class VDetailForm extends VBaseForm {
             return false
           }
         }
-        this.setEnableDependence(btnName, conditionFun)
+        this.setComponentEnableDependence(button, conditionFun)
         return
       case 'canceltxn':
         conditionFun = function() {
           if (this.state === basicConstant.VIEWSTATE_VIEW) {
-            var masterData = this.getMasterRecord()
-            if (masterData.rstatus === 0) {
+            var masterData = vForm.getMasterRecord()
+            if (masterData !== null  &&  masterData.rstatus === 0) {
               return false
             }
             return true
@@ -233,13 +267,13 @@ export default class VDetailForm extends VBaseForm {
             return false
           }
         }
-        this.setEnableDependence(btnName, conditionFun)
+        this.setComponentEnableDependence(button, conditionFun)
         return
       case 'uncanceltxn':
         conditionFun = function() {
           if (this.state === basicConstant.VIEWSTATE_VIEW) {
-            var masterData = this.getMasterRecord()
-            if (masterData.rstatus === 0) {
+            var masterData = vForm.getMasterRecord()
+            if (masterData !== null  && masterData.rstatus === 0) {
               return true
             }
             return false
@@ -247,13 +281,13 @@ export default class VDetailForm extends VBaseForm {
             return false
           }
         }
-        this.setEnableDependence(btnName, conditionFun)
+        this.setComponentEnableDependence(button, conditionFun)
         return
       case 'closetxn':
         conditionFun = function() {
           if (this.state === basicConstant.VIEWSTATE_VIEW) {
-            var masterData = this.getMasterRecord()
-            if (masterData.rstatus === 1 && masterData.bstatus !== 5) {
+            var masterData = vForm.getMasterRecord()
+            if (masterData !== null  && masterData.rstatus === 1 && masterData.bstatus !== 5) {
               return true
             }
             return false
@@ -261,13 +295,13 @@ export default class VDetailForm extends VBaseForm {
             return false
           }
         }
-        this.setEnableDependence(btnName, conditionFun)
+        this.setComponentEnableDependence(button, conditionFun)
         return
       case 'unclosetxn':
         conditionFun = function() {
           if (this.state === basicConstant.VIEWSTATE_VIEW) {
-            var masterData = this.getMasterRecord()
-            if (masterData.rstatus === 1 && masterData.bstatus === 5) {
+            var masterData = vForm.getMasterRecord()
+            if (masterData !== null  && masterData.rstatus === 1 && masterData.bstatus === 5) {
               return true
             }
             return false
@@ -275,7 +309,7 @@ export default class VDetailForm extends VBaseForm {
             return false
           }
         }
-        this.setEnableDependence(btnName, conditionFun)
+        this.setComponentEnableDependence(button, conditionFun)
         return
       case 'suspendtxn':
         conditionFun = function() {
@@ -285,7 +319,7 @@ export default class VDetailForm extends VBaseForm {
             return false
           }
         }
-        this.setEnableDependence(btnName, conditionFun)
+        this.setComponentEnableDependence(button, conditionFun)
         return
       case 'uncuspendtxn':
         conditionFun = function() {
@@ -295,7 +329,7 @@ export default class VDetailForm extends VBaseForm {
             return false
           }
         }
-        this.setEnableDependence(btnName, conditionFun)
+        this.setComponentEnableDependence(button, conditionFun)
         return
       case 'tobstatustxn':
         conditionFun = function(toStatus) {
@@ -303,15 +337,15 @@ export default class VDetailForm extends VBaseForm {
             if (this.state !== basicConstant.VIEWSTATE_VIEW) {
               return false
             } else {
-              var masterData = this.getMasterRecord()
-              if (masterData.rstatus === 1 && masterData.bstatus !== toStatus) {
+              var masterData = vForm.getMasterRecord()
+              if (masterData !== null  && masterData.rstatus === 1 && masterData.bstatus !== toStatus) {
                 return true
               }
               return false
             }
           }
         }
-        this.setEnableDependence(btnName, conditionFun(params[1]))
+        this.setComponentEnableDependence(button, conditionFun(params[1]))
         return
 
       default:

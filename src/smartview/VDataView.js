@@ -71,6 +71,7 @@ export default class VDataView {
 
   addDetailForm(detailFormMeta) {
     var detalForm = VDetailFormFactory.createInstant(this, detailFormMeta)
+    detalForm.initBiz()
     this.forms.push(detalForm)
   }
 
@@ -114,8 +115,20 @@ export default class VDataView {
   setEnableDependence(cmpName, condition) {
     var cmp = this.getCmpByName(cmpName)
     if (cmp !== null && cmp !== undefined) {
+      this.setComponentEnableDependence(cmp, condition)
+    }
+    return false
+  }
+
+   /**
+   * 设置可用依赖
+   * @param cmpName
+   * @param condition/condition()
+   */
+  setComponentEnableDependence(cmp, condition) {
+    if (cmp !== null && cmp !== undefined) {
       this.enableDependenceSet.push({
-        cmpName: cmpName,
+        cmpName: cmp.componentName,
         cmp: cmp,
         condition: condition
       })
@@ -123,6 +136,7 @@ export default class VDataView {
     }
     return false
   }
+
 
   /**
   * 设置可编辑依赖
