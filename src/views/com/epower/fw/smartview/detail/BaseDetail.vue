@@ -79,9 +79,7 @@ export default {
   },
   mounted() {
     this.getUIMeta().then(() => {
-      this.UiLoaded = true;
-      this.getDetailData().then(() => {
-        this.dataLoaded = true;
+        this.getDetailData().then(() => {
         this.bizInit();
         this.dataView.showDetailForm(this.$options.name); //add by max
       });
@@ -113,6 +111,7 @@ export default {
             this.dataView = VDataView.newDetailInstant(
               res.data.detailViewModel
             ); //add by max
+            this.UiLoaded = true;
             resolve("ok");
           });
       });
@@ -125,6 +124,7 @@ export default {
           this.$http.get(`/api/${this.UIMeta.detailViewModel.actionUrl}`).then(res => {
             this.dataPackageResp = res.data;
             this.dataView.loadDataByPackage(this.dataPackageResp.dataPackage); //add by max
+            this.dataLoaded = true;
             resolve("ok");
           });
         }

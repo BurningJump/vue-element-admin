@@ -3,7 +3,8 @@ import VForm from '../component/VForm'
 
 export default class VBaseForm extends VForm {
   // 所有有关的数据源
-  refDataSources = new Map();
+  dataSources = new Map();
+
   // form的元数据定义
   formMeta;
 
@@ -26,15 +27,15 @@ export default class VBaseForm extends VForm {
     super.show()
   }
 
-  openALLDataSource() {
-    for (const ds of this.refDataSources.values()) {
+  loadData() {
+    for (const ds of this.dataSources.values()) {
       ds.open()
     }
   }
 
   addRefDataSource(dataSource) {
     if (dataSource !== undefined || dataSource === null) {
-      this.refDataSources.set(dataSource.name, dataSource)
+      this.dataSources.set(dataSource.name, dataSource)
     }
   }
 }
