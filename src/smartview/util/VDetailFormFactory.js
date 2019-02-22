@@ -107,7 +107,7 @@ export default class VDetailFormFactory {
     if (aComponentMeta.dataset !== undefined) {
       var ds = form.parent.getDataSource(aComponentMeta.dataset)
       component.dataSource = ds
-      form.addRefDataSource(toolbar.dataSource)
+      form.addRefDataSource(component.dataSource)
     }
 
     // 添加form的组件
