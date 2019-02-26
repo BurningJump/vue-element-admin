@@ -31,7 +31,7 @@
             <div v-else v-html="scope.row[header.prop]"></div>
           </template>
         </el-table-column>
-        <el-table-column fixed="right" label="操作" width="auto" align="center">
+        <el-table-column v-if="view.rowToolbar" fixed="right" label="操作" width="auto" align="center">
           <template slot-scope="scope">
             <el-button-group>
               <el-tooltip v-for="btn in view.rowToolbar.components" v-if="!btn.isMore" class="item" effect="dark" :content="btn.label" placement="top">
