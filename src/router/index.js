@@ -64,13 +64,23 @@ export const asyncRouterMap = [
     },
     children: [
       {
-        path: 'operationList',
+        path: 'operationList/:id',
+        // path: 'operationList',
         component: () => import('@/views/com/epower/am/operation/operationList'),
         name: 'com.epower.am.operation.OperationList',
         meta: {
           title: 'operationList',
           roles: ['admin'] // or you can only set roles in sub nav
-        }
+        },
+        // children: [
+        //   {
+        //     path: 'operationList/:id(\\d+)',
+        //     component: () => import('@/views/com/epower/am/operation/operationList'),
+        //     name: 'List',
+        //     meta: { title: 'List', noCache: false },
+        //     hidden: true
+        //   },
+        // ]
       },
       {
         path: 'SelectList',
