@@ -96,17 +96,19 @@
 <script>
 import BaseListGrid from '@/views/com/epower/fw/smartview/list/BaseListGrid'
 import BaseListCard from '@/views/com/epower/fw/smartview/list/BaseListCard'
-import BaseSelect from '@/views/com/epower/fw/smartview/select/BaseSelect'
+// import BaseSelect from '@/views/com/epower/fw/smartview/select/BaseSelect'
 export default{
   name: 'com.epower.fw.smartview.list.BaseList',
   components: {
     BaseListGrid,
     BaseListCard,
-    BaseSelect,
+    // BaseSelect,
   },
   // extends: {BaseListGrid,BaseDetailCard},
   data() {
     return {
+      id: null,
+      tempRoute: {},
       UiLoaded: false,  // UI获取完成
       dataLoaded: false,  // 数据获取完成
       showMoreCondition: false,
@@ -128,51 +130,51 @@ export default{
       treeChild: {},
       treeGrandchild: {},
       tree: [],
-      grid: [],
-      list: [],
+      grid: {},
+      list: {},
       listQuery: {
         page: 1,
         limit: 20
       },
       multipleSelection: [],
-      data: [
-        {
-          label: '一级 1',
-          children: [{
-            label: '二级 1-1',
-            children: [{
-              label: '三级 1-1-1'
-            }]
-          }]
-        },
-        {
-        label: '一级 2',
-        children: [{
-          label: '二级 2-1',
-          children: [{
-            label: '三级 2-1-1'
-          }]
-        }, {
-          label: '二级 2-2',
-          children: [{
-            label: '三级 2-2-1'
-          }]
-        }]
-      },
-      {
-        label: '一级 3',
-        children: [{
-          label: '二级 3-1',
-          children: [{
-            label: '三级 3-1-1'
-          }]
-        }, {
-          label: '二级 3-2',
-          children: [{
-            label: '三级 3-2-1'
-          }]
-        }]
-      }],
+      // data: [
+      //   {
+      //     label: '一级 1',
+      //     children: [{
+      //       label: '二级 1-1',
+      //       children: [{
+      //         label: '三级 1-1-1'
+      //       }]
+      //     }]
+      //   },
+      //   {
+      //   label: '一级 2',
+      //   children: [{
+      //     label: '二级 2-1',
+      //     children: [{
+      //       label: '三级 2-1-1'
+      //     }]
+      //   }, {
+      //     label: '二级 2-2',
+      //     children: [{
+      //       label: '三级 2-2-1'
+      //     }]
+      //   }]
+      // },
+      // {
+      //   label: '一级 3',
+      //   children: [{
+      //     label: '二级 3-1',
+      //     children: [{
+      //       label: '三级 3-1-1'
+      //     }]
+      //   }, {
+      //     label: '二级 3-2',
+      //     children: [{
+      //       label: '三级 3-2-1'
+      //     }]
+      //   }]
+      // }],
       defaultProps: {
         children: 'children',
         label: 'label'
@@ -201,7 +203,14 @@ export default{
       }
     }
   },
-  mounted() {
+  // created() {
+  //   this.id = 888
+  //   // const id = this.$route.params && this.$route.params.id
+  //   this.getListData(this.id)
+  //   this.tempRoute = Object.assign({}, this.$route)
+  //   this.setTagsViewTitle()
+  // },
+  created() {
     this.getUIMeta().then(() => {
       this.UiLoaded = true
       this.getTree().then(() => {
@@ -214,6 +223,13 @@ export default{
     })
   },
   methods: {
+    setTagsViewTitle() {
+      this.id = Math.floor(1000*Math.random())
+      const title = 'List'
+      const route = Object.assign({}, this.tempRoute, { title: `${title}-${this.id}` })
+      
+      this.$store.dispatch('updateVisitedView', route)
+    },
     calcTableHeight() {
       setTimeout(() => {
         this.tableHeight = window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 190
@@ -251,7 +267,7 @@ export default{
           ? this.UIMeta.listViewModel.dataType.default
           : this.UIMeta.listViewModel.dataView.defaultView
           this.UIMeta.listViewModel.dataView.views.forEach((item, index) => {
-            this.grid[item.name] = []
+            this.$set(this.grid, item.name, [])
             item.components.forEach((thead) => {
               this.grid[item.name].push({
                 prop: thead.field,
@@ -340,11 +356,11 @@ export default{
           this.UIMeta.listViewModel.querys.forEach((query, qIndex) => {
             if (view.queryName === query.name) {
               this.$http.get(`/api/${query.actionUrl}/${query.queryMethod}`).then((res) => {
-                this.list[view.name] = []
+                this.$set(this.list, view.name, [])
                 res.data.resultList.forEach((item, index) => {
-                  this.list[view.name][index] = {}
+                  this.$set(this.list[view.name], index, {})
                   this.grid[view.name].forEach((thead, tIndex) => {
-                    this.list[view.name][index][thead.prop] = item[thead.prop]
+                    this.$set(this.list[view.name][index], thead.prop, item[thead.prop])
                   })
                 })
                 if (vIndex === this.UIMeta.listViewModel.dataView.views.length-1 && qIndex === this.UIMeta.listViewModel.querys.length-1) {

@@ -24,14 +24,14 @@
       </div>
       <el-table ref="multipleTable" :data="list[view.name]" element-loading-text="拼命加载中" border fit stripe highlight-current-row :header-cell-style="{background:'#f6f6f6'}" :height="height" :cell-style="cellStyle" :row-style="rowStyle" @selection-change="handleSelectionChange">
         <el-table-column type="selection" align="center"/>
-        <el-table-column v-for="(header, index) in grid[view.name]" :key="header.label" :prop="header.field" :label="header.label" align="center" :fixed="view.gridFixColumn > index" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
+        <el-table-column v-for="(header, index) in grid[view.name]" :key="header.label" :prop="header.prop" :label="header.label" align="center" :fixed="view.gridFixColumn > index" :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
           <template slot-scope="scope">
             <img v-if="header.ctype === 'image'" :src="scope.row[header.prop]" :width="header.width">
             <div v-else-if="header.ctype === 'valuelistField'" v-html="scope.row[header.prop][header.valueListModel.displayField]"></div>
             <div v-else v-html="scope.row[header.prop]"></div>
           </template>
         </el-table-column>
-        <el-table-column fixed="right" label="操作" width="auto" align="center">
+        <el-table-column v-if="view.rowToolbar" fixed="right" label="操作" width="auto" align="center">
           <template slot-scope="scope">
             <el-button-group>
               <el-tooltip v-for="btn in view.rowToolbar.components" v-if="!btn.isMore" class="item" effect="dark" :content="btn.label" placement="top">
@@ -56,7 +56,7 @@
       </el-table>
     </el-main>
     <el-footer style="height:auto;">
-      <div class="footerToolbar">
+      <div class="footerToolbar" v-if="view.footerToolbar">
         <div>
           <el-button-group>
             <el-button v-for="btn in view.footerToolbar.components" v-if="!btn.isMore" size="mini">
@@ -77,7 +77,7 @@
           </el-button-group>
         </div>
       </div>
-      <pagination v-show="list[view.name].length>0" :total="list[view.name].length" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList"/>
+      <!-- <pagination v-show="list[view.name].length>0" :total="list[view.name].length" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList"/> -->
     </el-footer>
   </div>
 </template>

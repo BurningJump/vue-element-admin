@@ -64,6 +64,7 @@ export const asyncRouterMap = [
     },
     children: [
       {
+        // path: 'operationList/:id',
         path: 'operationList',
         component: () => import('@/views/com/epower/am/operation/operationList'),
         name: 'com.epower.am.operation.OperationList',
