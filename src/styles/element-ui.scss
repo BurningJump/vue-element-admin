@@ -80,3 +80,27 @@
     display: block
   }
 }
+
+// el-form
+.el-form {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+.el-form-item {
+  margin-bottom: 3px;
+}
+.el-form-item, .el-select, .el-input {
+  width: 100%;
+}
+.el-input--mini .el-input__inner, .el-input__inner {
+  height: 22px;
+  line-height: 22px;
+}
+.el-form-item__label {
+  font-size: 12px;
+  font-weight: normal;
+}
+.el-form-item--mini.el-form-item, .el-form-item--small.el-form-item {
+  margin-bottom: 2px;
+}

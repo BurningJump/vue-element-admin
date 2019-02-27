@@ -55,7 +55,7 @@
         </el-table-column>
       </el-table>
     </el-main>
-    <el-footer style="height:auto;">
+    <el-footer style="height:auto;" id="grid-footer">
       <div class="footerToolbar" v-if="view.footerToolbar">
         <div>
           <el-button-group>
@@ -77,7 +77,7 @@
           </el-button-group>
         </div>
       </div>
-      <!-- <pagination v-show="list[view.name].length>0" :total="list[view.name].length" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList"/> -->
+      <pagination v-show="list[view.name].length>0" :total="list[view.name].length" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList"/>
     </el-footer>
   </div>
 </template>

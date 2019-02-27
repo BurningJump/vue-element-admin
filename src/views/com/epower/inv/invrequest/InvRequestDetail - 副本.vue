@@ -197,20 +197,6 @@ export default {
     flex-wrap: wrap;
     padding: 5px;
   }
-  .el-form-item {
-    margin-bottom: 3px;
-  }
-  .el-form-item, .el-select, .el-input {
-    width: 100%;
-  }
-  .el-input__inner {
-    height: 22px;
-    line-height: 22px;
-  }
-  .el-form-item__label {
-    font-size: 12px;
-    font-weight: normal;
-  }
   .el-tabs {
     width: 100%;
   }
