@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-container v-if="UiLoaded">
       <el-header height="auto" id="qconHeader">
-        <el-form :inline="true" :model="conditionForm" ref="conditionForm" class="demo-ruleForm" label-width="100px" size="mini">
+        <el-form :model="conditionForm" ref="conditionForm" class="demo-ruleForm" label-width="100px" size="mini">
           <el-form-item v-for="condition in UIMeta.listViewModel.qCondition.components" v-if="!condition.isMore" :key="condition.label" :style="{width: (condition.width <= 1 ? condition.width*100 + '%' : condition.width + 'px')}" :label="condition.label" :prop="conditionForm[condition.findField]">
             <el-input v-model="conditionForm[condition.findField]"/>
           </el-form-item>
@@ -214,11 +214,11 @@ export default{
     this.getUIMeta().then(() => {
       this.UiLoaded = true
       this.getTree().then(() => {
-        this.calcTableHeight()
         this.renderTree()
       })
       this.getListData().then(() => {
         this.dataLoaded = true
+        this.calcTableHeight()
       })
     })
   },
@@ -232,7 +232,7 @@ export default{
     },
     calcTableHeight() {
       setTimeout(() => {
-        this.tableHeight = window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 190
+        this.tableHeight = window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - parseInt(window.getComputedStyle(document.getElementById('grid-footer'), null).height) - 130
         this.treeHeight = (window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 96) + 'px'
       })
     },
@@ -405,18 +405,18 @@ body .el-table colgroup.gutter{
   padding-top: 6px;
   background-color: #fafafa;
 }
-.el-form {
-  display: flex;
-  flex-wrap: wrap;
-  width: 100%;
-}
-.el-form-item__label {
-  font-size: 12px;
-  font-weight: normal;
-}
-.el-form-item--mini.el-form-item, .el-form-item--small.el-form-item {
-  margin-bottom: 2px;
-}
+// .el-form {
+//   display: flex;
+//   flex-wrap: wrap;
+//   width: 100%;
+// }
+// .el-form-item__label {
+//   font-size: 12px;
+//   font-weight: normal;
+// }
+// .el-form-item--mini.el-form-item, .el-form-item--small.el-form-item {
+//   margin-bottom: 2px;
+// }
 .el-tabs {
   width: 100%;
 }

@@ -13,11 +13,3 @@ export default{
   methods: {}
 }
 </script>
-
-<style lang="scss">
-.el-form {
-  display: flex;
-  width: 100%;
-}
-</style>
-
