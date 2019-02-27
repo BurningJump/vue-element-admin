@@ -4,9 +4,6 @@ export default class VDataStore {
   // 数据存放
   datasets = [];
 
-  // 数据source
-  dataView;
-
   constructor(datastoreMeta) {
     this.init(datastoreMeta)
   }

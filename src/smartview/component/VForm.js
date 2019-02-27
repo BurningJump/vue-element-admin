@@ -22,6 +22,10 @@ export default class VForm extends VComponent {
     return this.components.get(componentName)
   }
 
+  getCmpByName(componentName) {
+    return this.getComponent(componentName)
+  }
+
   addComponent(component) {
     return this.components.set(component.componentName, component)
   }
