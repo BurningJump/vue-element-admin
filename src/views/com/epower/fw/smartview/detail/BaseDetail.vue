@@ -71,15 +71,17 @@ export default {
     };
   },
   props: ['form'],
-  // computed:{
-  //    activeTab(){
-  //      return  this.form.formMeta.detailPages[0].name;
-  //    }
-  // },
   components: {
     BaseDetailAGrid,
     BaseDetailColumn,
     BaseDetailGrid
+  },
+  watch: {
+    'form.formMeta'(val) {
+      if (val) {
+        this.activeTab = val.detailPages[0].name
+      }
+    }
   },
   mounted() {
     this.calcTableHeight();
