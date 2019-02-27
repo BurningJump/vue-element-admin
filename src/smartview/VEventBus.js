@@ -1,4 +1,4 @@
-export default class VEvent {
+export default class VEventBus {
   handleFunc = {};
 
   constructor() {

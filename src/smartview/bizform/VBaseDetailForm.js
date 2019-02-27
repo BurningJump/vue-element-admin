@@ -1,27 +1,82 @@
 import VBaseForm from './VBaseForm'
+import VComponentSet from '../component/VComponentSet.js'
+import VToolbar from '../component/VToolbar.js'
+import VPanel from '../component/VPanel.js'
+import VDBComponent from '../component/VDBComponent.js'
+import VButton from '../component/VButton.js'
 import * as cf from '../util/commonFun'
 import {
   basicConstant
 } from '@/smartview/VBasicConstant.js'
+import VDataStore from '@/smartview/db/VDataStore.js'
+import VDataSource from '@/smartview/db/VDataSource.js'
 
-export default class VDetailForm extends VBaseForm {
+export default class VBaseDetailForm extends VBaseForm {
   // 当前状态
   state = basicConstant.VIEWSTATE_VIEW;
 
-  constructor(parent) {
-    super(parent)
+  constructor(parent, formMeta) {
+    super(parent, formMeta)
     this.ctype = basicConstant.FORMTYPE_DETAIL
+    this.init()
   }
 
-  initBiz() {
+  /**
+   * 初始化form
+   */
+  init() {
+    // 创建数据存储
+    this.dataStore = new VDataStore(this.formMeta.datasetInfo)
+    // 创建数据感知
+    for (const dataset of this.dataStore.datasets) {
+      var dataSource = new VDataSource(dataset.name, dataset)
+      this.dataSources.set(dataSource.name, dataSource)
+    }
+    // 建立UI
+    this.createUI(this.formMeta)
+    // 建立UI的默认业务依赖
     this.createBizDependence()
+    // 业务逻辑初始化
+    this.bizInit()
   }
+
+  /**
+   * 业务处理
+   */
+  bizInit() {
+    var form = this
+    // 增加标准依赖
+
+    // 可用依赖
+    this.setFormEnableDependence(form)
+    // 值依赖
+    this.setFormValueDependence(form)
+    // 默认值依赖
+    this.setFormDefaultValue(form)
+    // 唯一依赖
+    this.setFormUniqueDependence(form)
+    // 必填依赖
+    this.setFormRequireDependence(form)
+    // 只读依赖
+    this.setFormReadOnlyDependence(form)
+    // 可手输入依赖
+    this.setFormEditableDependence(form)
+  }
+  setFormEnableDependence(form) {}
+  setFormButton(form) {}
+  setFormValueDependence(form) {}
+  setFormValueListFilter(form) {}
+  setFormDefaultValue(form) {}
+  setFormUniqueDependence(form) {}
+  setFormRequireDependence(form) {}
+  setFormReadOnlyDependence(form) {}
+  setFormEditableDependence(form) {}
   /**
    * 获取Master Table的数据记录
    */
   getMasterRecord() {
     // TODO  获取主数据
-    return  null
+    return null
   }
 
   /**
@@ -42,9 +97,9 @@ export default class VDetailForm extends VBaseForm {
         component.setDefaultEnable()
         component.setDefaultHidden()
         // 执行可用依赖
-        this.parent.enableDependenceControl(component)
+        this.enableDependenceControl(component)
         // 执行隐藏依赖
-        this.parent.hiddenDependenceControl(component)
+        this.hiddenDependenceControl(component)
 
         if (typeof component.setReadOnly === 'function') {
           component.setReadOnly(true) // 查看模式下只可以查看
@@ -52,7 +107,7 @@ export default class VDetailForm extends VBaseForm {
         if (typeof component.setDefaultAllowBlank === 'function') {
           component.setDefaultAllowBlank()
           // 执行必填依赖
-          this.parent.requiredDependenceControl(component)
+          this.requiredDependenceControl(component)
         }
       }
     } else { // 新增和修改模式
@@ -61,21 +116,21 @@ export default class VDetailForm extends VBaseForm {
         component.setDefaultEnable()
         component.setDefaultHidden()
         // 执行可用依赖
-        this.parent.enableDependenceControl(component)
+        this.enableDependenceControl(component)
         // 执行隐藏依赖
-        this.parent.hiddenDependenceControl(component)
+        this.hiddenDependenceControl(component)
 
         // 只读处理
         if (typeof component.setDefaultReadOnly === 'function') {
           component.setDefaultReadOnly()
           // 执行只读依赖
-          this.parent.readOnlyDependenceControl(component)
+          this.readOnlyDependenceControl(component)
         }
 
         if (typeof component.setDefaultAllowBlank === 'function') {
           component.setDefaultAllowBlank()
           // 执行必填依赖
-          this.parent.requiredDependenceControl(component)
+          this.requiredDependenceControl(component)
         }
       }
     }
@@ -83,21 +138,24 @@ export default class VDetailForm extends VBaseForm {
 
   show(state) {
     super.show()
-    this.loadData()
+    this.openDataSources()
     this.setUIState(state)
   }
 
-  setEnableDependence(cmpName, condition) {
-    var cmp = this.getComponent(cmpName)
-    if (cmp !== null && cmp !== undefined) {
-      this.setComponentEnableDependence(cmp, condition)
-    }
-    return false
-  }
 
-  setComponentEnableDependence(component, condition) {
-    this.parent.setComponentEnableDependence(component, condition)
-  }
+
+
+  // setEnableDependence(cmpName, condition) {
+  //   var cmp = this.getComponent(cmpName)
+  //   if (cmp !== null && cmp !== undefined) {
+  //     this.setComponentEnableDependence(cmp, condition)
+  //   }
+  //   return false
+  // }
+
+  // setComponentEnableDependence(component, condition) {
+  //   this.parent.setComponentEnableDependence(component, condition)
+  // }
 
   createBizDependence() {
     this._createEnableDependence()
@@ -231,7 +289,7 @@ export default class VDetailForm extends VBaseForm {
         conditionFun = function() {
           if (this.state === basicConstant.VIEWSTATE_VIEW) {
             var masterData = vForm.getMasterRecord()
-            if (masterData !== null  && (masterData.rstatus === 1 || masterData.rstatus === 0)) {
+            if (masterData !== null && (masterData.rstatus === 1 || masterData.rstatus === 0)) {
               return false
             }
             return true
@@ -245,7 +303,7 @@ export default class VDetailForm extends VBaseForm {
         conditionFun = function() {
           if (this.state === basicConstant.VIEWSTATE_VIEW) {
             var masterData = vForm.getMasterRecord()
-            if (masterData !== null  && masterData.rstatus === 1) {
+            if (masterData !== null && masterData.rstatus === 1) {
               return true
             }
             return false
@@ -259,7 +317,7 @@ export default class VDetailForm extends VBaseForm {
         conditionFun = function() {
           if (this.state === basicConstant.VIEWSTATE_VIEW) {
             var masterData = vForm.getMasterRecord()
-            if (masterData !== null  &&  masterData.rstatus === 0) {
+            if (masterData !== null && masterData.rstatus === 0) {
               return false
             }
             return true
@@ -273,7 +331,7 @@ export default class VDetailForm extends VBaseForm {
         conditionFun = function() {
           if (this.state === basicConstant.VIEWSTATE_VIEW) {
             var masterData = vForm.getMasterRecord()
-            if (masterData !== null  && masterData.rstatus === 0) {
+            if (masterData !== null && masterData.rstatus === 0) {
               return true
             }
             return false
@@ -287,7 +345,7 @@ export default class VDetailForm extends VBaseForm {
         conditionFun = function() {
           if (this.state === basicConstant.VIEWSTATE_VIEW) {
             var masterData = vForm.getMasterRecord()
-            if (masterData !== null  && masterData.rstatus === 1 && masterData.bstatus !== 5) {
+            if (masterData !== null && masterData.rstatus === 1 && masterData.bstatus !== 5) {
               return true
             }
             return false
@@ -301,7 +359,7 @@ export default class VDetailForm extends VBaseForm {
         conditionFun = function() {
           if (this.state === basicConstant.VIEWSTATE_VIEW) {
             var masterData = vForm.getMasterRecord()
-            if (masterData !== null  && masterData.rstatus === 1 && masterData.bstatus === 5) {
+            if (masterData !== null && masterData.rstatus === 1 && masterData.bstatus === 5) {
               return true
             }
             return false
@@ -338,7 +396,7 @@ export default class VDetailForm extends VBaseForm {
               return false
             } else {
               var masterData = vForm.getMasterRecord()
-              if (masterData !== null  && masterData.rstatus === 1 && masterData.bstatus !== toStatus) {
+              if (masterData !== null && masterData.rstatus === 1 && masterData.bstatus !== toStatus) {
                 return true
               }
               return false
@@ -351,5 +409,134 @@ export default class VDetailForm extends VBaseForm {
       default:
         return
     }
+  }
+
+  createUI(formMeta) {
+    this.componentName = formMeta.id
+    this.formMeta = formMeta
+
+    // 建立Master视图
+    var masterPanel = new VPanel(this)
+    this._initPanel(this, masterPanel, formMeta.masterPage)
+
+    // 1.视图中建立componentSet
+    var mComponentSet = new VComponentSet(masterPanel)
+    this._initComponentSet(this, mComponentSet, formMeta.masterPage.componentSetModel)
+
+    // 2.视图中建立toolbar
+    var mToolbar = new VToolbar(masterPanel)
+    this._initToolbar(this, mToolbar, formMeta.masterPage.toolbarModel)
+
+    // 3.建立detialpage视图
+    for (var page of formMeta.detailPages) {
+      // 建立Detail视图
+      var detailPanel = new VPanel(this)
+      this._initPanel(this, detailPanel, page)
+
+      // 1.视图中建立componentSet
+      var dComponentSet = new VComponentSet(detailPanel)
+      this._initComponentSet(this, dComponentSet, page.componentSetModel)
+
+      //  2.视图中建立toolbar
+      var dToolbar = new VToolbar(detailPanel)
+      this._initToolbar(this, dToolbar, page.toolbarModel)
+    }
+    return true
+  }
+
+  _initPanel(detailForm, panel, panelMeta) {
+    this._initComponent(detailForm, panel, panelMeta)
+  }
+
+  /**
+  * 初始化ComponentSet
+    *  @param {*} componentSetMeta 元数据
+    */
+  _initComponentSet(detailForm, componentSet, componentSetMeta) {
+    this._initComponent(detailForm, componentSet, componentSetMeta)
+
+    for (var j = 0; j < componentSetMeta.components.length; j++) {
+      var cmp = new VDBComponent(componentSet)
+      this._initDBComponent(detailForm, cmp, componentSetMeta.components[j])
+      cmp.dataSource = componentSet.dataSource
+    }
+  }
+
+  /**
+  * 初始化DBComponent
+  * @param {*} component
+  * @param {*} aComponentMeta
+  */
+  _initDBComponent(form, component, aComponentMeta) {
+    this._initComponent(form, component, aComponentMeta)
+
+    component.fieldName = aComponentMeta.field
+
+    component.editable = (aComponentMeta.editable === undefined) ? true : (aComponentMeta.editable === 'true')
+    component.originalEditable = component.editable
+
+    component.readOnly = (aComponentMeta.readOnly === undefined) ? false : (aComponentMeta.readOnly === 'true')
+    component.originalReadOnly = component.readOnly
+
+    component.allowBlank = (aComponentMeta.allowBlank === undefined) ? false : (aComponentMeta.allowBlank === 'true')
+    component.originalAllowBlank = component.allowBlank
+    component.enumModel = aComponentMeta.enumModel
+  }
+
+  // 初始化
+  _initComponent(form, component, aComponentMeta) {
+    component.componentName = aComponentMeta.name
+
+    if (aComponentMeta.label !== undefined) {
+      component.label = aComponentMeta.label
+    }
+
+    if (aComponentMeta.width !== undefined) {
+      component.width = aComponentMeta.width
+    }
+
+    if (aComponentMeta.ctype !== undefined) {
+      component.ctype = aComponentMeta.ctype
+    }
+
+    // 可用特性
+    component.enable = (aComponentMeta.enable === undefined || aComponentMeta.enable === null) ? true : (aComponentMeta.enable === 'true')
+    component.originalEnable = component.enable
+
+    // 可视特性
+    component.hidden = (aComponentMeta.hidden === undefined || aComponentMeta.hidden === null) ? false : (aComponentMeta.hidden === 'true')
+    component.originalHidden = component.hidden
+
+    // 数据连接
+    if (aComponentMeta.dataset !== undefined) {
+      var ds = form.getDataSource(aComponentMeta.dataset)
+      component.dataSource = ds
+    }
+
+    // 添加form的组件
+    form.addComponent(component)
+  }
+
+  /**
+  * 初始化ComponentSet
+    *  @param {*} componentSetMeta 元数据
+    */
+  _initToolbar(detailForm, toolbar, toolbarMeta) {
+    this._initComponent(detailForm, toolbar, toolbarMeta)
+    toolbar.showMoreButton = toolbarMeta.showMoreButton
+    for (var buttonMeta of toolbarMeta.buttons) {
+      var cmp = new VButton(toolbar)
+      this._initToolbarButton(detailForm, cmp, buttonMeta)
+    }
+  }
+  /**
+  * 初始化按钮
+    *  @param {*} componentSetMeta 元数据
+    */
+  _initToolbarButton(form, cmp, cmpMeta) {
+    this._initComponent(form, cmp, cmpMeta)
+    cmp.fun = cmpMeta.fun
+    cmp.iconcls = cmpMeta.iconcls
+    cmp.panelType = cmpMeta.panelType
   }
 }

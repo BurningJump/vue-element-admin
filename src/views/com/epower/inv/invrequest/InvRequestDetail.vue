@@ -2,11 +2,7 @@
 import BaseBillDetail from '@/views/com/epower/fw/smartview/detail/BaseBillDetail'
 export default {
   name: 'com.epower.inv.invrequest.InvRequestDetail',
-  extends: BaseBillDetail,
-  data() {
-    return {
-    }
-  },
+  extends: BaseBillDetail
 }
 </script>
 
