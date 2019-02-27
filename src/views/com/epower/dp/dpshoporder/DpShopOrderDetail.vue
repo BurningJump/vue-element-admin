@@ -1,9 +1,3 @@
-
-  <template v-slot:header>
-    <h1>Here might be a page title</h1>
-  </template>
-
-
 <script>
 import BaseBillDetail from "@/views/com/epower/fw/smartview/detail/BaseBillDetail";
 import { basicConstant } from "@/smartview/VBasicConstant.js";
