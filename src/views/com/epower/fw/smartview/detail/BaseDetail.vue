@@ -1,5 +1,5 @@
 <template>
-  <div class="base-bill-detail-container">
+  <div class="base-bill-detail-container" v-if="form">
     <slot name="header"></slot>
     <base-detail-column
       :tab="form.formMeta.masterPage"

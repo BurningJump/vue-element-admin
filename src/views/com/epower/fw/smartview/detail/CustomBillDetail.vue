@@ -26,7 +26,7 @@ export default {
           this.form.show();
       });
     });
- },
+  },
   methods: {
     getBizForm(formMeta) {
       return new VBaseDetailForm(this, formMeta);
