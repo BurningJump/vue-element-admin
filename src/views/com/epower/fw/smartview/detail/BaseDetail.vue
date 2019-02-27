@@ -2,14 +2,13 @@
   <div class="base-bill-detail-container">
     <slot name="header"></slot>
     <base-detail-column
-      v-if="UiLoaded&&dataLoaded"
-      :tab="UIMeta.detailViewModel.masterPage"
-      :page ="form.getComponent(UIMeta.detailViewModel.masterPage.name)"
+      :tab="form.formMeta.masterPage"
+      :page ="form.getComponent(form.formMeta.masterPage.name)"
       @onButtonClick = "handleButtonClick"
     />
-    <el-tabs v-if="UiLoaded&&dataLoaded" v-model="activeTab" type="card" @tab-click="handleTabClick">
+    <el-tabs v-model="activeTab" type="card" @tab-click="handleTabClick">
       <el-tab-pane
-        v-for="(tab,tabIndex) in UIMeta.detailViewModel.detailPages"
+        v-for="(tab,tabIndex) in form.formMeta.detailPages"
         :key="tab.name"
         :name="tab.name"
       >
@@ -21,14 +20,14 @@
           <base-detail-grid
             v-if="tab.componentSetModel.style === 'grid'"
             :tab="tab"
-            :dataLoaded="dataLoaded"
+            :dataLoaded="true"
             :activeTab="activeTab"
             :height="height"
             :componentSet="form.getComponent(tab.componentSetModel.name)"
           />
           <base-detail-a-grid
             v-else-if="tab.componentSetModel.style === 'aGrid'"
-            :url="UIMeta.detailViewModel.datasetInfo.datasets[tabIndex].actionMethod"
+            :url="form.formMeta.datasetInfo.datasets[tabIndex].actionMethod"
             :tab="tab"
             :activeTab="activeTab"
             :listLoading="listLoading"
@@ -60,33 +59,30 @@ import * as cf from "@/smartview/util/commonFun.js";
 export default {
   data() {
     return {
-      UIapi: "",
       listLoading: false,
-      UiLoaded: false, // UI获取完成
-      dataLoaded: false, // 数据获取完成
+      // UiLoaded: false, // UI获取完成
+    //  dataLoaded: true, // 数据获取完成
       height: 600, // 表头高度
-      UIMeta: "",
-      dataPackageResp: "",
-      activeTab: "",
-      tab: Object,
-      form: null //add by max
+      // UIMeta: "",
+      // dataPackageResp: "",
+      activeTab:"",
+      // tab: Object,
+      // form: null //add by max
     };
   },
+  props: ['form'],
+  // computed:{
+  //    activeTab(){
+  //      return  this.form.formMeta.detailPages[0].name;
+  //    }
+  // },
   components: {
     BaseDetailAGrid,
     BaseDetailColumn,
     BaseDetailGrid
   },
-created(){
-        this.getUIMeta().then(() => {
-        this.getDetailData().then(() => {
-          this.form.loadDataByPackage(this.dataPackageResp.dataPackage); //add by max
-          this.form.show();
-      });
-    });
-},
   mounted() {
-     this.calcTableHeight();
+    this.calcTableHeight();
   },
   methods: {
     calcTableHeight() {
@@ -101,36 +97,36 @@ created(){
         // this.height = (window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 100) + 'px'
       });
     },
-    getBizForm(formMeta){
-       return new VBaseDetailForm(this,formMeta)
-    },
-    getUIMeta() {
-      return new Promise((resolve, reject) => {
-        this.$http
-          .get(
-            `/api/getDetailUIMeta/${this.$options.name}`
-          )
-          .then(res => {
-            this.UIMeta = res.data;
-            this.activeTab = this.UIMeta.detailViewModel.detailPages[0].name;
-            this.form = this.getBizForm(res.data.detailViewModel)//add by max
-            this.UiLoaded = true;
-            resolve("ok");
-          });
-      });
-    },
+    // getBizForm(formMeta){
+    //    return new VBaseDetailForm(this,formMeta)
+    // },
+    // getUIMeta() {
+    //   return new Promise((resolve, reject) => {
+    //     this.$http
+    //       .get(
+    //         `/api/getDetailUIMeta/${this.$options.name}`
+    //       )
+    //       .then(res => {
+    //         this.UIMeta = res.data;
+    //         this.activeTab = this.UIMeta.detailViewModel.detailPages[0].name;
+    //         this.form = this.getBizForm(res.data.detailViewModel)//add by max
+    //         this.UiLoaded = true;
+    //         resolve("ok");
+    //       });
+    //   });
+    // },
 
-    getDetailData() {
-      return new Promise((resolve, reject) => {
-        if (this.UIMeta.detailViewModel.actionUrl) {
-          this.$http.get(`/api/${this.UIMeta.detailViewModel.actionUrl}`).then(res => {
-            this.dataPackageResp = res.data;
-            this.dataLoaded = true;
-            resolve("ok");
-          });
-        }
-      });
-    },
+    // getDetailData() {
+    //   return new Promise((resolve, reject) => {
+    //     if (this.UIMeta.detailViewModel.actionUrl) {
+    //       this.$http.get(`/api/${this.UIMeta.detailViewModel.actionUrl}`).then(res => {
+    //         this.dataPackageResp = res.data;
+    //         this.dataLoaded = true;
+    //         resolve("ok");
+    //       });
+    //     }
+    //   });
+    // },
     remoteMethod() {},
     handleTabClick() {},
     handleButtonClick(params){

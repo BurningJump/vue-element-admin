@@ -1,8 +1,8 @@
 <script>
-import BaseBillDetail from '@/views/com/epower/fw/smartview/detail/BaseBillDetail'
+import CustomBillDetail from '@/views/com/epower/fw/smartview/detail/CustomBillDetail'
 export default {
   name: 'com.epower.inv.invrequest.InvRequestDetail',
-  extends: BaseBillDetail
+  extends: CustomBillDetail
 }
 </script>
 

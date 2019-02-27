@@ -1,8 +1,14 @@
+<template>
+    <BaseBillDetail :form = "form"  >
+    </BaseBillDetail>
+</template>
+
 <script>
+import CustomBillDetail from '@/views/com/epower/fw/smartview/detail/CustomBillDetail';
 import BaseBillDetail from "@/views/com/epower/fw/smartview/detail/BaseBillDetail";
-import { basicConstant } from "@/smartview/VBasicConstant.js";
-import { longStackSupport } from "q";
 import VBaseDetailForm from "@/smartview/bizform/VBaseDetailForm.js";
+import { basicConstant } from "@/smartview/VBasicConstant.js";
+
 
 class DpShopOrderDetailForm extends VBaseDetailForm {
   setFormEnableDependence(form) {
@@ -36,11 +42,12 @@ class DpShopOrderDetailForm extends VBaseDetailForm {
 
 export default {
   name: "com.epower.dp.dpshoporder.DpShopOrderDetail",
-  extends: BaseBillDetail,
+  extends:CustomBillDetail,
+  components:{BaseBillDetail},
   methods: {
     getBizForm(formMeta) {
       return new DpShopOrderDetailForm(this, formMeta);
-    }
+    },
   }
 };
 </script>
