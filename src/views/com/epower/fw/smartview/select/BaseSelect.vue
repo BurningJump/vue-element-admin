@@ -400,9 +400,11 @@ export default {
         this.$http.get('/api/openapi/workTeamListData').then((res) => {
           this.list = []
           res.data.resultList.forEach((item, index) => {
-            this.list[index] = {}
+            // this.list[index] = {}
+            this.$set(this.list, index, {})
             this.grid.forEach((thead, tIndex) => {
               this.list[index][thead.prop] = item[thead.prop]
+              this.$set(this.list[index], thead.prop, item[thead.prop])
             })
           })
         })

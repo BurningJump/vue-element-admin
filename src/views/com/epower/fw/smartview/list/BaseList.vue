@@ -227,7 +227,6 @@ export default{
       this.id = Math.floor(1000*Math.random())
       const title = 'List'
       const route = Object.assign({}, this.tempRoute, { title: `${title}-${this.id}` })
-      console.log(route,'route----------');
       
       this.$store.dispatch('updateVisitedView', route)
     },
@@ -268,7 +267,6 @@ export default{
           ? this.UIMeta.listViewModel.dataType.default
           : this.UIMeta.listViewModel.dataView.defaultView
           this.UIMeta.listViewModel.dataView.views.forEach((item, index) => {
-            // this.grid[item.name] = []
             this.$set(this.grid, item.name, [])
             item.components.forEach((thead) => {
               this.grid[item.name].push({
@@ -358,22 +356,14 @@ export default{
           this.UIMeta.listViewModel.querys.forEach((query, qIndex) => {
             if (view.queryName === query.name) {
               this.$http.get(`/api/${query.actionUrl}/${query.queryMethod}`).then((res) => {
-                console.log(view.name,'view.name---------');
-                
-                // this.list[view.name] = []
                 this.$set(this.list, view.name, [])
                 res.data.resultList.forEach((item, index) => {
-                  // this.list[view.name][index] = {}
                   this.$set(this.list[view.name], index, {})
                   this.grid[view.name].forEach((thead, tIndex) => {
-                    // this.list[view.name][index][thead.prop] = item[thead.prop]
                     this.$set(this.list[view.name][index], thead.prop, item[thead.prop])
                   })
                 })
                 if (vIndex === this.UIMeta.listViewModel.dataView.views.length-1 && qIndex === this.UIMeta.listViewModel.querys.length-1) {
-                  console.log(this.list, 'this.list[view.name]');
-                  console.log(this.grid, 'this.grid[view.name]');
-                  
                   resolve('ok')
                 }
               })

@@ -88,7 +88,6 @@ export default {
   name: 'com.epower.fw.smartview.list.BaseListGrid',
   data() {
     return {
-      // tableData: [],
       listQuery: {
         page: 1,
         limit: 20
