@@ -405,18 +405,6 @@ body .el-table colgroup.gutter{
   padding-top: 6px;
   background-color: #fafafa;
 }
-// .el-form {
-//   display: flex;
-//   flex-wrap: wrap;
-//   width: 100%;
-// }
-// .el-form-item__label {
-//   font-size: 12px;
-//   font-weight: normal;
-// }
-// .el-form-item--mini.el-form-item, .el-form-item--small.el-form-item {
-//   margin-bottom: 2px;
-// }
 .el-tabs {
   width: 100%;
 }
@@ -437,12 +425,6 @@ body .el-table colgroup.gutter{
 }
 .el-tabs__header {
   margin: 0 0 6px;
-}
-.topToolbar {
-  display: inline-flex;
-  position: absolute;
-  top: -40px;
-  right: 0px;
 }
 .footerToolbar {
   display: inline-flex;

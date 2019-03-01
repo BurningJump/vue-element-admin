@@ -128,3 +128,12 @@ export default {
 }
 </script>
 
+<style lang="scss" scoped>
+.topToolbar {
+  display: inline-flex;
+  position: absolute;
+  top: -40px;
+  right: 0px;
+}
+</style>
+

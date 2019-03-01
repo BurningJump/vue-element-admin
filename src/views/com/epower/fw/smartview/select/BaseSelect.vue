@@ -525,17 +525,5 @@ export default {
 .table-container {
   padding: 0 20px;
 }
-.el-form {
-  display: flex;
-  flex-wrap: wrap;
-  width: 100%;
-}
-.el-form-item__label {
-  font-size: 12px;
-  font-weight: normal;
-}
-.el-form-item--mini.el-form-item, .el-form-item--small.el-form-item {
-  margin-bottom: 2px;
-}
 </style>
 
