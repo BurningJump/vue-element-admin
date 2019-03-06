@@ -24,6 +24,7 @@ export default {
         this.getDetailData().then(() => {
           this.form.loadDataByPackage(this.dataPackageResp.dataPackage); //add by max
           this.form.show();
+          this.$bus.emit('getSetting')
       });
     });
   },
