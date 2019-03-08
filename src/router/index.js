@@ -98,6 +98,7 @@ export const asyncRouterMap = [
       {
         path: 'DpShopOrderDetail',
         component: () => import('@/views/com/epower/dp/dpshoporder/DpShopOrderDetail'),
+        control: () => import('@/views/com/epower/dp/dpshoporder/DpShopOrderDetailForm.js'),
         name: 'com.epower.dp.dpshoporder.DpShopOrderDetail',
         meta: {
           title: 'DpShopOrderDetail',

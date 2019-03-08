@@ -36,6 +36,17 @@ export default class VBaseForm extends VForm {
      // 值依赖依赖
      valueDependenceSet = [];
 
+    //  getVueComponentPath() {
+    //    return ''
+    // }
+
+    //  vueComponent() {
+    //    var fn = function() {
+    //      import(this.getVueComponentPath())
+    //    }
+    //    return fn
+    //  }
+
      constructor(parent, formMeta) {
        super(parent)
        this.ctype = basicConstant.FORMTYPE_BASE
@@ -124,7 +135,7 @@ export default class VBaseForm extends VForm {
 
   /**
    * 设置可用依赖
-   * @param cmpName
+   * @param cmpName 组件名称
    * @param condition/condition()
    */
      setEnableDependence(cmpName, condition) {
@@ -137,7 +148,7 @@ export default class VBaseForm extends VForm {
 
   /**
    * 设置可用依赖
-   * @param cmpName
+   * @param cmp 组件
    * @param condition/condition()
    */
      setComponentEnableDependence(cmp, condition) {
@@ -431,6 +442,4 @@ export default class VBaseForm extends VForm {
          }
        }
      }
-
-
 }

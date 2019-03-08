@@ -21,6 +21,14 @@ export default class VBaseDetailForm extends VBaseForm {
     this.init()
   }
 
+  getVueComponentPath() {
+    return '@/views/com/epower/fw/smartview/detail/CustomBillDetail'
+  }
+
+  static NewInstant(parent, formMeta) {
+    return new VBaseDetailForm(parent, formMeta)
+  }
+
   /**
    * 初始化form
    */
@@ -141,21 +149,6 @@ export default class VBaseDetailForm extends VBaseForm {
     this.openDataSources()
     this.setUIState(state)
   }
-
-
-
-
-  // setEnableDependence(cmpName, condition) {
-  //   var cmp = this.getComponent(cmpName)
-  //   if (cmp !== null && cmp !== undefined) {
-  //     this.setComponentEnableDependence(cmp, condition)
-  //   }
-  //   return false
-  // }
-
-  // setComponentEnableDependence(component, condition) {
-  //   this.parent.setComponentEnableDependence(component, condition)
-  // }
 
   createBizDependence() {
     this._createEnableDependence()

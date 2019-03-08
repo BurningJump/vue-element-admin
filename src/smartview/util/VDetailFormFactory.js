@@ -1,4 +1,4 @@
-import VDetailForm from '../bizform/VDetailForm.js'
+import VBaseDetailForm from '../bizform/VBaseDetailForm.js'
 import VComponentSet from '../component/VComponentSet.js'
 import VDBComponent from '../component/VDBComponent.js'
 import VButton from '../component/VButton.js'
@@ -7,7 +7,7 @@ import VPanel from '../component/VPanel.js'
 
 export default class VDetailFormFactory {
   static createInstant(dataView, formMeta) {
-    var detailForm = new VDetailForm(dataView)
+    var detailForm = new VBaseDetailForm(dataView)
     detailForm.componentName = formMeta.id
     detailForm.formMeta = formMeta
 
