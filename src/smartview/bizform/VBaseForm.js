@@ -1,445 +1,446 @@
-import { basicConstant } from '@/smartview/VBasicConstant.js'
+import {
+  basicConstant
+} from '@/smartview/VBasicConstant.js'
 import VForm from '../component/VForm'
-import VEventBus from '@/smartview/VEventBus.js'
-import { vEventType } from '@/smartview/VEventBus.js'
+
+import {
+  vEventType
+} from '@/smartview/VEventBus.js'
 import VDataSource from '@/smartview/db/VDataSource.js'
 import VDataStore from '@/smartview/db/VDataStore.js'
+
+import Message from '@/smartview/util/Message.js'
 
 export default class VBaseForm extends VForm {
   // 所有有关的数据源
   dataSources = new Map();
 
-  // 数据存储
-    dataStore;
+  // 操作代码
+  operationCode = null;
 
-  // 事件处理中心
-    eventBus = new VEventBus();
+  // 数据存储
+  dataStore;
 
   // form的元数据定义
-    formMeta;
+  formMeta;
 
-     // 权限
-     permissionSet=[];
+  // 权限
+  permissionSet = [];
 
-     // 可用依赖
-     enableDependenceSet = [];
-     // 可见依赖
-     hiddenDependenceSet = [];
-     // 只读依赖
-     readOnlyDependenceSet = [];
-     // 唯一值依赖
-     uniquedDependenceSet = [];
-     // 必填依赖
-     requiredDependenceSet = [];
-     // 编辑依赖
-     editableDependenceSet = [];
-     // 值依赖依赖
-     valueDependenceSet = [];
+  // 可用依赖
+  enableDependenceSet = [];
+  // 可见依赖
+  hiddenDependenceSet = [];
+  // 只读依赖
+  readOnlyDependenceSet = [];
+  // 唯一值依赖
+  uniquedDependenceSet = [];
+  // 必填依赖
+  requiredDependenceSet = [];
+  // 编辑依赖
+  editableDependenceSet = [];
+  // 值依赖依赖
+  valueDependenceSet = [];
 
-    //  getVueComponentPath() {
-    //    return ''
-    // }
+  constructor(parent, formMeta) {
+    super(parent)
+    this.ctype = basicConstant.FORMTYPE_BASE
+    this.formMeta = formMeta
+  }
 
-    //  vueComponent() {
-    //    var fn = function() {
-    //      import(this.getVueComponentPath())
-    //    }
-    //    return fn
-    //  }
+  createDataStore(metaValue) {
+    this.dataStore = new VDataStore(metaValue)
+    this.dataStore.dataView = this
+    this.createDefultDataSource()
+  }
 
-     constructor(parent, formMeta) {
-       super(parent)
-       this.ctype = basicConstant.FORMTYPE_BASE
-       this.formMeta = formMeta
-     }
+  createDefultDataSource() {
+    for (const dataset of this.dataStore.datasets) {
+      var dataSource = new VDataSource(dataset.name, dataset)
+      this.dataSources.set(dataSource.name, dataSource)
+    }
+  }
 
   /**
-   * 添加监听
-   * @param {*} type
-   * @param {*} func
+   * 返回数据是否修改过 curd
    */
-     addListener(type, func) {
-       return this.eventBus.add(type, func)
-     }
-  /**
-    * 触发事件
-    * @param {*} type
-    */
-     fireEvent(type) {
-       return this.eventBus.fire(type)
-     }
+  isChanged() {
+    for (const ds of this.dataSources) {
+      if (ds.isChanged() === true) return true
+    }
+    return false
+  }
 
-     createDataStore(metaValue) {
-       this.dataStore = new VDataStore(metaValue)
-       this.dataStore.dataView = this
-       this.createDefultDataSource()
-     }
+  show() {
+    super.show()
+  }
 
-     createDefultDataSource() {
-       for (const dataset of this.dataStore.datasets) {
-         var dataSource = new VDataSource(dataset.name, dataset)
-         this.dataSources.set(dataSource.name, dataSource)
-       }
-     }
+  openDataSources() {
+    for (const ds of this.dataSources.values()) {
+      ds.open()
+    }
+  }
 
-  /**
-       * 返回数据是否修改过 curd
-       */
-     isChanged() {
-       for (const ds of this.dataSources) {
-         if (ds.isChanged() === true) return true
-       }
-       return false
-     }
+  getDataset(datasetName) {
+    return this.dataStore.getDataset(datasetName)
+  }
 
-     show() {
-       super.show()
-     }
+  getDataSource(datasourceName) {
+    return this.dataSources.get(datasourceName)
+  }
 
-     openDataSources() {
-       for (const ds of this.dataSources.values()) {
-         ds.open()
-       }
-     }
-
-     getDataset(datasetName) {
-       return this.dataStore.getDataset(datasetName)
-     }
-
-     getDataSource(datasourceName) {
-       return this.dataSources.get(datasourceName)
-     }
-
-     addRefDataSource(dataSource) {
-       if (dataSource !== undefined || dataSource === null) {
-         this.dataSources.set(dataSource.name, dataSource)
-       }
-     }
+  addRefDataSource(dataSource) {
+    if (dataSource !== undefined || dataSource === null) {
+      this.dataSources.set(dataSource.name, dataSource)
+    }
+  }
 
   /**
-    * 根据datapackage装载数据
-    * @param {*} dataPackage
-    */
+   * 根据datapackage装载数据
+   * @param {*} dataPackage
+   */
 
-     loadDataByPackage(dataPackage) {
-       if (this.fireEvent(vEventType.beforeLoadDataPackage) === false) return
-       this.dataStore.loadDataByPackage(dataPackage)
-       this.fireEvent(vEventType.afterLoadDataPackage)
-     }
+  loadDataByPackage(dataPackage) {
+    if (this.fireEvent(vEventType.beforeLoadDataPackage) === false) return
+    this.dataStore.loadDataByPackage(dataPackage)
+    this.fireEvent(vEventType.afterLoadDataPackage)
+  }
 
-     loadDataByList(datasetName, list) {
-       if (this.fireEvent(vEventType.beforeLoadDataList) === false) return
-       this.dataStore.loadDataByList(datasetName, list)
-       this.fireEvent(vEventType.afterLoadDataList)
-     }
+  loadDataByList(datasetName, list) {
+    if (this.fireEvent(vEventType.beforeLoadDataList) === false) return
+    this.dataStore.loadDataByList(datasetName, list)
+    this.fireEvent(vEventType.afterLoadDataList)
+  }
 
   /**
    * 设置可用依赖
-   * @param cmpName 组件名称
+   * @param cmpName
    * @param condition/condition()
    */
-     setEnableDependence(cmpName, condition) {
-       var cmp = this.getComponent(cmpName)
-       if (cmp !== null && cmp !== undefined) {
-         this.setComponentEnableDependence(cmp, condition)
-       }
-       return false
-     }
+  setEnableDependence(cmpName, condition) {
+    var cmp = this.getComponent(cmpName)
+    if (cmp !== null && cmp !== undefined) {
+      this.setComponentEnableDependence(cmp, condition)
+    }
+    return false
+  }
 
   /**
    * 设置可用依赖
-   * @param cmp 组件
+   * @param cmpName
    * @param condition/condition()
    */
-     setComponentEnableDependence(cmp, condition) {
-       if (cmp !== null && cmp !== undefined) {
-         this.enableDependenceSet.push({
-           cmpName: cmp.componentName,
-           cmp: cmp,
-           condition: condition
-         })
-         return true
-       }
-       return false
-     }
+  setComponentEnableDependence(cmp, condition) {
+    if (cmp !== null && cmp !== undefined) {
+      this.enableDependenceSet.push({
+        cmpName: cmp.componentName,
+        cmp: cmp,
+        condition: condition
+      })
+      return true
+    }
+    return false
+  }
 
   /**
-  * 设置可编辑依赖
-  * @param cmpName
-  * @param condition/condition()
-  */
-     setEditableDependence(cmpName, condition) {
-       var cmp = this.getComponent(cmpName)
-       if (cmp !== null && cmp !== undefined) {
-         this.editableDependenceSet.push({
-           cmpName: cmpName,
-           cmp: cmp,
-           condition: condition
-         })
-       }
-     }
+   * 设置可编辑依赖
+   * @param cmpName
+   * @param condition/condition()
+   */
+  setEditableDependence(cmpName, condition) {
+    var cmp = this.getComponent(cmpName)
+    if (cmp !== null && cmp !== undefined) {
+      this.editableDependenceSet.push({
+        cmpName: cmpName,
+        cmp: cmp,
+        condition: condition
+      })
+    }
+  }
 
   /**
-  * 设置编辑依赖
-  * @param cmpName
-  * @param condition/condition()
-  */
-     setReadOnlyDependence(cmpName, condition) {
-       var cmp = this.getComponent(cmpName)
-       if (cmp !== null && cmp !== undefined) {
-         this.readOnlyDependenceSet.push({
-           cmpName: cmpName,
-           cmp: cmp,
-           condition: condition
-         })
-       }
-     }
+   * 设置编辑依赖
+   * @param cmpName
+   * @param condition/condition()
+   */
+  setReadOnlyDependence(cmpName, condition) {
+    var cmp = this.getComponent(cmpName)
+    if (cmp !== null && cmp !== undefined) {
+      this.readOnlyDependenceSet.push({
+        cmpName: cmpName,
+        cmp: cmp,
+        condition: condition
+      })
+    }
+  }
   /**
    * 设置必填依赖
    * @param cmpName
    * @param conditionFun
    */
-     setRequiredDependence(cmpName, condition) {
-       var cmp = this.getComponent(cmpName)
-       if (cmp !== null && cmp !== undefined) {
-         this.requiredDependenceSet.push({
-           cmpName: cmpName,
-           cmp: cmp,
-           condition: condition
-         })
-       }
-     }
+  setRequiredDependence(cmpName, condition) {
+    var cmp = this.getComponent(cmpName)
+    if (cmp !== null && cmp !== undefined) {
+      this.requiredDependenceSet.push({
+        cmpName: cmpName,
+        cmp: cmp,
+        condition: condition
+      })
+    }
+  }
 
   /**
-  * 设置隐藏
-  * @param cmpName
-  * @param conditionFun
-  */
-     setHiddenDependence(cmpName, condition) {
-       var cmp = this.getComponent(cmpName)
-       if (cmp !== null && cmp !== undefined) {
-         this.hiddenDependenceSet.push({
-           cmpName: cmpName,
-           cmp: cmp,
-           condition: condition
-         })
-       }
-     }
+   * 设置隐藏
+   * @param cmpName
+   * @param conditionFun
+   */
+  setHiddenDependence(cmpName, condition) {
+    var cmp = this.getComponent(cmpName)
+    if (cmp !== null && cmp !== undefined) {
+      this.hiddenDependenceSet.push({
+        cmpName: cmpName,
+        cmp: cmp,
+        condition: condition
+      })
+    }
+  }
 
   /**
    * 设置唯一性依赖
    * @param cmpName
    * @param conditionFun
    */
-     setUniqueDependence(cmpName, condition) {
-       var cmp = this.getComponent(cmpName)
-       if (cmp !== null && cmp !== undefined) {
-         this.uniqueDependenceSet.push({
-           cmpName: cmpName,
-           cmp: cmp,
-           condition: condition
-         })
-       }
-     }
+  setUniqueDependence(cmpName, condition) {
+    var cmp = this.getComponent(cmpName)
+    if (cmp !== null && cmp !== undefined) {
+      this.uniqueDependenceSet.push({
+        cmpName: cmpName,
+        cmp: cmp,
+        condition: condition
+      })
+    }
+  }
   /**
-    * 设置值依赖
-    * @param String targetCmpName
-    * @param String[] dependenceFields
-    * @param Boolean/function condition
-    * @param value/function value
-    */
-     setValueDependence(targetCmpName, dependenceCmpNames, condition, value) {
-       var dependenceCmpNameSet = []
-       if (typeof dependenceCmpNames === 'string') {
-         dependenceCmpNameSet.push(dependenceCmpNames)
-       } else {
-         dependenceCmpNameSet = dependenceCmpNames
-       }
-       this.valueDependenceSet.push(
-         {
-           type: basicConstant.DEPENDENCE_VALUE,
-           cmpName: targetCmpName,
-           dependenceCmpNames: dependenceCmpNameSet,
-           condition: condition,
-           value: value
-         })
-     }
+   * 设置值依赖
+   * @param String targetCmpName
+   * @param String[] dependenceFields
+   * @param Boolean/function condition
+   * @param value/function value
+   */
+  setValueDependence(targetCmpName, dependenceCmpNames, condition, value) {
+    var dependenceCmpNameSet = []
+    if (typeof dependenceCmpNames === 'string') {
+      dependenceCmpNameSet.push(dependenceCmpNames)
+    } else {
+      dependenceCmpNameSet = dependenceCmpNames
+    }
+    this.valueDependenceSet.push({
+      type: basicConstant.DEPENDENCE_VALUE,
+      cmpName: targetCmpName,
+      dependenceCmpNames: dependenceCmpNameSet,
+      condition: condition,
+      value: value
+    })
+  }
 
   /**
-  * 根据所依赖的字段，获取对应的依赖集
-  * @param denpendeceCmpName
-  * @returns {Array} denpendeceSet
-  */
-     getValueDependenceSet(dependenceCmpName) {
-       var dependenceSet = []
-       for (var i = 0; i < this.valueDependenceSet.length; i++) {
-         var dependenceCmpNames = this.valueDependenceSet[i].dependenceCmpNames
-         var isDependence = false
-         if (dependenceCmpName == null) {
-           isDependence = true
-         } else {
-           for (var j = 0; j < dependenceCmpNames.length; j++) {
-             if (dependenceCmpNames[j] === dependenceCmpName) {
-               isDependence = true
-               break
-             }
-           }
-         }
-         if (isDependence) {
-           dependenceSet.push(this.valueDependenceSet[i])
-         }
-       }
-       return dependenceSet
-     }
+   * 根据所依赖的字段，获取对应的依赖集
+   * @param denpendeceCmpName
+   * @returns {Array} denpendeceSet
+   */
+  getValueDependenceSet(dependenceCmpName) {
+    var dependenceSet = []
+    for (var i = 0; i < this.valueDependenceSet.length; i++) {
+      var dependenceCmpNames = this.valueDependenceSet[i].dependenceCmpNames
+      var isDependence = false
+      if (dependenceCmpName == null) {
+        isDependence = true
+      } else {
+        for (var j = 0; j < dependenceCmpNames.length; j++) {
+          if (dependenceCmpNames[j] === dependenceCmpName) {
+            isDependence = true
+            break
+          }
+        }
+      }
+      if (isDependence) {
+        dependenceSet.push(this.valueDependenceSet[i])
+      }
+    }
+    return dependenceSet
+  }
   /**
- * 编辑依赖处理
- */
-     editableDependenceControl(component = null) {
-       var findit = false
-       for (const ds of this.editableDependenceSet) {
-         if (component === null) {
-           findit = true
-         } else {
-           if (findit === true) break
-           if (ds.cmp === component) {
-             findit = true
-           }
-         }
-         if (findit === true) {
-           var isEditable = true
-           var record = null
-           if (ds.cmp.dataSource !== null) {
-             record = ds.cmp.dataSource.getRecord()
-           }
-           if (typeof ds.condition === 'function') {
-             isEditable = ds.condition({ record: record, cmp: ds.cmp })
-           } else {
-             isEditable = ds.condition
-           }
-           ds.cmp.setEnable(isEditable)
-         }
-       }
-     }
+   * 编辑依赖处理
+   */
+  editableDependenceControl(component = null) {
+    var findit = false
+    for (const ds of this.editableDependenceSet) {
+      if (component === null) {
+        findit = true
+      } else {
+        if (findit === true) break
+        if (ds.cmp === component) {
+          findit = true
+        }
+      }
+      if (findit === true) {
+        var isEditable = true
+        var record = null
+        if (ds.cmp.dataSource !== null) {
+          record = ds.cmp.dataSource.getRecord()
+        }
+        if (typeof ds.condition === 'function') {
+          isEditable = ds.condition({
+            record: record,
+            cmp: ds.cmp
+          })
+        } else {
+          isEditable = ds.condition
+        }
+        ds.cmp.setEnable(isEditable)
+      }
+    }
+  }
 
   /**
- * 编辑依赖处理
- */
-     readOnlyDependenceControl(component = null) {
-       var findit = false
-       for (const ds of this.readOnlyDependenceSet) {
-         if (component === null) {
-           findit = true
-         } else {
-           if (findit === true) break
-           if (ds.cmp === component) {
-             findit = true
-           }
-         }
-         if (findit === true) {
-           var isReadOnly = true
-           var record = null
-           if (ds.cmp.dataSource !== null) {
-             record = ds.cmp.dataSource.getRecord()
-           }
-           if (typeof ds.condition === 'function') {
-             isReadOnly = ds.condition({ record: record, cmp: ds.cmp })
-           } else {
-             isReadOnly = ds.condition
-           }
-           ds.cmp.setReadOnly(!isReadOnly)
-         }
-       }
-     }
+   * 编辑依赖处理
+   */
+  readOnlyDependenceControl(component = null) {
+    var findit = false
+    for (const ds of this.readOnlyDependenceSet) {
+      if (component === null) {
+        findit = true
+      } else {
+        if (findit === true) break
+        if (ds.cmp === component) {
+          findit = true
+        }
+      }
+      if (findit === true) {
+        var isReadOnly = true
+        var record = null
+        if (ds.cmp.dataSource !== null) {
+          record = ds.cmp.dataSource.getRecord()
+        }
+        if (typeof ds.condition === 'function') {
+          isReadOnly = ds.condition({
+            record: record,
+            cmp: ds.cmp
+          })
+        } else {
+          isReadOnly = ds.condition
+        }
+        ds.cmp.setReadOnly(!isReadOnly)
+      }
+    }
+  }
 
   /**
- * 可用依赖处理
- */
-     enableDependenceControl(component = null) {
-       var findit = false
-       for (const ds of this.enableDependenceSet) {
-         if (component === null) {
-           findit = true
-         } else {
-           if (findit === true) break
-           if (ds.cmp === component) {
-             findit = true
-           }
-         }
-         if (findit === true) {
-           var isEnable = true
-           var record = null
-           if (ds.cmp.dataSource !== null) {
-             record = ds.cmp.dataSource.getRecord()
-           }
-           if (typeof ds.condition === 'function') {
-             isEnable = ds.condition({ record: record, cmp: ds.cmp })
-           } else {
-             isEnable = ds.condition
-           }
-           ds.cmp.setEnable(isEnable)
-         }
-       }
-     }
+   * 可用依赖处理
+   */
+  enableDependenceControl(component = null) {
+    var findit = false
+    for (const ds of this.enableDependenceSet) {
+      if (component === null) {
+        findit = true
+      } else {
+        if (findit === true) break
+        if (ds.cmp === component) {
+          findit = true
+        }
+      }
+      if (findit === true) {
+        var isEnable = true
+        var record = null
+        if (ds.cmp.dataSource !== null) {
+          record = ds.cmp.dataSource.getRecord()
+        }
+        if (typeof ds.condition === 'function') {
+          isEnable = ds.condition({
+            record: record,
+            cmp: ds.cmp
+          })
+        } else {
+          isEnable = ds.condition
+        }
+        ds.cmp.setEnable(isEnable)
+      }
+    }
+  }
 
   /**
- * 隐藏依赖处理
- */
-     hiddenDependenceControl(component) {
-       var findit = false
-       for (const ds of this.hiddenDependenceSet) {
-         if (component === null) {
-           findit = true
-         } else {
-           if (findit === true) break
-           if (ds.cmp === component) {
-             findit = true
-           }
-         }
-         if (findit === true) {
-           var isHidden = true
-           var record = null
-           if (ds.cmp.dataSource !== null) {
-             record = ds.cmp.dataSource.getRecord()
-           }
-           if (typeof ds.condition === 'function') {
-             isHidden = ds.condition({ record: record, cmp: ds.cmp })
-           } else {
-             isHidden = ds.condition
-           }
-           ds.cmp.setHidden(isHidden)
-         }
-       }
-     }
+   * 隐藏依赖处理
+   */
+  hiddenDependenceControl(component) {
+    var findit = false
+    for (const ds of this.hiddenDependenceSet) {
+      if (component === null) {
+        findit = true
+      } else {
+        if (findit === true) break
+        if (ds.cmp === component) {
+          findit = true
+        }
+      }
+      if (findit === true) {
+        var isHidden = true
+        var record = null
+        if (ds.cmp.dataSource !== null) {
+          record = ds.cmp.dataSource.getRecord()
+        }
+        if (typeof ds.condition === 'function') {
+          isHidden = ds.condition({
+            record: record,
+            cmp: ds.cmp
+          })
+        } else {
+          isHidden = ds.condition
+        }
+        ds.cmp.setHidden(isHidden)
+      }
+    }
+  }
 
   /**
-* 隐藏依赖处理
-*/
-     requiredDependenceControl(component) {
-       var findit = false
-       for (const ds of this.requiredDependenceSet) {
-         if (component === null) {
-           findit = true
-         } else {
-           if (findit === true) break
-           if (ds.cmp === component) {
-             findit = true
-           }
-         }
-         if (findit === true) {
-           var isRequired = true
-           var record
-           if (ds.cmp.dataSource === null || ds.cmp.dataSource === undefined) {
-             record = null
-           } else {
-             record = ds.cmp.dataSource.getRecord()
-           }
-           if (typeof ds.condition === 'function') {
-             isRequired = ds.condition({ record: record, cmp: ds.cmp })
-           } else {
-             isRequired = ds.condition
-           }
-           ds.cmp.setAllowBlank(!isRequired)
-         }
-       }
-     }
+   * 隐藏依赖处理
+   */
+  requiredDependenceControl(component) {
+    var findit = false
+    for (const ds of this.requiredDependenceSet) {
+      if (component === null) {
+        findit = true
+      } else {
+        if (findit === true) break
+        if (ds.cmp === component) {
+          findit = true
+        }
+      }
+      if (findit === true) {
+        var isRequired = true
+        var record
+        if (ds.cmp.dataSource === null || ds.cmp.dataSource === undefined) {
+          record = null
+        } else {
+          record = ds.cmp.dataSource.getRecord()
+        }
+        if (typeof ds.condition === 'function') {
+          isRequired = ds.condition({
+            record: record,
+            cmp: ds.cmp
+          })
+        } else {
+          isRequired = ds.condition
+        }
+        ds.cmp.setAllowBlank(!isRequired)
+      }
+    }
+  }
+
+  showSucMesg(config) {
+    Message.showSucMesg(config)
+  }
+
+  showFailMesg(config) {
+    Message.showFailMesg(config)
+  }
 }

@@ -1,3 +1,4 @@
+import VEventBus from '@/smartview/VEventBus.js'
 
 export default class VComponent {
   parent;
@@ -16,6 +17,36 @@ export default class VComponent {
   // 是否隐藏
   hidden;
   originalHidden;
+
+    // 事件处理中心
+  eventBus = new VEventBus();
+
+    /**
+   * 添加监听
+   * @param {*} type
+   * @param {*} func
+   */
+  addListener(type, func) {
+    return this.eventBus.add(type, func)
+  }
+
+  /**
+   * api兼容
+   * @param {类型} type
+   * @param {*} func
+   */
+  on(type, func){
+    addListener(type, func)
+  }
+
+/**
+ * 触发事件
+ * @param {*} type
+ */
+  fireEvent(type) {
+    return this.eventBus.fire(type)
+  }
+
 
   constructor(parent = null) {
     this.parent = parent

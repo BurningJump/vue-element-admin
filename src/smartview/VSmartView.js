@@ -58,7 +58,8 @@ export default class VSmartView {
             // TODO 需要替代一下ID
             var routerPath = res.fullpath
             // 1检查是否存在路游表，没有就创建，待考虑
-            router.push({
+            var my= router
+            my.push({
               path: routerPath,
               query: {
                 form: form,
