@@ -75,7 +75,7 @@ export default {
     HotTable
   },
   mounted() {
-    this.$nextTick(() => {
+    this.$bus.on('getSetting', () => {
       this.getSettings()
     })
   },

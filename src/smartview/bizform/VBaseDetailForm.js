@@ -21,9 +21,9 @@ export default class VBaseDetailForm extends VBaseForm {
     this.init()
   }
 
-  getVueComponentPath() {
-    return '@/views/com/epower/fw/smartview/detail/CustomBillDetail'
-  }
+  // getVueComponentPath() {
+  //   return '@/views/com/epower/fw/smartview/detail/CustomBillDetail'
+  // }
 
   static NewInstant(parent, formMeta) {
     return new VBaseDetailForm(parent, formMeta)
