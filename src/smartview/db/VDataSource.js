@@ -138,9 +138,19 @@ export default class VDataSource {
    * @param {*} listData
    */
   refresh() {
+    var curIndex = this.rowIndex
     var data = this.dataset.getDatasetData(this.datasetName, this.filter)
-    this.openByDataList(data)
-    // TODO  需要处理光标位置
+    this.dataList = data
+    if (this.dataList !== null || this.dataList !== undefined) {
+      if (this.dataList.length > 0) {
+        // TODO  这里有Bug，需要按Key重新定位index
+        this.rowIndex = curIndex
+        this._loadComponentData(this.rowIndex)
+      } else {
+        this.rowIndex = -1
+        this._clearComponentData()
+      }
+    }
   }
 
   // 是否最底

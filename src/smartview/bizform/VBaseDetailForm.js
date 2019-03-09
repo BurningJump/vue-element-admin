@@ -83,8 +83,7 @@ export default class VBaseDetailForm extends VBaseForm {
    * 获取Master Table的数据记录
    */
   getMasterRecord() {
-    // TODO  获取主数据
-    const ds = this.getMasterDataSource()
+     const ds = this.getMasterDataSource()
     return ds.getRecord()
   }
 
