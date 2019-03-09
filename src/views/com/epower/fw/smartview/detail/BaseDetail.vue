@@ -57,6 +57,7 @@ import VBaseDetailForm from "@/smartview/bizform/VBaseDetailForm.js";
 import * as cf from "@/smartview/util/commonFun.js";
 
 export default {
+  name: 'com-epower-fw-smartview-detail-BaseDetail',
   data() {
     return {
       listLoading: false,
@@ -99,36 +100,6 @@ export default {
         // this.height = (window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 100) + 'px'
       });
     },
-    // getBizForm(formMeta){
-    //    return new VBaseDetailForm(this,formMeta)
-    // },
-    // getUIMeta() {
-    //   return new Promise((resolve, reject) => {
-    //     this.$http
-    //       .get(
-    //         `/api/getDetailUIMeta/${this.$options.name}`
-    //       )
-    //       .then(res => {
-    //         this.UIMeta = res.data;
-    //         this.activeTab = this.UIMeta.detailViewModel.detailPages[0].name;
-    //         this.form = this.getBizForm(res.data.detailViewModel)//add by max
-    //         this.UiLoaded = true;
-    //         resolve("ok");
-    //       });
-    //   });
-    // },
-
-    // getDetailData() {
-    //   return new Promise((resolve, reject) => {
-    //     if (this.UIMeta.detailViewModel.actionUrl) {
-    //       this.$http.get(`/api/${this.UIMeta.detailViewModel.actionUrl}`).then(res => {
-    //         this.dataPackageResp = res.data;
-    //         this.dataLoaded = true;
-    //         resolve("ok");
-    //       });
-    //     }
-    //   });
-    // },
     remoteMethod() {},
     handleTabClick() {},
     handleButtonClick(params){

@@ -65,7 +65,7 @@
 
 <script>
 export default {
-  name: "com.epower.fw.smartview.detail.BaseDetailColumn",
+  name: "com-epower-fw-smartview-detail-BaseDetailColumn",
   data() {
     return {
       componentSet:this.page.findChild(this.tab.componentSetModel.name),

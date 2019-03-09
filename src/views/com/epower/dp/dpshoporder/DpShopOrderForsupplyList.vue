@@ -1,6 +1,6 @@
 <script>
 import BaseList from '@/views/com/epower/fw/smartview/list/BaseList'
-import VSmartView from '@/smartview/VSmartView.js'
+import {vsmartview} from '@/smartview/VSmartView.js'
 
 export default{
   name: 'com.epower.dp.dpshoporder.DpShopOrderForsupplyList',
@@ -13,8 +13,7 @@ export default{
   mounted() {},
   methods: {
     resetForm(){
-      const v = new VSmartView()
-      v.callForm('com.epower.dp.dpshoporder.DpShopOrderDetail', 1, 'VIEW')
+      vsmartview.callForm('com.epower.dp.dpshoporder.DpShopOrderDetail', 1, 'VIEW')
     }
   }
 }

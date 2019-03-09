@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-import router  from '@/router'
+import router from '@/router'
 import { basicConstant } from '@/smartview/VBasicConstant.js'
 import { asyncRouterMap } from '@/router'
 
@@ -27,14 +27,16 @@ export default class VSmartView {
 
   getRouter(routes, formKey, parentPath) {
     var res = null
+    var afullpath
     for (var rt of routes) {
       if (rt.name !== undefined && rt.name === formKey) {
-        var afullpath = (parentPath === '' ? rt.path:parentPath + '/' + rt.path)
+        afullpath = parentPath === '' ? rt.path : parentPath + '/' + rt.path
         res = { route: rt, fullpath: afullpath }
         break
       } else {
         if (rt.children !== undefined) {
-          res = this.getRouter(rt.children, formKey, parentPath + '/' + rt.path)
+          afullpath = parentPath === '' ? rt.path : parentPath + '/' + rt.path
+          res = this.getRouter(rt.children, formKey, afullpath)
           if (res !== null) {
             break
           }
@@ -44,26 +46,28 @@ export default class VSmartView {
     return res
   }
 
-  callForm(formKey, id, states, cvar = null) {
-    var form = null
+  // 通过router call from
+  callForm(formKey, id, states, aCvar = null) {
+    var vform = null
     var maper = asyncRouterMap
     var res = this.getRouter(maper, formKey, '')
     res.route.control()
       .then(module => {
         this.getUIMeta(formKey).then(formMeta => {
-          form = module.default.NewInstant(this, formMeta)
-          this.getDetailData(form.formMeta, id).then(dataPackage => {
-            form.loadDataByPackage(dataPackage) // add by max
-            form.show(states)
+          vform = module.default.NewInstant(this, formMeta)
+          this.getDetailData(vform.formMeta, id).then(dataPackage => {
+            vform.loadDataByPackage(dataPackage) // add by max
+            vform.show(states)
             // TODO 需要替代一下ID
             var routerPath = res.fullpath
-            // 1检查是否存在路游表，没有就创建，待考虑
-            var my= router
-            my.push({
+            // 调用vue-router call出form
+            // TODO var myRouter 的赋值是否会导致分险，需要再次评估。
+            var myRouter = router
+            myRouter.push({
               path: routerPath,
               query: {
-                form: form,
-                cvar: cvar
+                form: vform,
+                cvar: aCvar
               }
             })
           }).catch(err => {
@@ -77,7 +81,7 @@ export default class VSmartView {
         console.log(err.message)
       })
   }
-
+  // TODO 通过动态加载js call from 目前没有搞定，原因import时提示模块不存在
   // callForm(formKey, id, states) {
   //   var formJsPath = formKey.replace(/\./g, '/')
   //   var form = null
@@ -143,3 +147,5 @@ export default class VSmartView {
       })
   }
 }
+
+export var vsmartview = new VSmartView()

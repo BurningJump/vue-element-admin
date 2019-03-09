@@ -67,7 +67,7 @@
 <script>
 import Pagination from '@/components/Pagination'
 export default {
-  name: 'com.epower.fw.smartview.detail.BaseDetailAGrid',
+  name: 'com-epower-fw-smartview-detail-BaseDetailAGrid',
   props: ['url', 'tab', 'activeTab', 'height','componentSet'],
   components: {
     Pagination

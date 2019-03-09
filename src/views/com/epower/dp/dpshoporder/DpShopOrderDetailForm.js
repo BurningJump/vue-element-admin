@@ -2,10 +2,8 @@ import VBaseDetailForm from '@/smartview/bizform/VBaseDetailForm.js'
 import { basicConstant } from '@/smartview/VBasicConstant.js'
 
 export default class DpShopOrderDetailForm extends VBaseDetailForm {
-  // 获取Vue视图路径
-  getVueComponentPath() {
-    return '/com/epower/dp/dpshoporder/DpShopOrderDetail'
-  }
+
+  operationCode = 'DP02' ;
 
   setFormEnableDependence(form) {
     var canGenStockBillFun = function(e) {
@@ -34,5 +32,15 @@ export default class DpShopOrderDetailForm extends VBaseDetailForm {
 
     form.setRequiredDependence('SellerNick', isNeedFun)
   }
+
+  setFormButton(form) {
+    var newStockOrder = form.getCmpByName('newStockOrder')
+    newStockOrder.on('click',
+      function() {
+        form.showFailMesg({ msg: '生成要货单失败!' })
+      }
+    )
+  }
+
 }
 

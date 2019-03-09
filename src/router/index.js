@@ -87,7 +87,7 @@ export const asyncRouterMap = [
   {
     path: '/com/epower/dp/dpshoporder',
     component: Layout,
-    redirect: '/com/epower/dp/dpshoporder/DpShopOrderDetail',
+    redirect: '/com/epower/dp/dpshoporder/DpShopOrderForsupplyList',
     alwaysShow: true, // will always show the root menu
     meta: {
       title: 'dpshoporder',
@@ -96,19 +96,11 @@ export const asyncRouterMap = [
     },
     children: [
       {
-        path: 'DpShopOrderDetail',
+        path: 'DpShopOrderDetail/:id',
         component: () => import('@/views/com/epower/dp/dpshoporder/DpShopOrderDetail'),
         control: () => import('@/views/com/epower/dp/dpshoporder/DpShopOrderDetailForm.js'),
         name: 'com.epower.dp.dpshoporder.DpShopOrderDetail',
-        meta: {
-          title: 'DpShopOrderDetail',
-          roles: ['admin'] // or you can only set roles in sub nav
-        }
-      },
-      {
-        path: 'DpShopOrderDetail/:id',
-        component: () => import('@/views/com/epower/dp/dpshoporder/DpShopOrderDetail'),
-        name: 'com.epower.dp.dpshoporder.DpShopOrderDetail',
+        hidden: true,
         meta: {
           title: 'DpShopOrderDetail',
           roles: ['admin'] // or you can only set roles in sub nav
