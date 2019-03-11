@@ -6,7 +6,7 @@
       :page ="form.getComponent(form.formMeta.masterPage.name)"
       @onButtonClick = "handleButtonClick"
     />
-    <el-tabs v-model="activeTab" type="card" @tab-click="handleTabClick">
+    <el-tabs v-model="form.activeDetailPage" type="card" @tab-click="handleTabClick">
       <el-tab-pane
         v-for="(tab,tabIndex) in form.formMeta.detailPages"
         :key="tab.name"
@@ -21,7 +21,7 @@
             v-if="tab.componentSetModel.style === 'grid'"
             :tab="tab"
             :dataLoaded="true"
-            :activeTab="activeTab"
+            :activeTab="form.activeDetailPage"
             :height="height"
             :componentSet="form.getComponent(tab.componentSetModel.name)"
           />
@@ -29,7 +29,7 @@
             v-else-if="tab.componentSetModel.style === 'aGrid'"
             :url="form.formMeta.datasetInfo.datasets[tabIndex].actionMethod"
             :tab="tab"
-            :activeTab="activeTab"
+            :activeTab="form.activeDetailPage"
             :listLoading="listLoading"
             :height="height"
             :componentSet="form.getComponent(tab.componentSetModel.name)"
@@ -38,7 +38,7 @@
           <base-detail-column
             v-else-if="tab.componentSetModel.style === 'column'"
             :tab="tab"
-            :activeTab="activeTab"
+            :activeTab="form.activeDetailPage"
             :page ="form.getComponent(tab.name)"
             @buttonOnClick = "handleButtonClick"
           />
@@ -66,7 +66,7 @@ export default {
       height: 600, // 表头高度
       // UIMeta: "",
       // dataPackageResp: "",
-      activeTab:"",
+     // activeTab:"",
       // tab: Object,
       // form: null //add by max
     };
@@ -77,13 +77,13 @@ export default {
     BaseDetailColumn,
     BaseDetailGrid
   },
-  watch: {
-    'form.formMeta'(val) {
-      if (val) {
-        this.activeTab = val.detailPages[0].name
-      }
-    }
-  },
+  // watch: {
+  //   'form.formMeta'(val) {
+  //     if (val) {
+  //       this.activeTab = val.detailPages[0].name
+  //     }
+  //   }
+  // },
   mounted() {
     this.calcTableHeight();
   },

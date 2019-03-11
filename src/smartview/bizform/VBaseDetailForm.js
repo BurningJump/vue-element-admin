@@ -12,6 +12,9 @@ import VDataStore from '@/smartview/db/VDataStore.js'
 import VDataSource from '@/smartview/db/VDataSource.js'
 
 export default class VBaseDetailForm extends VBaseForm {
+  // 当前活动的Tab
+  activeDetailPage = '';
+
   // 当前状态
   state = basicConstant.VIEWSTATE_VIEW;
 
@@ -83,7 +86,7 @@ export default class VBaseDetailForm extends VBaseForm {
    * 获取Master Table的数据记录
    */
   getMasterRecord() {
-     const ds = this.getMasterDataSource()
+    const ds = this.getMasterDataSource()
     return ds.getRecord()
   }
 
@@ -208,7 +211,7 @@ export default class VBaseDetailForm extends VBaseForm {
 
       //  聚合页面的处理
       if (detailPages[j].componentSetModel != null && detailPages[j].componentSetModel.style === basicConstant.AGRID) {
-        var conditionFun = function () {
+        var conditionFun = function() {
           if (this.state === basicConstant.VIEWSTATE_NEW || this.state === basicConstant.VIEWSTATE_MODIFY) {
             return false
           } else {
@@ -230,7 +233,7 @@ export default class VBaseDetailForm extends VBaseForm {
       case 'new':
         return
       case 'refresh':
-        conditionFun = function () {
+        conditionFun = function() {
           if (this.state === basicConstant.VIEWSTATE_NEW) {
             return false
           } else {
@@ -240,7 +243,7 @@ export default class VBaseDetailForm extends VBaseForm {
         this.setComponentEnableDependence(button, conditionFun)
         return
       case 'save':
-        conditionFun = function () {
+        conditionFun = function() {
           if (this.state === basicConstant.VIEWSTATE_VIEW) {
             return false
           } else {
@@ -252,7 +255,7 @@ export default class VBaseDetailForm extends VBaseForm {
         return
 
       case 'delete':
-        conditionFun = function () {
+        conditionFun = function() {
           if (this.state === basicConstant.VIEWSTATE_NEW) {
             return false
           } else {
@@ -267,7 +270,7 @@ export default class VBaseDetailForm extends VBaseForm {
 
         return
       case 'attachmentmanage':
-        conditionFun = function () {
+        conditionFun = function() {
           if (this.state === basicConstant.VIEWSTATE_NEW) {
             return false
           } else {
@@ -279,7 +282,7 @@ export default class VBaseDetailForm extends VBaseForm {
         return
 
       case 'addrow':
-        conditionFun = function () {
+        conditionFun = function() {
           if (this.state === basicConstant.VIEWSTATE_VIEW) {
             return false
           } else {
@@ -291,7 +294,7 @@ export default class VBaseDetailForm extends VBaseForm {
         return
 
       case 'copyrow':
-        conditionFun = function () {
+        conditionFun = function() {
           if (this.state === basicConstant.VIEWSTATE_VIEW) {
             return false
           } else {
@@ -304,7 +307,7 @@ export default class VBaseDetailForm extends VBaseForm {
 
       case 'deleterow':
 
-        conditionFun = function () {
+        conditionFun = function() {
           if (this.state === basicConstant.VIEWSTATE_VIEW) {
             return false
           } else {
@@ -314,7 +317,7 @@ export default class VBaseDetailForm extends VBaseForm {
         this.setComponentEnableDependence(button, conditionFun)
         return
       case 'approvetxn':
-        conditionFun = function () {
+        conditionFun = function() {
           if (this.state === basicConstant.VIEWSTATE_VIEW) {
             var masterData = vForm.getMasterRecord()
             if (masterData !== null && (masterData.rstatus === 1 || masterData.rstatus === 0)) {
@@ -328,7 +331,7 @@ export default class VBaseDetailForm extends VBaseForm {
         this.setComponentEnableDependence(button, conditionFun)
         return
       case 'unapprovetxn':
-        conditionFun = function () {
+        conditionFun = function() {
           if (this.state === basicConstant.VIEWSTATE_VIEW) {
             var masterData = vForm.getMasterRecord()
             if (masterData !== null && masterData.rstatus === 1) {
@@ -342,7 +345,7 @@ export default class VBaseDetailForm extends VBaseForm {
         this.setComponentEnableDependence(button, conditionFun)
         return
       case 'canceltxn':
-        conditionFun = function () {
+        conditionFun = function() {
           if (this.state === basicConstant.VIEWSTATE_VIEW) {
             var masterData = vForm.getMasterRecord()
             if (masterData !== null && masterData.rstatus === 0) {
@@ -356,7 +359,7 @@ export default class VBaseDetailForm extends VBaseForm {
         this.setComponentEnableDependence(button, conditionFun)
         return
       case 'uncanceltxn':
-        conditionFun = function () {
+        conditionFun = function() {
           if (this.state === basicConstant.VIEWSTATE_VIEW) {
             var masterData = vForm.getMasterRecord()
             if (masterData !== null && masterData.rstatus === 0) {
@@ -370,7 +373,7 @@ export default class VBaseDetailForm extends VBaseForm {
         this.setComponentEnableDependence(button, conditionFun)
         return
       case 'closetxn':
-        conditionFun = function () {
+        conditionFun = function() {
           if (this.state === basicConstant.VIEWSTATE_VIEW) {
             var masterData = vForm.getMasterRecord()
             if (masterData !== null && masterData.rstatus === 1 && masterData.bstatus !== 5) {
@@ -384,7 +387,7 @@ export default class VBaseDetailForm extends VBaseForm {
         this.setComponentEnableDependence(button, conditionFun)
         return
       case 'unclosetxn':
-        conditionFun = function () {
+        conditionFun = function() {
           if (this.state === basicConstant.VIEWSTATE_VIEW) {
             var masterData = vForm.getMasterRecord()
             if (masterData !== null && masterData.rstatus === 1 && masterData.bstatus === 5) {
@@ -398,7 +401,7 @@ export default class VBaseDetailForm extends VBaseForm {
         this.setComponentEnableDependence(button, conditionFun)
         return
       case 'suspendtxn':
-        conditionFun = function () {
+        conditionFun = function() {
           if (this.state === basicConstant.VIEWSTATE_VIEW) {
             return true
           } else {
@@ -408,7 +411,7 @@ export default class VBaseDetailForm extends VBaseForm {
         this.setComponentEnableDependence(button, conditionFun)
         return
       case 'uncuspendtxn':
-        conditionFun = function () {
+        conditionFun = function() {
           if (this.state === basicConstant.VIEWSTATE_VIEW) {
             return true
           } else {
@@ -418,8 +421,8 @@ export default class VBaseDetailForm extends VBaseForm {
         this.setComponentEnableDependence(button, conditionFun)
         return
       case 'tobstatustxn':
-        conditionFun = function (toStatus) {
-          return function () {
+        conditionFun = function(toStatus) {
+          return function() {
             if (this.state !== basicConstant.VIEWSTATE_VIEW) {
               return false
             } else {
@@ -469,6 +472,11 @@ export default class VBaseDetailForm extends VBaseForm {
       var dToolbar = new VToolbar(detailPanel)
       this._initToolbar(this, dToolbar, page.toolbarModel)
     }
+
+    if (formMeta.detailPages !== undefined && formMeta.detailPages.length > 0) {
+      this.activeDetailPage = formMeta.detailPages[0].name
+    }
+
     return true
   }
 
