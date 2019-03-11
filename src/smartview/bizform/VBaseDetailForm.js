@@ -517,6 +517,7 @@ export default class VBaseDetailForm extends VBaseForm {
     component.allowBlank = (aComponentMeta.allowBlank === undefined) ? false : (aComponentMeta.allowBlank === 'true')
     component.originalAllowBlank = component.allowBlank
     component.enumModel = aComponentMeta.enumModel
+    component.remoteComboBoxModel = aComponentMeta.remoteComboBoxModel
   }
 
   // 初始化
