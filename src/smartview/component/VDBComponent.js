@@ -107,7 +107,9 @@ export default class VDBComponent extends VComponent {
     this.setAllowBlank(this.originalAllowBlank)
   }
 
-  saveInputValue() {
+  saveInputValue(val=null) {
+    if(val!=null)
+      this._inputValue=val;
     this.value = this.inputValue
   }
 }

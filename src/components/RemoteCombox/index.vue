@@ -77,10 +77,12 @@
         console.log('callValueListFromRefeed:'+resData);
         if((resData||'')=='')
           return;
+        this.comValue = [];
+        this.filterList = [];
         if(!this.multiple){
           this.comValue = resData[0][this.input.remoteComboBoxModel.valueField];
         }else{
-          for(let item in resData){
+          for(let item of resData){
             this.comValue.push(item[this.input.remoteComboBoxModel.valueField]);            
           }
         }
@@ -101,7 +103,7 @@
         // 当 input 失去焦点时触发
       },
       fireChangeEvent(){
-        console.log('--fireChangeEvent:');
+        console.log('--fireChangeEvent:'+this.comValue+';--filterList:'+this.filterList);
         this.input.saveInputValue(this.comValue);
       },
       //获取远程数据      

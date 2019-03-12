@@ -414,6 +414,7 @@ export default {
               this.$set(this.list[index], thead.prop, item[thead.prop])
             })
           })
+          this.list =res.data.resultList; 
         })
       })
     },
