@@ -18,10 +18,10 @@ export default class VComponent {
   hidden;
   originalHidden;
 
-    // 事件处理中心
+  // 事件处理中心
   eventBus = new VEventBus();
 
-    /**
+  /**
    * 添加监听
    * @param {*} type
    * @param {*} func
@@ -35,18 +35,25 @@ export default class VComponent {
    * @param {类型} type
    * @param {*} func
    */
-  on(type, func){
-    addListener(type, func)
+  on(type, func) {
+    this.addListener(type, func)
   }
 
-/**
+  /**
  * 触发事件
  * @param {*} type
  */
-  fireEvent(type) {
-    return this.eventBus.fire(type)
+  fireEvent(type, param = null) {
+    return this.eventBus.fire(type, param)
   }
 
+  /**
+ * 触发事件
+ * @param {*} type
+ */
+  fire(type, param = null) {
+    return this.fireEvent(type, param)
+  }
 
   constructor(parent = null) {
     this.parent = parent
