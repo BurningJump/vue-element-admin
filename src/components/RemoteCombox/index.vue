@@ -68,9 +68,12 @@
     methods: {
       //调用valueList窗口
       callValueListFrom(){
+
         // var formJsPath = formKey.replace(/\./g, '/')
-           this.$router.push({path:'/com/epower/am/operation/SelectList',
-              query: {callValueListFromRefeed: this.callValueListFromRefeed} })
+        this.$router.push({path:'/com/epower/am/operation/SelectList',
+              query: {
+                selectType:this.multiple?'multi':'single',
+                callValueListFromRefeed: this.callValueListFromRefeed} })
       },
       //调用valueList窗口回调函数，1.填充comValue，2.filterList，3.保存结果到datapackage
       callValueListFromRefeed(resData){
@@ -87,6 +90,7 @@
           }
         }
         this.filterList = resData;  
+        this.fullList = resData;  
         this.fireChangeEvent();    
       },
 
