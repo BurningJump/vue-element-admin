@@ -155,12 +155,14 @@
       </el-container>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="submitFun">确 定</el-button>
+        <!-- <el-button type="primary" @click="dialogVisible = false">确 定</el-button> -->
       </span>
     </el-dialog>
   <!-- </div> -->
 </template>
 <script>
+import router from '@/router'  //临时代码
 import Pagination from '@/components/Pagination'
 export default {
   data() {
@@ -260,6 +262,11 @@ export default {
     })
   },
   methods: {
+    submitFun(){
+      console.log('here call submitFun');
+      this.$route.query.callValueListFromRefeed(this.selectedList);
+      this.dialogVisible = false;
+    },
     handleSelect(selection, row) {
       if (this.selectType === 'single') {
         // 单选模式下， 只能选中一条，一旦选中其中一条，之前选中的数据取消选中

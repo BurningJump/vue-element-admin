@@ -1,4 +1,5 @@
 <template>
+  <div class="remotecombox-contain"> 
   <el-select
     v-model="comValue"
     :multiple="multiple"
@@ -25,11 +26,15 @@
       :value=getObjectValueByKey(item,input.remoteComboBoxModel.valueField)>
       <span style="float: left">{{getObjectValueByKey(item,input.remoteComboBoxModel.displayField)}}</span>
       <span style="float: right; color: #8492a6; font-size: 13px">{{getObjectValueByKey(item,input.remoteComboBoxModel.valueField)}}</span>
-    </el-option>
+    </el-option>    
   </el-select>
+  <el-button icon="el-icon-search" class="remotecombox-search" @click="callValueListFrom"></el-button>
+  </div>
 </template>
 
 <script>
+  import router from '@/router'  //临时代码
+
   export default {
     name: 'RemoteCombox',
     data() {
@@ -37,10 +42,11 @@
         fullList: [],    //远程获取的结果 
         filterList: [],  //过滤后的结果     
         comValue: [],    //保存用户选择的结果
-        loading: false        
+        loading: false
       }
     },
     props: {input:{},
+            extraFilter:'', //业务人员在前端自定义的过滤条件
             multiple:true,
             disabled:false,
             clearable:true,
@@ -60,6 +66,28 @@
       this.loadRemoteData('',2);
     },
     methods: {
+      //调用valueList窗口
+      callValueListFrom(){
+        // var formJsPath = formKey.replace(/\./g, '/')
+           this.$router.push({path:'/com/epower/am/operation/SelectList',
+              query: {callValueListFromRefeed: this.callValueListFromRefeed} })
+      },
+      //调用valueList窗口回调函数，1.填充comValue，2.filterList，3.保存结果到datapackage
+      callValueListFromRefeed(resData){
+        console.log('callValueListFromRefeed:'+resData);
+        if((resData||'')=='')
+          return;
+        if(!this.multiple){
+          this.comValue = resData[0][this.input.remoteComboBoxModel.valueField];
+        }else{
+          for(let item in resData){
+            this.comValue.push(item[this.input.remoteComboBoxModel.valueField]);            
+          }
+        }
+        this.filterList = resData;  
+        this.fireChangeEvent();    
+      },
+
       fireRemoveTagEvent(){
         //console.log('fireRemoveTagEvent:');
         // 多选模式下移除tag时触发;
@@ -103,6 +131,8 @@
           }else{
             filterStr = this.getFilterStr(this.input.remoteComboBoxModel.displayFieldType,'like',this.input.remoteComboBoxModel.displayField,query);
           }
+          filterStr=this.extraFilter + filterStr;
+
           this.fullList =await this.getRomteData({filter:filterStr});
           this.filterList=this.fullList;
           this.loading = false;
@@ -181,3 +211,16 @@
     }
   }
 </script>
+
+
+
+<style>
+  .remotecombox-contain{
+    white-space:nowrap;
+  }
+  .remotecombox-search{
+    padding-left: 0px;
+    width:5px;
+    border:0px;
+  }
+</style>
