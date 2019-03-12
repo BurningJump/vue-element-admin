@@ -11,6 +11,7 @@ import {
 import VDataStore from '@/smartview/db/VDataStore.js'
 import VDataSource from '@/smartview/db/VDataSource.js'
 
+
 export default class VBaseDetailForm extends VBaseForm {
   // 当前活动的Tab
   activeDetailPage = '';
@@ -456,7 +457,7 @@ export default class VBaseDetailForm extends VBaseForm {
 
     // 2.视图中建立toolbar
     var mToolbar = new VToolbar(masterPanel)
-    this._initToolbar(this, mToolbar, formMeta.masterPage.toolbarModel)
+    this._initToolbar(this, mToolbar, formMeta.masterPage.toolbarModel, mComponentSet.dataSource)
 
     // 3.建立detialpage视图
     for (var page of formMeta.detailPages) {
@@ -470,7 +471,7 @@ export default class VBaseDetailForm extends VBaseForm {
 
       //  2.视图中建立toolbar
       var dToolbar = new VToolbar(detailPanel)
-      this._initToolbar(this, dToolbar, page.toolbarModel)
+      this._initToolbar(this, dToolbar, page.toolbarModel, dComponentSet.dataSource)
     }
 
     if (formMeta.detailPages !== undefined && formMeta.detailPages.length > 0) {
@@ -558,22 +559,149 @@ export default class VBaseDetailForm extends VBaseForm {
    * 初始化ComponentSet
    *  @param {*} componentSetMeta 元数据
    */
-  _initToolbar(detailForm, toolbar, toolbarMeta) {
+  _initToolbar(detailForm, toolbar, toolbarMeta, datasource) {
     this._initComponent(detailForm, toolbar, toolbarMeta)
     toolbar.showMoreButton = toolbarMeta.showMoreButton
     for (var buttonMeta of toolbarMeta.buttons) {
       var cmp = new VButton(toolbar)
-      this._initToolbarButton(detailForm, cmp, buttonMeta)
+      this._initToolbarButton(detailForm, cmp, buttonMeta, datasource)
     }
   }
   /**
    * 初始化按钮
    *  @param {*} componentSetMeta 元数据
    */
-  _initToolbarButton(form, cmp, cmpMeta) {
+  _initToolbarButton(form, cmp, cmpMeta, datasource) {
     this._initComponent(form, cmp, cmpMeta)
     cmp.fun = cmpMeta.fun
     cmp.iconcls = cmpMeta.iconcls
     cmp.panelType = cmpMeta.panelType
+    if (cmpMeta.fun !== undefined && cmpMeta.fun !== null) {
+      cmp.funName	= cf.parseFunctionName(cmpMeta.fun)
+      cmp.funParams = cf.parseFunctionParams(cmpMeta.fun)
+      // 如果定义了function 会强制赋予一个datasouce
+      if (cmp.funName !== undefined && cmp.funName !== null) {
+        if (cmp.dataSource === null && datasource !== null) {
+          cmp.dataSource = datasource
+        }
+        // 添加标准响应
+        cmp.on('click', this.doStandFunction)
+      }
+    }
+  }
+
+  doStandFunction(param) {
+    var funName = param.component.funName
+    var params = param.component.funParams
+    var datasource = param.component.dataSource
+    var form = param.form
+    var result = false
+    if (funName == 'save') {
+      result = this.save()
+    } else if (funName == 'new') {
+      result = form.addRecord()
+    } else if (funName == 'refresh') {
+      result = this.refreshData()
+    } else if (funName == 'modify') {
+      result = this.modify()
+    } else if (funName == 'delete') {
+      result = this.deleteRecord()
+    } else if (funName == 'copynew') {
+      result = this.copyNew()
+    } else if (funName == 'addrow') {
+      result = this.addRow(datasource)
+    } else if (funName == 'copyrow') {
+      result = this.copyRow(datasource)
+    } else if (funName == 'deleterow') {
+      result = this.deleteRows(datasource)
+    } else if (funName == 'addaggregation') {
+      result = this.addAggregation(datasource)
+    } else if (funName == 'modifyaggregation') {
+      result = this.modifyAggregation(datasource)
+    } else if (funName == 'viewaggregation') {
+      result = this.viewAggregation(datasource)
+    } else if (funName == 'deleteaggregation') {
+      result = this.deleteAggregation(datasource)
+    } else if (funName == 'approvetxn') {
+      result = this.approveTxn(datasource, params)
+    } else if (funName == 'unapprovetxn') {
+      result = this.unApproveTxn(datasource, params)
+    } else if (funName == 'canceltxn') {
+      result = this.cancelTxn(datasource, params)
+    } else if (funName == 'uncanceltxn') {
+      result = this.unCancelTxn(datasource, params)
+    } else if (funName == 'closetxn') {
+      result = this.closeTxn(datasource, params)
+    } else if (funName == 'unclosetxn') {
+      result = this.unCloseTxn(datasource, params)
+    } else if (funName == 'suspendtxn') {
+      result = this.suspendTxn(datasource, params)
+    } else if (funName == 'unsuspendtxn') {
+      result = this.unSuspendTxn(datasource, params)
+    } else if (funName == 'tobstatustxn') {
+      result = this.toBStatusTxn(datasource, params)
+    } else if (funName == 'uploadattachment') {
+      result = this.uploadAttachment()
+    } else if (funName == 'downloadattachment') {
+      result = this.downloadAttachment()
+    } else if (funName == 'attachmentmanage') {
+      result = this.attachmentmanage()
+    } else{
+      result = true
+    }
+    return result
+
+  }
+
+  /**
+   * 检查操作权限
+   * @param {*} operation
+   */
+  checkFunPermission(operation = null) {
+    // TODO  检查操作权限
+    return true
+  }
+
+  /**
+   *  新增单据
+   */
+  addRecord() {
+    var me = this
+    if (me.checkFunPermission('new') === false) return false
+    // 监听master新增前置事件,返回false中断
+    if (me.fireEvent('beforeNew') === false) { return false }
+
+    // 清空数据集中的数据
+    this.dataStore.emptyDataSet()
+    for (const ds of this.dataSources.values()) {
+      ds.emptyData()
+    }
+
+    // 改变DetailForm状态为NEW
+    var initDataPackage = me.getCVar('initDataPackage')
+    // 判断是否有初始datapackage
+    if (initDataPackage == null) { // 没有初始datapackage时
+      // 设置记录的初始值
+      var mDatasource = this.getMasterDataSource()
+      mDatasource.appendRecord()
+      // TODO 刷新相关的treepanel
+      // me.syncTreeData(dataSetName, recData)
+    } else { // 有初始数据时
+      me.loadDataByPackage(initDataPackage) // add by max
+      me.addCVar({ initDataPackage: null })
+      // 新增有初始化数据的不进行初始化赋值
+    }
+    this.show(basicConstant.VIEWSTATE_NEW)
+    // 监听新增后置事件
+    this.fireEvent('afterNew')
+  }
+
+  /**
+     * 根据DetailPage的增加记录
+     * @param cmpSetName
+     * @returns {Boolean}
+  */
+  addRow(datasource) {
+
   }
 }

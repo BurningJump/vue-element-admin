@@ -21,7 +21,9 @@ export default class VEventBus {
       if (target === null || target === undefined) { return true }
       const count = target.length
       for (var i = 0; i < count; i++) {
-        target[i](params)
+        if (target[i](params) === false) {
+          return false
+        }
       }
 
       // if (arguments.length === 1) {

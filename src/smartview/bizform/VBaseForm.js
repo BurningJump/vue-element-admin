@@ -12,6 +12,8 @@ import VDataStore from '@/smartview/db/VDataStore.js'
 import Message from '@/smartview/util/Message.js'
 
 export default class VBaseForm extends VForm {
+
+
   // 所有有关的数据源
   dataSources = new Map();
 
@@ -23,6 +25,16 @@ export default class VBaseForm extends VForm {
 
   // form的元数据定义
   formMeta;
+
+  /**
+     * 本地变量集
+     */
+  cvars=null;
+
+  /**
+     * 需传到后台服务的变量集
+     */
+  svars=null;
 
   // 权限
   permissionSet = [];
@@ -41,6 +53,7 @@ export default class VBaseForm extends VForm {
   editableDependenceSet = [];
   // 值依赖依赖
   valueDependenceSet = [];
+
 
   constructor(parent, formMeta) {
     super(parent)
@@ -110,6 +123,19 @@ export default class VBaseForm extends VForm {
     if (this.fireEvent(vEventType.beforeLoadDataList) === false) return
     this.dataStore.loadDataByList(datasetName, list)
     this.fireEvent(vEventType.afterLoadDataList)
+  }
+
+  /**
+	 * 設置默認值
+	 * @param datasetName
+	 * @param fieldName
+	 * @param value
+	 */
+  setDefaultValue(datasetName, fieldName, value) {
+    var dataset = this.dataStore.getDataset(datasetName)
+    if (dataset !== null) {
+      dataset.setDefaultValue(fieldName, value)
+    }
   }
 
   /**
@@ -442,5 +468,32 @@ export default class VBaseForm extends VForm {
 
   showFailMesg(config) {
     Message.showFailMesg(config)
+  }
+
+  /**
+	 * 添加Cvar
+	 * @param varObject
+	 */
+  addCVar(varObject) {
+    var me = this
+    if (me.cvars == null) {
+      me.cvars = varObject
+    } else {
+      Object.extend(me.cvars, varObject)
+    }
+  }
+
+  /**
+	 * 获取CVar的值，不存在就返回空
+	 * @param varName
+	 * @returns varValue
+	 */
+  getCVar(varName) {
+    var me = this
+    if (me.cvars == null) {
+      return null
+    } else {
+      return me.cvars[varName]
+    }
   }
 }

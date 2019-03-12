@@ -189,5 +189,19 @@ export default class VDataSource {
   getDataSet() {
     return this.dataset
   }
+
+  emptyData(filter = null) {
+    this.filter = filter
+    this.dataList = []
+    this.rowIndex = -1
+    this._clearComponentData()
+  }
+
+  appendRecord() {
+    var record = this.dataset.appendRecord()
+    this.dataList.push(record)
+    this.rowIndex = this.rowIndex + 1
+    this._loadComponentData(this.rowIndex)
+  }
 }
 

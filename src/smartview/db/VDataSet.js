@@ -1,3 +1,5 @@
+import  * as UID  from '@/smartview/util/uuid.js';
+
 export default class VDataSet {
   name;// 名称
   dataStore = null; // 数据仓库
@@ -305,4 +307,21 @@ export default class VDataSet {
     }
     return false
   }
+
+  appendRecord() {
+    // ID的获取,后面要处理成标准算法
+    var dataId = new UID.UUID().toString()
+    var newData = { id: dataId, entityStatus: 'I' }
+    newData = this.replaceDefaultValue(newData)
+    this.currentTable.push(newData)
+    return newData
+  }
+
+  emptyData() {
+    this.currentTable = []// 当前记录
+    this.originalTable = []// 原始记录
+    this.updateLogs = [] // 更新记录
+  }
+
+
 }

@@ -17,6 +17,7 @@ export default {
   },
   created(){
     this.form =  this.$route.query.form
+
   },
 };
 </script>
