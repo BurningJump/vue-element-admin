@@ -11,7 +11,6 @@ import {
 import VDataStore from '@/smartview/db/VDataStore.js'
 import VDataSource from '@/smartview/db/VDataSource.js'
 
-
 export default class VBaseDetailForm extends VBaseForm {
   // 当前活动的Tab
   activeDetailPage = '';
@@ -54,7 +53,7 @@ export default class VBaseDetailForm extends VBaseForm {
   bizInit() {
     var form = this
     // 增加按钮监听事件
-    this.setFormButtonListener(form)
+    this.setFormButton(form)
     // 可用依赖
     this.setFormEnableDependence(form)
     // 值依赖
@@ -73,7 +72,6 @@ export default class VBaseDetailForm extends VBaseForm {
     this.setFormBiz(form)
   }
   setFormBiz(form) {}
-  setFormButtonListener(form) {}
   setFormEnableDependence(form) {}
   setFormButton(form) {}
   setFormValueDependence(form) {}
@@ -580,7 +578,7 @@ export default class VBaseDetailForm extends VBaseForm {
       cmp.funName	= cf.parseFunctionName(cmpMeta.fun)
       cmp.funParams = cf.parseFunctionParams(cmpMeta.fun)
       // 如果定义了function 会强制赋予一个datasouce
-      if (cmp.funName !== undefined && cmp.funName !== null) {
+      if (cmp.funName !== undefined && cmp.funName !== null && cmp.funName.trim() !== '') {
         if (cmp.dataSource === null && datasource !== null) {
           cmp.dataSource = datasource
         }
@@ -646,11 +644,10 @@ export default class VBaseDetailForm extends VBaseForm {
       result = this.downloadAttachment()
     } else if (funName == 'attachmentmanage') {
       result = this.attachmentmanage()
-    } else{
+    } else {
       result = true
     }
     return result
-
   }
 
   /**
@@ -702,6 +699,6 @@ export default class VBaseDetailForm extends VBaseForm {
      * @returns {Boolean}
   */
   addRow(datasource) {
-
+    datasource.appendRecord()
   }
 }

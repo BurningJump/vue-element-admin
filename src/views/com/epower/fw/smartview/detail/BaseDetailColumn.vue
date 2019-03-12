@@ -57,7 +57,7 @@
             <el-option v-for="item in input.enumModel.items" :key="item.name" :label="item.label" :value="item.value"/>
           </el-select>
 
-          <remote-combox v-else-if="input.ctype === 'remoteComboBox'" :input="input"
+          <remote-combox v-else-if="input.ctype === 'remoteComboBox'" :input="input" :initValue="input.inputValue"
             :allowcreate="input.allowcreate" :multiple="false" :disabled="!input.enable" :clearable="input.clearable">
           </remote-combox>
 

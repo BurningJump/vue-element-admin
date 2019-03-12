@@ -1,19 +1,18 @@
 import {
   basicConstant
-} from '@/smartview/VBasicConstant.js'
+} from '../VBasicConstant.js'
 import VForm from '../component/VForm'
 
 import {
   vEventType
-} from '@/smartview/VEventBus.js'
-import VDataSource from '@/smartview/db/VDataSource.js'
-import VDataStore from '@/smartview/db/VDataStore.js'
+} from '../VEventBus.js'
+import VDataSource from '../db/VDataSource.js'
+import VDataStore from '../db/VDataStore.js'
 
-import Message from '@/smartview/util/Message.js'
+import * as Message from '../util/Message.js'
+import VDBComponent from '../component/VDBComponent.js'
 
 export default class VBaseForm extends VForm {
-
-
   // 所有有关的数据源
   dataSources = new Map();
 
@@ -53,7 +52,6 @@ export default class VBaseForm extends VForm {
   editableDependenceSet = [];
   // 值依赖依赖
   valueDependenceSet = [];
-
 
   constructor(parent, formMeta) {
     super(parent)
@@ -494,6 +492,15 @@ export default class VBaseForm extends VForm {
       return null
     } else {
       return me.cvars[varName]
+    }
+  }
+  setCmpValue(cmpName, value, rowIndex = null) {
+    var component = this.getComponent(cmpName)
+    if (component !== null) {
+      if (component instanceof VDBComponent) {
+        component.inputValue = value
+        component.value = value
+      }
     }
   }
 }
