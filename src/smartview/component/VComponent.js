@@ -21,7 +21,9 @@ export default class VComponent {
   // 事件处理中心
   eventBus = new VEventBus();
 
-  /**
+
+
+    /**
    * 添加监听
    * @param {*} type
    * @param {*} func

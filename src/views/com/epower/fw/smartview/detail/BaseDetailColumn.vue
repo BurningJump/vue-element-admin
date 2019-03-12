@@ -46,10 +46,9 @@
       >
         <el-form-item :label="input.label" :required="!input.allowBlank">
           <el-input
-            v-if=" input.ctype === 'textfield' || input.ctype === 'valuelistField' ||input.ctype === 'remoteComboBox'  "
+            v-if="input.ctype === 'textfield' "
             v-model="input.inputValue" :disabled="!input.enable"  :readonly="input.readOnly"  clearable
-            @blur = "input.saveInputValue()"
-          />
+            @blur = "input.saveInputValue()"  />
           <el-checkbox v-else-if="input.ctype === 'checkboxField'" v-model="input.inputValue" :disabled="!input.enable "   @blur = "input.saveInputValue()" />
           <el-date-picker v-else-if="input.ctype === 'dateField'" v-model="input.inputValue" type="date" :disabled="!input.enable"  @blur = "input.saveInputValue()" />
           <el-date-picker v-else-if="input.ctype === 'dateTimeField'" v-model="input.inputValue" type="datetime" :disabled="!input.enable"    @blur = "input.saveInputValue()"/>
@@ -57,6 +56,11 @@
           <el-select v-else-if="input.ctype === 'comboBox'" v-model="input.inputValue" filterable :disabled="!input.enable"  @blur = "input.saveInputValue()"  >
             <el-option v-for="item in input.enumModel.items" :key="item.name" :label="item.label" :value="item.value"/>
           </el-select>
+
+          <remote-combox v-else-if="input.ctype === 'remoteComboBox'" :input="input"
+            :allowcreate="input.allowcreate" :multiple="false" :disabled="!input.enable" :clearable="input.clearable">
+          </remote-combox>
+
         </el-form-item>
       </el-form>
     </el-main>
@@ -64,6 +68,7 @@
 </template>
 
 <script>
+import RemoteCombox from "@/components/RemoteCombox";
 export default {
   name: "com-epower-fw-smartview-detail-BaseDetailColumn",
   data() {
@@ -71,6 +76,9 @@ export default {
       componentSet:this.page.findChild(this.tab.componentSetModel.name),
       toolbar:this.page.findChild(this.tab.toolbarModel.name)
     };
+  },
+  components: {
+    RemoteCombox
   },
   computed:{
   },

@@ -33,6 +33,9 @@ export default class VDBComponent extends VComponent {
   // 多选选择模型
   enumModel;
 
+  //远程combox的配置
+  remoteComboBoxModel;
+
   get inputValue() {
     return this._inputValue
   }
@@ -104,7 +107,9 @@ export default class VDBComponent extends VComponent {
     this.setAllowBlank(this.originalAllowBlank)
   }
 
-  saveInputValue() {
+  saveInputValue(val=null) {
+    if(val!=null)
+      this._inputValue=val;
     this.value = this.inputValue
   }
 }
