@@ -153,6 +153,9 @@ export default class VDataSource {
     }
   }
 
+  isChanged() {
+    return this.dataset.isChanged()
+  }
   // 是否最底
   isEof() {
     if (this.dataList != null && this.dataList !== undefined && this.dataList.length > 0) {

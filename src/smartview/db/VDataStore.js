@@ -1,4 +1,5 @@
-import VDataSet from '@/smartview/db/VDataSet.js'
+import VDataSet from './VDataSet.js'
+import request from '@/utils/request'
 
 export default class VDataStore {
   // 数据存放
@@ -8,6 +9,20 @@ export default class VDataStore {
     this.init(datastoreMeta)
   }
 
+  commitToDB(AUrl, AParams = null) {
+    return new Promise(
+      (resolve, reject) => {
+        request({
+          url: AUrl,
+          params: AParams,
+          method: 'get'
+        }).then(resData => {
+          resolve(resData)
+        }).catch(err => {
+          console.log(err.message)
+        })
+      })
+  }
   getDataset(datasetName) {
     for (var j = 0; j < this.datasets.length; j++) {
       if (this.datasets[j].name === datasetName) {
@@ -69,6 +84,10 @@ export default class VDataStore {
     if (ds !== null) ds.defaultValue(fieldName, value)
   }
 
+  /**
+   * 清空数据集
+   * @param {} datasetName
+   */
   emptyDataSet(datasetName = null) {
     for (const ds of this.datasets) {
       if (datasetName == null) {
@@ -79,6 +98,19 @@ export default class VDataStore {
     }
   }
 
+  /**
+   * 删除数据集
+   * @param {} datasetName
+   */
+  deleteDataSet(datasetName = null) {
+    for (const ds of this.datasets) {
+      if (datasetName == null) {
+        ds.deleteAllRecord()
+      } else if (ds.name === datasetName) {
+        ds.deleteAllRecord()
+      }
+    }
+  }
   // 修改DataPackage的Dataset数据
   updateDPFieldByName(datasetName, key, fieldname, newValue) {
     // 寻找DataSet的记录

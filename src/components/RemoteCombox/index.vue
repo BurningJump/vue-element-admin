@@ -102,7 +102,7 @@
       callValueListFromRefeed(resData){
         console.log('callValueListFromRefeed:'+resData);
         if((resData||'')=='')
-          return; 
+          return;
         let selectValues=[];
         this.filterList = [];
         if(!this.multiple){
@@ -114,7 +114,7 @@
         }
         this.filterList = resData;
         this.fullList = resData;
-        
+
         this.newValue = selectValues;
         this.input.saveInputValue(this.selectValues);
         // this.fireChangeEvent();
