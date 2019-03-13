@@ -1,7 +1,7 @@
 <template>
   <div class="remotecombox-contain">
   <el-select
-    v-model="comValue"
+    v-model="newValue"
     :multiple="multiple"
     :disabled="disabled"
     :clearable="clearable"
@@ -17,7 +17,6 @@
     @remove-tag="fireRemoveTagEvent"
     @focus="fireFocusEvent"
     @blur="fireBlurEvent"
-    @change="fireChangeEvent"
     >
     <el-option
       v-for="item in filterList"
@@ -41,12 +40,12 @@
       return {
         fullList: [],    //远程获取的结果
         filterList: [],  //过滤后的结果
-        comValue: [],//this.bandValue,    //保存用户选择的结果
+        // comValue: [],    //保存用户选择的结果
         loading: false
       }
     },
     props: {input:{},
-            bandValue:'',  //
+            bandValue:'',
             extraFilter:'', //业务人员在前端自定义的过滤条件
             multiple:true,
             disabled:false,
@@ -54,45 +53,59 @@
             allowcreate:false,
             loadingtext:'拼命加载中...'},
     computed: {
-
+      newValue:{
+        get: function(){
+          return this.bandValue;
+        },
+        set: function(value){
+          // if(!this.multiple){
+          //   this.comValue = value;
+          // }else{
+          //   this.comValue.push(value);
+          // }
+          this.input.saveInputValue(value);
+        }
+      }
     },
     mounted() {
       //初始值显示
       console.log('input:'+this.input);
-      if(!this.multiple){
-        this.comValue = this.input.inputValue;
-      }else{
-        this.comValue.push(this.input.inputValue);
-      }
+      // if(!this.multiple){
+      //   this.comValue = this.input.inputValue;
+      // }else{
+      //   this.comValue.push(this.input.inputValue);
+      // }
       this.loadRemoteData('',2);
     },
     methods: {
       //调用valueList窗口
       callValueListFrom(){
-
         // var formJsPath = formKey.replace(/\./g, '/')
         this.$router.push({path:'/com/epower/am/operation/SelectList',
               query: {
                 selectType:this.multiple?'multi':'single',
                 callValueListFromRefeed: this.callValueListFromRefeed} })
       },
-      //调用valueList窗口回调函数，1.填充comValue，2.filterList，3.保存结果到datapackage
+      //调用valueList窗口回调函数，1.填充bandValue，2.filterList，3.保存结果到datapackage
       callValueListFromRefeed(resData){
         console.log('callValueListFromRefeed:'+resData);
         if((resData||'')=='')
           return;
-        this.comValue = [];
+        let selectValues=[];
         this.filterList = [];
         if(!this.multiple){
-          this.comValue = resData[0][this.input.remoteComboBoxModel.valueField];
+          selectValues=resData[0][this.input.remoteComboBoxModel.valueField];
         }else{
           for(let item of resData){
-            this.comValue.push(item[this.input.remoteComboBoxModel.valueField]);
+            selectValues.push(item[this.input.remoteComboBoxModel.valueField]);
           }
         }
         this.filterList = resData;
         this.fullList = resData;
-        this.fireChangeEvent();
+
+        this.newValue = selectValues;
+        this.input.saveInputValue(this.selectValues);
+        // this.fireChangeEvent();
       },
 
       fireRemoveTagEvent(){
@@ -107,10 +120,10 @@
         // console.log('--fireBlurEvent:');
         // 当 input 失去焦点时触发
       },
-      fireChangeEvent(){
-        console.log('--fireChangeEvent:'+this.comValue+';--filterList:'+this.filterList);
-        this.input.saveInputValue(this.comValue);
-      },
+      // fireChangeEvent(){
+      //   console.log('--fireChangeEvent:'+this.bandValue+';--filterList:'+this.filterList);
+      //   this.input.saveInputValue(this.comValue);
+      // },
       //获取远程数据
       getRomteData(param){
         return new Promise((resolve, reject) => {
