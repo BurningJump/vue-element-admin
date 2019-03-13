@@ -83,6 +83,9 @@ export default class VDBComponent extends VComponent {
    */
   loadData(aValue) {
     this.loading = true
+    //TODO 2019-03-13 xiao  在新增记录时，如果是多选模式，但未指定[]类型时，将无法绑定数据
+    //如果是多选 this.inputValue = [].concat(aValue)
+    //如果是单选 this.inputValue = aValue
     this.inputValue = aValue
     this.value = aValue
     this.oldValue = aValue

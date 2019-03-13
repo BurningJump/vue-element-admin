@@ -1,3 +1,14 @@
+// 远程异步数据获取并选择组件
+// 配置如下
+// allowcreate：是否允许用户自定义选项，即新增系统中不存在的选项
+// multiple：是否支持多选
+// disabled：是否不可用
+// clearable：是否支持一键清空，仅单选模式下生效
+// fromAction：远程数据请求地址
+// valueField：数据存储的字段
+// valueFieldType：数据存储字段的类型
+// displayField：前端显示字段
+// displayFieldType：前端显示字段的类型
 <template>
   <div class="remotecombox-contain">
   <el-select
@@ -23,7 +34,8 @@
       :key=getObjectValueByKey(item,input.remoteComboBoxModel.valueField)
       :label=getObjectValueByKey(item,input.remoteComboBoxModel.displayField)
       :value=getObjectValueByKey(item,input.remoteComboBoxModel.valueField)>
-      <span style="float: left">{{getObjectValueByKey(item,input.remoteComboBoxModel.displayField)}}</span>
+      <span style="float: left" class="option_coloum">{{getObjectValueByKey(item,input.remoteComboBoxModel.displayField)}}</span>
+      <span style="float: left" class="option_coloum">{{getObjectValueByKey(item,input.remoteComboBoxModel.displayField)}}</span>
       <span style="float: right; color: #8492a6; font-size: 13px">{{getObjectValueByKey(item,input.remoteComboBoxModel.valueField)}}</span>
     </el-option>
   </el-select>
@@ -45,7 +57,7 @@
       }
     },
     props: {input:{},
-            bandValue:'',
+            bandValue:[],
             extraFilter:'', //业务人员在前端自定义的过滤条件
             multiple:true,
             disabled:false,
@@ -242,5 +254,9 @@
     padding-left: 0px;
     width:5px;
     border:0px;
+  }
+
+  .option_coloum{
+    margin-right: 10px;
   }
 </style>

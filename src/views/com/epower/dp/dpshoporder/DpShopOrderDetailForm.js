@@ -41,7 +41,7 @@ export default class DpShopOrderDetailForm extends VBaseDetailForm {
     newStockOrder.on('click',
       function(params = null) {
         // form.showFailMesg({ msg: '生成要货单失败!' })
-        form.setCmpValue('DemandShopId', '')
+        form.setCmpValue('DemandShopId', null)
       }
     )
   }

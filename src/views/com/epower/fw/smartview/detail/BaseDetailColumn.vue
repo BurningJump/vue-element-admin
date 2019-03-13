@@ -58,7 +58,7 @@
           </el-select>
 
           <remote-combox v-else-if="input.ctype === 'remoteComboBox'" :input="input" :bandValue="input.inputValue"
-            :allowcreate="input.allowcreate" :multiple="false" :disabled="!input.enable" :clearable="input.clearable">
+            :allowcreate="input.allowcreate" :multiple="true" :disabled="!input.enable" :clearable="input.clearable">
           </remote-combox>
 
         </el-form-item>
