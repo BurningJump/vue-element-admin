@@ -1,4 +1,4 @@
-import  * as UID  from '@/smartview/util/uuid.js';
+import * as UID from '@/smartview/util/uuid.js'
 
 export default class VDataSet {
   name;// 名称
@@ -322,6 +322,4 @@ export default class VDataSet {
     this.originalTable = []// 原始记录
     this.updateLogs = [] // 更新记录
   }
-
-
 }

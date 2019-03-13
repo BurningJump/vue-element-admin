@@ -41,12 +41,12 @@
       return {
         fullList: [],    //远程获取的结果
         filterList: [],  //过滤后的结果
-        comValue: [],    //保存用户选择的结果
+        comValue: [],//this.bandValue,    //保存用户选择的结果
         loading: false
       }
     },
     props: {input:{},
-            initValue:'',
+            bandValue:'',  //
             extraFilter:'', //业务人员在前端自定义的过滤条件
             multiple:true,
             disabled:false,

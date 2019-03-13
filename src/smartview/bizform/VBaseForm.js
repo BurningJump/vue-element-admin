@@ -9,7 +9,7 @@ import {
 import VDataSource from '../db/VDataSource.js'
 import VDataStore from '../db/VDataStore.js'
 
-import * as Message from '../util/Message.js'
+import * as VMessage from '../util/VMessage.js'
 import VDBComponent from '../component/VDBComponent.js'
 
 export default class VBaseForm extends VForm {
@@ -76,7 +76,7 @@ export default class VBaseForm extends VForm {
    * 返回数据是否修改过 curd
    */
   isChanged() {
-    for (const ds of this.dataSources) {
+    for (const ds of this.dataSources.values()) {
       if (ds.isChanged() === true) return true
     }
     return false
@@ -461,13 +461,19 @@ export default class VBaseForm extends VForm {
   }
 
   showSucMesg(config) {
-    Message.showSucMesg(config)
+    VMessage.showSucMesg(config)
   }
 
   showFailMesg(config) {
-    Message.showFailMesg(config)
+    VMessage.showFailMesg(config)
+  }
+  askMesg(config) {
+    VMessage.askMesg(config)
   }
 
+  alert(mesage) {
+    VMessage.alert(mesage)
+  }
   /**
 	 * 添加Cvar
 	 * @param varObject

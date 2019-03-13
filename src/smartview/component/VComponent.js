@@ -21,9 +21,7 @@ export default class VComponent {
   // 事件处理中心
   eventBus = new VEventBus();
 
-
-
-    /**
+  /**
    * 添加监听
    * @param {*} type
    * @param {*} func
@@ -59,7 +57,7 @@ export default class VComponent {
 
   constructor(parent = null) {
     this.parent = parent
-    if (this.parent == null || this.parent === undefined) {} else {
+    if ((this.parent == null || this.parent === undefined) === false) {
       // 如果有添加子组件的方法，执行添加子组件
       if (typeof parent.addChild === 'function') {
         parent.addChild(this)
@@ -136,7 +134,7 @@ export default class VComponent {
   }
 
   getDataSet() {
-    if (this._dataSource == null || this._dataSource == undefined) {
+    if (this._dataSource == null || this._dataSource === undefined) {
       return null
     } else {
       return this._dataSource.getDataSet()

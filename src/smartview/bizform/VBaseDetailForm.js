@@ -7,9 +7,11 @@ import VButton from '../component/VButton.js'
 import * as cf from '../util/commonFun'
 import {
   basicConstant
-} from '@/smartview/VBasicConstant.js'
-import VDataStore from '@/smartview/db/VDataStore.js'
-import VDataSource from '@/smartview/db/VDataSource.js'
+} from '../VBasicConstant.js'
+import VDataStore from '../db/VDataStore.js'
+import VDataSource from '../db/VDataSource.js'
+
+import request from '@/utils/request'
 
 export default class VBaseDetailForm extends VBaseForm {
   // 当前活动的Tab
@@ -116,8 +118,10 @@ export default class VBaseDetailForm extends VBaseForm {
    * 设置UI状态
    * @param {状态} state
    */
-  setUIState(state) {
-    this.state = state
+  setUIState(state = null) {
+    if (state !== null) {
+      this.state = state
+    }
     this._setComponentSetUIState()
   }
   /**
@@ -141,6 +145,14 @@ export default class VBaseDetailForm extends VBaseForm {
           component.setDefaultAllowBlank()
           // 执行必填依赖
           this.requiredDependenceControl(component)
+        }
+      }
+    } else if (this.state === basicConstant.VIEWSTATE_NULL) {
+      // 没有数据状态时
+      for (const component of this.components.values()) {
+        component.setEnable(false)
+        if (typeof component.setReadOnly === 'function') {
+          component.setReadOnly(true) // 查看模式下只可以查看
         }
       }
     } else { // 新增和修改模式
@@ -594,56 +606,56 @@ export default class VBaseDetailForm extends VBaseForm {
     var datasource = param.component.dataSource
     var form = param.form
     var result = false
-    if (funName == 'save') {
-      result = this.save()
-    } else if (funName == 'new') {
-      result = form.addRecord()
-    } else if (funName == 'refresh') {
-      result = this.refreshData()
-    } else if (funName == 'modify') {
-      result = this.modify()
-    } else if (funName == 'delete') {
-      result = this.deleteRecord()
-    } else if (funName == 'copynew') {
-      result = this.copyNew()
-    } else if (funName == 'addrow') {
-      result = this.addRow(datasource)
-    } else if (funName == 'copyrow') {
-      result = this.copyRow(datasource)
-    } else if (funName == 'deleterow') {
-      result = this.deleteRows(datasource)
-    } else if (funName == 'addaggregation') {
-      result = this.addAggregation(datasource)
-    } else if (funName == 'modifyaggregation') {
-      result = this.modifyAggregation(datasource)
-    } else if (funName == 'viewaggregation') {
-      result = this.viewAggregation(datasource)
-    } else if (funName == 'deleteaggregation') {
-      result = this.deleteAggregation(datasource)
-    } else if (funName == 'approvetxn') {
-      result = this.approveTxn(datasource, params)
-    } else if (funName == 'unapprovetxn') {
-      result = this.unApproveTxn(datasource, params)
-    } else if (funName == 'canceltxn') {
-      result = this.cancelTxn(datasource, params)
-    } else if (funName == 'uncanceltxn') {
-      result = this.unCancelTxn(datasource, params)
-    } else if (funName == 'closetxn') {
-      result = this.closeTxn(datasource, params)
-    } else if (funName == 'unclosetxn') {
-      result = this.unCloseTxn(datasource, params)
-    } else if (funName == 'suspendtxn') {
-      result = this.suspendTxn(datasource, params)
-    } else if (funName == 'unsuspendtxn') {
-      result = this.unSuspendTxn(datasource, params)
-    } else if (funName == 'tobstatustxn') {
-      result = this.toBStatusTxn(datasource, params)
-    } else if (funName == 'uploadattachment') {
-      result = this.uploadAttachment()
-    } else if (funName == 'downloadattachment') {
-      result = this.downloadAttachment()
-    } else if (funName == 'attachmentmanage') {
-      result = this.attachmentmanage()
+    if (funName === 'save') {
+      result = form.saveData()
+    } else if (funName === 'new') {
+      result = form.addData()
+    } else if (funName === 'refresh') {
+      result = form.refreshData()
+    } else if (funName === 'modify') {
+      result = form.modifyData()
+    } else if (funName === 'delete') {
+      result = form.deleteData()
+    } else if (funName === 'copynew') {
+      result = form.copyNew()
+    } else if (funName === 'addrow') {
+      result = form.addRow(datasource)
+    } else if (funName === 'copyrow') {
+      result = form.copyRow(datasource)
+    } else if (funName === 'deleterow') {
+      result = form.deleteRows(datasource)
+    } else if (funName === 'addaggregation') {
+      result = form.addAggregation(datasource)
+    } else if (funName === 'modifyaggregation') {
+      result = form.modifyAggregation(datasource)
+    } else if (funName === 'viewaggregation') {
+      result = form.viewAggregation(datasource)
+    } else if (funName === 'deleteaggregation') {
+      result = form.deleteAggregation(datasource)
+    } else if (funName === 'approvetxn') {
+      result = form.approveTxn(datasource, params)
+    } else if (funName === 'unapprovetxn') {
+      result = form.unApproveTxn(datasource, params)
+    } else if (funName === 'canceltxn') {
+      result = form.cancelTxn(datasource, params)
+    } else if (funName === 'uncanceltxn') {
+      result = form.unCancelTxn(datasource, params)
+    } else if (funName === 'closetxn') {
+      result = form.closeTxn(datasource, params)
+    } else if (funName === 'unclosetxn') {
+      result = form.unCloseTxn(datasource, params)
+    } else if (funName === 'suspendtxn') {
+      result = form.suspendTxn(datasource, params)
+    } else if (funName === 'unsuspendtxn') {
+      result = form.unSuspendTxn(datasource, params)
+    } else if (funName === 'tobstatustxn') {
+      result = form.toBStatusTxn(datasource, params)
+    } else if (funName === 'uploadattachment') {
+      result = form.uploadAttachment()
+    } else if (funName === 'downloadattachment') {
+      result = form.downloadAttachment()
+    } else if (funName === 'attachmentmanage') {
+      result = form.attachmentmanage()
     } else {
       result = true
     }
@@ -659,11 +671,101 @@ export default class VBaseDetailForm extends VBaseForm {
     return true
   }
 
+  modifyData() {
+    var me = this
+
+    if (me.isChanged()) {
+      this.alert('当前记录已经修改过了,请先保存')
+      return false
+    }
+
+    if (this.state === basicConstant.VIEWSTATE_NULL ||
+              this.state === basicConstant.VIEWSTATE_NEW
+    ) {
+      return false
+    }
+
+    if (!me.checkFunPermission('modify')) return false
+    if (me.fireEvent('beforeModify') === false) { return false }
+    me.state = basicConstant.VIEWSTATE_MODIFY
+    me.setUIState()
+    me.fireEvent('afterModify')
+  }
+
+  saveData() {
+    if (this.state === basicConstant.VIEWSTATE_VIEW ||
+      this.state === basicConstant.VIEWSTATE_NULL) {
+      this.showFailMesg({ msg: '记录查看状态，无法保存单据！' })
+      return false
+    }
+    var me = this
+
+    if (me.isChanged() === false) {
+      return false
+    }
+
+    if (!me.checkFunPermission('save')) return
+    // 监听master删除前置事件,返回false中断
+    if (me.fireEvent('beforeSave') === false) { return false }
+    // TODO 需要添加 sVars
+    this.dataStore.commitToDB(this.formMeta.actionUrl + '!save.action',
+      { sVars: JSON.stringify(this.svars) })
+      .then(resdata => {
+        me.loadDataByPackage(resdata.dataPackage)
+        me.openDataSources()
+        me.setUIState()
+        me.success('恭喜您，保存单据成功！')
+        me.fireEvent('afterSave')
+      }).catch(err => {
+        console.log(err.message)
+        me.showFailMesg('保存失败！ 原因是：' + err.message)
+      })
+  }
+
+  /**
+   *  删除单据
+   */
+  deleteData() {
+    var deletefun = function() {
+      var me = this
+      if (!me.checkFunPermission('delete')) return false
+      // 监听master删除前置事件,返回false中断
+      if (me.fireEvent('beforeDelete') === false) { return false }
+      this.dataStore.DeleteDataSet()
+      // TODO 需要添加 sVars
+      this.dataStore.commitToDB(this.formMeta.actionUrl + '!save.action',
+        { sVars: JSON.stringify(this.svars) })
+        .then(resdate => {
+          for (const ds of this.dataSources.values()) {
+            ds.emptyData()
+          }
+          this.state = basicConstant.VIEWSTATE_NULL
+          me.setUIState()
+          me.fireEvent('afterDelete')
+          me.success('恭喜您，删除单据成功！')
+        }).catch(err => {
+          console.log(err.message)
+        })
+    }
+
+    this.askMesg({ message: '确认删除吗？', fn: deletefun })
+  }
+
   /**
    *  新增单据
    */
-  addRecord() {
+  addData() {
     var me = this
+    if ((this.state === basicConstant.VIEWSTATE_VIEW ||
+          this.state === basicConstant.VIEWSTATE_NULL) === false) {
+      this.showFailMesg({ msg: '记录不是查看状态，无法进入新增状态！' })
+      return false
+    }
+    if (me.isChanged()) {
+      this.alert('当前记录已经修改过了,请先保存')
+      return false
+    }
+
     if (me.checkFunPermission('new') === false) return false
     // 监听master新增前置事件,返回false中断
     if (me.fireEvent('beforeNew') === false) { return false }
@@ -684,13 +786,46 @@ export default class VBaseDetailForm extends VBaseForm {
       // TODO 刷新相关的treepanel
       // me.syncTreeData(dataSetName, recData)
     } else { // 有初始数据时
+      // 装载初始数据
       me.loadDataByPackage(initDataPackage) // add by max
+      // 清空初始数据，防止下次出问题
       me.addCVar({ initDataPackage: null })
       // 新增有初始化数据的不进行初始化赋值
     }
-    this.show(basicConstant.VIEWSTATE_NEW)
+    this.setUIState(basicConstant.VIEWSTATE_NEW)
     // 监听新增后置事件
     this.fireEvent('afterNew')
+    return true
+  }
+
+  /**
+   *  新增单据
+   */
+  refreshData() {
+    var me = this
+
+    if (me.isChanged()) {
+      this.alert('当前记录已经修改过了,请先保存')
+      return false
+    }
+
+    // 新增状态刷新无效
+    if (me.state === basicConstant.VIEWSTATE_NEW ||
+      me.state === basicConstant.VIEWSTATE_NULL
+    ) return false
+
+    if (!me.checkFunPermission('refresh')) return
+
+    if (me.fireEvent('beforeRefresh') === false) { return }
+
+    this.requestDetailData().then(dataPackage => {
+      this.loadDataByPackage(dataPackage)
+      this.show(this.state)
+    }).catch(err => {
+      console.log(err.message)
+    })
+
+    me.fireEvent('afterRefresh')
   }
 
   /**
@@ -700,5 +835,50 @@ export default class VBaseDetailForm extends VBaseForm {
   */
   addRow(datasource) {
     datasource.appendRecord()
+  }
+
+  getIdValue() {
+    var result = null
+    var recData = this.getMasterDataSource().getRecord()
+    if (recData !== null) {
+      result = recData['id']
+    }
+    return result
+  }
+
+  requestDetailData(id = null) {
+    var me = this
+    var dataId
+    // ID 赋值
+    if (id !== null) {
+      dataId = id
+    } else {
+      dataId = me.getIdValue()
+      if (dataId == null) {
+        if (me.cvars.aggregationId != null) {
+          dataId = me.cvars.aggregationId
+        } else {
+          dataId = me.cvars.recData.id
+        }
+      }
+    }
+    var params = {
+      dataId: dataId,
+      language: '', // TODO设置语言
+      sVars: JSON.stringify(me.svars)
+    }
+    return new Promise(
+      (resolve, reject) => {
+        request({
+          url: '/api/' + this.formMeta.actionUrl,
+          params: params,
+          method: 'get'
+        }).then(resData => {
+          this.respData = resData.data
+          resolve(resData.data.dataPackage)
+        }).catch(err => {
+          console.log(err.message)
+        })
+      })
   }
 }

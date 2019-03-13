@@ -2,7 +2,6 @@ import request from '@/utils/request'
 import router from '@/router'
 import { basicConstant } from '@/smartview/VBasicConstant.js'
 import { asyncRouterMap } from '@/router'
-import * as UID from '@/smartview/util/uuid.js'
 
 export default class VSmartView {
   // 窗体
@@ -48,7 +47,7 @@ export default class VSmartView {
   }
 
   // 通过router call from
-  callForm(formKey, id, states, aCvar = null) {
+  callForm(formKey, id, states, ACvar = null) {
     var vform = null
     var maper = asyncRouterMap
     var res = this.getRouter(maper, formKey, '')
@@ -56,7 +55,8 @@ export default class VSmartView {
       .then(module => {
         this.getUIMeta(formKey).then(formMeta => {
           vform = module.default.NewInstant(this, formMeta)
-          this.getDetailData(vform.formMeta, id).then(dataPackage => {
+          vform.cvar = ACvar
+          vform.requestDetailData(id).then(dataPackage => {
             vform.loadDataByPackage(dataPackage) // add by max
             vform.show(states)
             // TODO 需要替代一下ID
@@ -67,8 +67,7 @@ export default class VSmartView {
             myRouter.push({
               path: routerPath,
               query: {
-                form: vform,
-                cvar: aCvar
+                form: vform
               }
             })
           }).catch(err => {
@@ -133,20 +132,20 @@ export default class VSmartView {
       })
   }
 
-  getDetailData(formMeta, id) {
-    return new Promise(
-      (resolve, reject) => {
-        request({
-          url: '/api/' + formMeta.actionUrl,
-          method: 'get'
-        }).then(resData => {
-          this.respData = resData.data
-          resolve(resData.data.dataPackage)
-        }).catch(err => {
-          console.log(err.message)
-        })
-      })
-  }
+  // getDetailData(formMeta, id) {
+  //   return new Promise(
+  //     (resolve, reject) => {
+  //       request({
+  //         url: '/api/' + formMeta.actionUrl,
+  //         method: 'get'
+  //       }).then(resData => {
+  //         this.respData = resData.data
+  //         resolve(resData.data.dataPackage)
+  //       }).catch(err => {
+  //         console.log(err.message)
+  //       })
+  //     })
+  // }
 }
 
 export var vsmartview = new VSmartView()
