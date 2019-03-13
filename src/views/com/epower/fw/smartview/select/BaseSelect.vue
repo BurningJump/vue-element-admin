@@ -236,6 +236,8 @@ export default {
     }
   },
   mounted() {
+    console.log(this.$route.query, 'this.$route.query')
+    this.selectType = this.$route.query.selectType
     // this.$bus.emit('showWorkTeamDialog', {formMeta:data,selectType:single})
     this.$bus.on('showWorkTeamDialog', data => {
       this.dialogVisible = true
@@ -264,6 +266,10 @@ export default {
   methods: {
     submitFun(){
       console.log('here call submitFun');
+      if(this.selectType === 'single') {
+        // 单选模式下，在选中记录后，点击确认时也要把选中记录插入到 selectedList 列表中
+        this.toggleSelection(this.originSelecttion, 'originTable')
+      }
       this.$route.query.callValueListFromRefeed(this.selectedList);
       this.dialogVisible = false;
     },
