@@ -69,6 +69,16 @@ export default class VDataStore {
     if (ds !== null) ds.defaultValue(fieldName, value)
   }
 
+  emptyDataSet(datasetName = null) {
+    for (const ds of this.datasets) {
+      if (datasetName == null) {
+        ds.emptyData()
+      } else if (ds.name === datasetName) {
+        ds.emptyData()
+      }
+    }
+  }
+
   // 修改DataPackage的Dataset数据
   updateDPFieldByName(datasetName, key, fieldname, newValue) {
     // 寻找DataSet的记录

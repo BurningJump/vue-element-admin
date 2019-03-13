@@ -2,6 +2,7 @@ import request from '@/utils/request'
 import router from '@/router'
 import { basicConstant } from '@/smartview/VBasicConstant.js'
 import { asyncRouterMap } from '@/router'
+import * as UID from '@/smartview/util/uuid.js'
 
 export default class VSmartView {
   // 窗体

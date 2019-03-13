@@ -1,7 +1,7 @@
 <template>
-  <div class="remotecombox-contain"> 
+  <div class="remotecombox-contain">
   <el-select
-    v-model="comValue"
+    v-model="newValue"
     :multiple="multiple"
     :disabled="disabled"
     :clearable="clearable"
@@ -17,7 +17,6 @@
     @remove-tag="fireRemoveTagEvent"
     @focus="fireFocusEvent"
     @blur="fireBlurEvent"
-    @change="fireChangeEvent"    
     >
     <el-option
       v-for="item in filterList"
@@ -26,7 +25,7 @@
       :value=getObjectValueByKey(item,input.remoteComboBoxModel.valueField)>
       <span style="float: left">{{getObjectValueByKey(item,input.remoteComboBoxModel.displayField)}}</span>
       <span style="float: right; color: #8492a6; font-size: 13px">{{getObjectValueByKey(item,input.remoteComboBoxModel.valueField)}}</span>
-    </el-option>    
+    </el-option>
   </el-select>
   <el-button icon="el-icon-search" class="remotecombox-search" @click="callValueListFrom"></el-button>
   </div>
@@ -39,13 +38,14 @@
     name: 'RemoteCombox',
     data() {
       return {
-        fullList: [],    //远程获取的结果 
-        filterList: [],  //过滤后的结果     
-        comValue: [],    //保存用户选择的结果
+        fullList: [],    //远程获取的结果
+        filterList: [],  //过滤后的结果
+        // comValue: [],    //保存用户选择的结果
         loading: false
       }
     },
     props: {input:{},
+            bandValue:'',
             extraFilter:'', //业务人员在前端自定义的过滤条件
             multiple:true,
             disabled:false,
@@ -53,51 +53,65 @@
             allowcreate:false,
             loadingtext:'拼命加载中...'},
     computed: {
-      
+      newValue:{
+        get: function(){
+          return this.bandValue;
+        },
+        set: function(value){
+          // if(!this.multiple){
+          //   this.comValue = value;
+          // }else{
+          //   this.comValue.push(value);
+          // }
+          this.input.saveInputValue(value);
+        }
+      }
     },
-    mounted() {      
+    mounted() {
       //初始值显示
       console.log('input:'+this.input);
-      if(!this.multiple){
-        this.comValue = this.input.inputValue;
-      }else{
-        this.comValue.push(this.input.inputValue);
-      }
+      // if(!this.multiple){
+      //   this.comValue = this.input.inputValue;
+      // }else{
+      //   this.comValue.push(this.input.inputValue);
+      // }
       this.loadRemoteData('',2);
     },
     methods: {
       //调用valueList窗口
       callValueListFrom(){
-
         // var formJsPath = formKey.replace(/\./g, '/')
         this.$router.push({path:'/com/epower/am/operation/SelectList',
               query: {
                 selectType:this.multiple?'multi':'single',
                 callValueListFromRefeed: this.callValueListFromRefeed} })
       },
-      //调用valueList窗口回调函数，1.填充comValue，2.filterList，3.保存结果到datapackage
+      //调用valueList窗口回调函数，1.填充bandValue，2.filterList，3.保存结果到datapackage
       callValueListFromRefeed(resData){
         console.log('callValueListFromRefeed:'+resData);
         if((resData||'')=='')
-          return;
-        this.comValue = [];
+          return; 
+        let selectValues=[];
         this.filterList = [];
         if(!this.multiple){
-          this.comValue = resData[0][this.input.remoteComboBoxModel.valueField];
+          selectValues=resData[0][this.input.remoteComboBoxModel.valueField];
         }else{
           for(let item of resData){
-            this.comValue.push(item[this.input.remoteComboBoxModel.valueField]);            
+            selectValues.push(item[this.input.remoteComboBoxModel.valueField]);
           }
         }
-        this.filterList = resData;  
-        this.fullList = resData;  
-        this.fireChangeEvent();    
+        this.filterList = resData;
+        this.fullList = resData;
+        
+        this.newValue = selectValues;
+        this.input.saveInputValue(this.selectValues);
+        // this.fireChangeEvent();
       },
 
       fireRemoveTagEvent(){
         //console.log('fireRemoveTagEvent:');
         // 多选模式下移除tag时触发;
-      }, 
+      },
       fireFocusEvent(){
        /// console.log('fireFocusEvent:');
         // 当 input 获得焦点时触发;
@@ -106,19 +120,19 @@
         // console.log('--fireBlurEvent:');
         // 当 input 失去焦点时触发
       },
-      fireChangeEvent(){
-        console.log('--fireChangeEvent:'+this.comValue+';--filterList:'+this.filterList);
-        this.input.saveInputValue(this.comValue);
-      },
-      //获取远程数据      
-      getRomteData(param){        
+      // fireChangeEvent(){
+      //   console.log('--fireChangeEvent:'+this.bandValue+';--filterList:'+this.filterList);
+      //   this.input.saveInputValue(this.comValue);
+      // },
+      //获取远程数据
+      getRomteData(param){
         return new Promise((resolve, reject) => {
         this.$http.get(`http://root.yiuser.com:3001/`+this.input.remoteComboBoxModel.fromAction,{
               params:param
             },{
               emulateJSON: true
             })
-          .then(res => {            
+          .then(res => {
             resolve(res.data.resultList);
           });
         });
@@ -126,14 +140,14 @@
       async loadRemoteData(query,initFlag) {
         //无值及空值时不远程请求
           this.loading = true;
-          
+
           //拼接过滤条件
           let filterStr = ' ';
           // let fieldType = 'string';
           if(initFlag==1){
             filterStr = this.getFilterStr(this.input.remoteComboBoxModel.valueFieldType,'=',this.input.remoteComboBoxModel.valueField,query);
           }else if(initFlag==2){
-            
+
           }else{
             filterStr = this.getFilterStr(this.input.remoteComboBoxModel.displayFieldType,'like',this.input.remoteComboBoxModel.displayField,query);
           }
@@ -143,10 +157,10 @@
           this.filterList=this.fullList;
           this.loading = false;
       },
-      
+
       remoteMethod(query,initFlag) {
         //无值及空值时全列表可选
-        if ( (query||'').trim() !== '') {          
+        if ( (query||'').trim() !== '') {
           // this.this.loadRemoteData('',1);;
 
           this.filterList = this.fullList.filter(item => {
@@ -155,9 +169,9 @@
               itemValue = (this.getObjectValueByKey(item,this.input.remoteComboBoxModel.valueField));
             }else{
               itemValue = (this.getObjectValueByKey(item,this.input.remoteComboBoxModel.displayField));
-            }            
+            }
             return itemValue.indexOf(query.toLowerCase()) > -1;
-          });             
+          });
         } else {
           this.filterList = this.fullList;
         }
@@ -166,7 +180,7 @@
       getObjectValueByKey(item,k) {
         let v = '';
         if(item||''!='')
-          v=item[k];        
+          v=item[k];
         return v.replace(/<[^>]+>/g,""); //去除字符串中所有html标签及&nbsp符号
       },
       //拼接过滤条件
@@ -181,19 +195,19 @@
 			    	case 'string':
 			    		if ( operation == "like" )
 			    			aValue =  "%" + aValue.replace(/(^\s*)|(\s*$)/g, "") +"%";
-			    		
-			    		if (aValue.indexOf("%")>=0)	 			
-			    			operation = "like" ; 
-			    		
+
+			    		if (aValue.indexOf("%")>=0)
+			    			operation = "like" ;
+
 		    			filter =filterfield + " " + operation +  " \'" + aValue +"\'";
 			    		break;
 			    	case 'date':
 			    		if( basicConstant.DB_DIALECT==DbConstant.ORACLE){
 			    			filter = "to_char(" + filterfield + ",\'YYYY-MM-dd\') " +operation + " \'" + Ext.Date.format(aValue, 'Y-m-d') +"\'";
-				    		
+
 			    		}else if( basicConstant.DB_DIALECT==DbConstant.MYSQL){
 			    			filter = "date(" + filterfield + ") " +operation + " \'" + Ext.Date.format(aValue, 'Y-m-d') +"\'";
-				    		
+
 			    		}else{
 			    			filter = "date(" + filterfield + ") " +operation + " \'" + Ext.Date.format(aValue, 'Y-m-d') +"\'";
 			    		}
@@ -201,11 +215,11 @@
 			    	case 'datetime':
 			    		if( basicConstant.DB_DIALECT==DbConstant.ORACLE){
 			    			filter =  filterfield +operation + " " + "to_date(\'" +  Ext.Date.format(aValue, 'Y-m-d H:i:s')+"\'" + ",\'YYYY-MM-dd hh24:mi:ss\') " +"";
-				    		
+
 			    		}else{
 			    			filter =  filterfield + operation + " \'" + Ext.Date.format(aValue, 'Y-m-d H:i:s') +"\'";
 			    		}
-			    		
+
 			    		break;
 
 			    	default:

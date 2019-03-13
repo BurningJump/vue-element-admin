@@ -1,15 +1,16 @@
 import {
   basicConstant
-} from '@/smartview/VBasicConstant.js'
+} from '../VBasicConstant.js'
 import VForm from '../component/VForm'
 
 import {
   vEventType
-} from '@/smartview/VEventBus.js'
-import VDataSource from '@/smartview/db/VDataSource.js'
-import VDataStore from '@/smartview/db/VDataStore.js'
+} from '../VEventBus.js'
+import VDataSource from '../db/VDataSource.js'
+import VDataStore from '../db/VDataStore.js'
 
-import Message from '@/smartview/util/Message.js'
+import * as Message from '../util/Message.js'
+import VDBComponent from '../component/VDBComponent.js'
 
 export default class VBaseForm extends VForm {
   // 所有有关的数据源
@@ -23,6 +24,16 @@ export default class VBaseForm extends VForm {
 
   // form的元数据定义
   formMeta;
+
+  /**
+     * 本地变量集
+     */
+  cvars=null;
+
+  /**
+     * 需传到后台服务的变量集
+     */
+  svars=null;
 
   // 权限
   permissionSet = [];
@@ -110,6 +121,19 @@ export default class VBaseForm extends VForm {
     if (this.fireEvent(vEventType.beforeLoadDataList) === false) return
     this.dataStore.loadDataByList(datasetName, list)
     this.fireEvent(vEventType.afterLoadDataList)
+  }
+
+  /**
+	 * 設置默認值
+	 * @param datasetName
+	 * @param fieldName
+	 * @param value
+	 */
+  setDefaultValue(datasetName, fieldName, value) {
+    var dataset = this.dataStore.getDataset(datasetName)
+    if (dataset !== null) {
+      dataset.setDefaultValue(fieldName, value)
+    }
   }
 
   /**
@@ -442,5 +466,41 @@ export default class VBaseForm extends VForm {
 
   showFailMesg(config) {
     Message.showFailMesg(config)
+  }
+
+  /**
+	 * 添加Cvar
+	 * @param varObject
+	 */
+  addCVar(varObject) {
+    var me = this
+    if (me.cvars == null) {
+      me.cvars = varObject
+    } else {
+      Object.extend(me.cvars, varObject)
+    }
+  }
+
+  /**
+	 * 获取CVar的值，不存在就返回空
+	 * @param varName
+	 * @returns varValue
+	 */
+  getCVar(varName) {
+    var me = this
+    if (me.cvars == null) {
+      return null
+    } else {
+      return me.cvars[varName]
+    }
+  }
+  setCmpValue(cmpName, value, rowIndex = null) {
+    var component = this.getComponent(cmpName)
+    if (component !== null) {
+      if (component instanceof VDBComponent) {
+        component.inputValue = value
+        component.value = value
+      }
+    }
   }
 }

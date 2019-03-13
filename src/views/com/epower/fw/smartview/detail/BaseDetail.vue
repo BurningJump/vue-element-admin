@@ -54,21 +54,13 @@ import BaseDetailAGrid from "@/views/com/epower/fw/smartview/detail/BaseDetailAG
 import BaseDetailColumn from "@/views/com/epower/fw/smartview/detail/BaseDetailColumn";
 import BaseDetailGrid from "@/views/com/epower/fw/smartview/detail/BaseDetailGrid";
 import VBaseDetailForm from "@/smartview/bizform/VBaseDetailForm.js";
-import * as cf from "@/smartview/util/commonFun.js";
 
 export default {
   name: 'com-epower-fw-smartview-detail-BaseDetail',
   data() {
     return {
       listLoading: false,
-      // UiLoaded: false, // UI获取完成
-    //  dataLoaded: true, // 数据获取完成
       height: 600, // 表头高度
-      // UIMeta: "",
-      // dataPackageResp: "",
-     // activeTab:"",
-      // tab: Object,
-      // form: null //add by max
     };
   },
   props: ['form'],
@@ -77,13 +69,6 @@ export default {
     BaseDetailColumn,
     BaseDetailGrid
   },
-  // watch: {
-  //   'form.formMeta'(val) {
-  //     if (val) {
-  //       this.activeTab = val.detailPages[0].name
-  //     }
-  //   }
-  // },
   mounted() {
     this.calcTableHeight();
   },
@@ -103,12 +88,11 @@ export default {
     remoteMethod() {},
     handleTabClick() {},
     handleButtonClick(params){
+      params['form'] = this.form;
+   //     Object.extend(params,{form:this.form});
+        var button = params.component;
+        button.fire('click',params)
         console.log(params.component.fun);
-        var btnFun	= cf.parseFunctionName(params.component.fun);
-				var params= cf.parseFunctionParams(params.component.fun);
-        if (this.form.hasOwnProperty(params.component.fun)){
-          this.form[params.component.fun](params);
-        }
     }
   },
 };
