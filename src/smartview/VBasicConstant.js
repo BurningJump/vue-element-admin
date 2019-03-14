@@ -13,6 +13,7 @@ export var basicConstant = {
 
   CMP_COMPONENTSET: 'COMPONENTSET',
   CMP_TOOLBAR: 'TOOLBAR',
+  CMP_REMOTECOMBOX: 'remoteComboBox',
   CMP_BUTTON: 'BUTTON',
   CMP_PANEL: 'PANEL'
   // DEPENDENCE_VALUE: 'VALUE',

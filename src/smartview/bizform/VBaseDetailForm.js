@@ -4,6 +4,7 @@ import VToolbar from '../component/VToolbar.js'
 import VPanel from '../component/VPanel.js'
 import VDBComponent from '../component/VDBComponent.js'
 import VButton from '../component/VButton.js'
+import VRemoteCombox from '../component/VRemoteCombox.js'
 import * as cf from '../util/commonFun'
 import {
   basicConstant
@@ -502,13 +503,46 @@ export default class VBaseDetailForm extends VBaseForm {
   _initComponentSet(detailForm, componentSet, componentSetMeta) {
     this._initComponent(detailForm, componentSet, componentSetMeta)
 
-    for (var j = 0; j < componentSetMeta.components.length; j++) {
-      var cmp = new VDBComponent(componentSet)
-      this._initDBComponent(detailForm, cmp, componentSetMeta.components[j])
+    for (var componentMeta of componentSetMeta.components) {
+      var cmp
+      if (componentMeta.ctype === 'remoteComboBox') {
+        cmp = new VRemoteCombox(componentSet)
+        this._initRemoteCombox(detailForm, cmp, componentMeta)
+      }
+      // TODO 初始化valuelistCompoent
+      // else if (componentMeta.ctype === 'valuelistField') {
+      //   cmp = new VRemoteCombox(componentSet)
+      //   this._initValuelist(detailForm, cmp, componentMeta)
+      // }
+      else {
+        cmp = new VDBComponent(componentSet)
+        this._initDBComponent(detailForm, cmp, componentMeta)
+      }
       cmp.dataSource = componentSet.dataSource
     }
   }
 
+  // _initValuelist(form, component, aComponentMeta) {
+  //   this._initDBComponent(form, component, aComponentMeta)
+  //   if (aComponentMeta.valueListModel !== undefined && aComponentMeta.valueListModel !== null) {
+  //     component.fromAction = aComponentMeta.valueListModel.fromAction // 远程数据请求地址
+  //     component.valueField = aComponentMeta.valueListModel.valueField // 数据存储的字段
+  //     component.valueFieldType = aComponentMeta.valueListModel.valueFieldType // ：//数据存储字段的类型
+  //     component.displayField = aComponentMeta.valueListModel.displayField // ：前端显示字段
+  //     component.displayFieldType = aComponentMeta.valueListModel.displayFieldType // ：前端显示字段的类型
+  //   }
+  // }
+
+  _initRemoteCombox(form, component, aComponentMeta) {
+    this._initDBComponent(form, component, aComponentMeta)
+    if (aComponentMeta.remoteComboBoxModel !== undefined && aComponentMeta.remoteComboBoxModel !== null) {
+      component.fromAction = aComponentMeta.remoteComboBoxModel.fromAction // 远程数据请求地址
+      component.valueField = aComponentMeta.remoteComboBoxModel.valueField // 数据存储的字段
+      component.valueFieldType = aComponentMeta.remoteComboBoxModel.valueFieldType // ：//数据存储字段的类型
+      component.displayField = aComponentMeta.remoteComboBoxModel.displayField // ：前端显示字段
+      component.displayFieldType = aComponentMeta.remoteComboBoxModel.displayFieldType // ：前端显示字段的类型
+    }
+  }
   /**
    * 初始化DBComponent
    * @param {*} component
@@ -527,12 +561,14 @@ export default class VBaseDetailForm extends VBaseForm {
 
     component.allowBlank = (aComponentMeta.allowBlank === undefined) ? false : (aComponentMeta.allowBlank === 'true')
     component.originalAllowBlank = component.allowBlank
+
     component.enumModel = aComponentMeta.enumModel
-    component.remoteComboBoxModel = aComponentMeta.remoteComboBoxModel
   }
 
   // 初始化
   _initComponent(form, component, aComponentMeta) {
+    component.componentMeta = aComponentMeta
+
     component.componentName = aComponentMeta.name
 
     if (aComponentMeta.label !== undefined) {

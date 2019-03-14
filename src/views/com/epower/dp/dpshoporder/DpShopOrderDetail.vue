@@ -1,7 +1,7 @@
 <template>
    <BaseBillDetail :form = "form"  >
       <div slot="header">
-        <span>this is slot header </span>
+        <span>slot header </span>
       </div>
     </BaseBillDetail>
 </template>
