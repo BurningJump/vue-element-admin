@@ -62,6 +62,37 @@
 import { HotTable } from '@handsontable/vue'
 import Handsontable from 'handsontable'
 
+import RemoteCombox from "@/components/RemoteCombox";
+// import CustomEditor from '@/components/RemoteComboxForHandsonTable/CustomEditor.js'
+
+class CustomEditor extends Handsontable.editors.TextEditor {
+  constructor(props) {
+    super(props);
+  }
+
+  createElements() {
+    super.createElements();
+
+    this.RemoteCombox = document.createElement('remote-combox');
+    this.RemoteCombox.setAttribute('placeholder', '输入');
+    this.RemoteCombox.setAttribute('multiple', true);
+    this.RemoteCombox.setAttribute('bandValue', '数据1');
+    
+    // this.TEXTAREA.className = 'handsontableInput';
+    // this.textareaStyle = this.TEXTAREA.style;
+    
+    
+    // this.label = document.createElement('button');
+    // this.label.innerText = '弹窗';
+
+    Handsontable.dom.empty(this.TEXTAREA_PARENT);
+    
+    this.TEXTAREA_PARENT.appendChild(this.RemoteCombox);
+    // this.TEXTAREA_PARENT.appendChild(this.label);
+
+  }
+}
+
 export default {
   name: 'com-epower-fw-smartview-detail-BaseDetailGrid',
   data() {
@@ -72,7 +103,8 @@ export default {
   },
   props: ['tab', 'activeTab', 'height','componentSet', 'dataLoaded'],
   components: {
-    HotTable
+    HotTable,
+    RemoteCombox
   },
   mounted() {
     this.getSettings()
@@ -87,7 +119,11 @@ export default {
         dataSchema: {},
         colHeaders: [],
         rowHeaders: false,
-        columns: [],
+        columns: [
+          {
+            editor: CustomEditor
+          }
+        ],
         colWidths: [],
         rowHeights: 55,
         className: "htCenter htMiddle",

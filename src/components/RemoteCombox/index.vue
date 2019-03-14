@@ -81,7 +81,7 @@
     },
     mounted() {
       //初始值显示
-      console.log('input:'+this.input);
+      // console.log('input:'+this.input);
       // if(!this.multiple){
       //   this.comValue = this.input.inputValue;
       // }else{
@@ -125,6 +125,7 @@
         // 多选模式下移除tag时触发;
       },
       fireFocusEvent(){
+        // this.label=this.getObjectValueByKey(item,input.remoteComboBoxModel.valueFieldType)
        /// console.log('fireFocusEvent:');
         // 当 input 获得焦点时触发;
       },
