@@ -1,14 +1,21 @@
 import VEventBus from '@/smartview/VEventBus.js'
 
 export default class VComponent {
+
   parent;
+
   componentName;// 组件名称
+
+  componentMeta;// 存储组件的xml定义
+
   label; // 组件展示
   width; // 展示宽度
   ctype; // 组件类型
   children = []; // 组件类型
 
   _dataSource = null;// 数据源,可用为空
+
+
 
   // 是否有效
   enable = true;
