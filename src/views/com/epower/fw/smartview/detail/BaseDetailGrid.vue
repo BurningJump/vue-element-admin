@@ -104,7 +104,13 @@ export default {
         contextMenu: true,
         manualColumnFreeze: true,
         fixedColumnsLeft: 0, // 冻结前n列
-        fixedRowsTop: 0 // 冻结前n行
+        fixedRowsTop: 0 ,// 冻结前n行
+        afterSelection: (row, column, row2, column2, preventScrolling, selectionLayerLevel) => {
+          //光标移动的时候，datasource的光标也要移动
+           // console.log('to row ' + row)
+            this.componentSet.dataSource.scrollTo(row);
+
+          }
       }
       this.componentSet.children.forEach(theader => {
         this.settings.colHeaders.push(theader.label);
@@ -121,6 +127,8 @@ export default {
           data: theader.fieldName
         });
       });
+
+
     },
     coverRenderer (instance, td, row, col, prop, value, cellProperties) {
       var escaped = Handsontable.helper.stringify(value),

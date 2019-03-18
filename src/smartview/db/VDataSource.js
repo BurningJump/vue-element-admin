@@ -50,9 +50,7 @@ export default class VDataSource {
    */
   first() {
     if (this.getRecordCount() > 0) {
-      this.rowIndex = 0
-      this._loadComponentData(this.rowIndex)
-      return true
+      return this.scrollTo(0)
     }
     return false
   }
@@ -61,9 +59,7 @@ export default class VDataSource {
    */
   next() {
     if (this.rowIndex < this.getRecordCount()) {
-      this.rowIndex++
-      this._loadComponentData(this.rowIndex)
-      return true
+      return this.scrollTo(this.rowIndex + 1)
     }
     return false
   }
@@ -73,11 +69,18 @@ export default class VDataSource {
   */
   proio() {
     if (this.rowIndex > 0) {
-      this.rowIndex--
-      this._loadComponentData(this.rowIndex)
-      return true
+      return this.scrollTo(this.rowIndex - 1)
     }
     return false
+  }
+  /**
+  * 当前光标移到第几行
+  */
+  scrollTo(newRowIndex) {
+    if (this.rowIndex === newRowIndex) return true
+    this.rowIndex = newRowIndex
+    this._loadComponentData(this.rowIndex)
+    return true
   }
 
   // _loadDataList(filter = null) {
