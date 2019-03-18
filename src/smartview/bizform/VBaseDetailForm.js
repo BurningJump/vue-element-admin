@@ -659,7 +659,7 @@ export default class VBaseDetailForm extends VBaseForm {
     } else if (funName === 'copyrow') {
       result = form.copyRow(datasource)
     } else if (funName === 'deleterow') {
-      result = form.deleteRows(datasource)
+      result = form.deleteRow(datasource)
     } else if (funName === 'addaggregation') {
       result = form.addAggregation(datasource)
     } else if (funName === 'modifyaggregation') {
@@ -872,6 +872,16 @@ export default class VBaseDetailForm extends VBaseForm {
   addRow(datasource) {
     datasource.appendRecord()
   }
+
+
+  /**
+     * 根据DetailPage的增加记录
+     * @param cmpSetName
+     * @returns {Boolean}
+  */
+ deleteRow(datasource) {
+  datasource.deleteRecord()
+}
 
   getIdValue() {
     var result = null

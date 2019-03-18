@@ -114,6 +114,9 @@ export default class VDataSet {
   getDatasetData(filter = null) {
     var result = []
     for (const record of this.currentTable) {
+      if (record['entityStatus'] === 'D') {
+        continue
+      }
       if (filter != null) {
         if (filter(record) === true) {
           result.push(record)
@@ -129,7 +132,7 @@ export default class VDataSet {
   getValue(key, fieldName) {
     // 寻找DataSet的记录
     for (var j = 0; j < this.currentTable.length; j++) {
-      if (this.currentTable[j].entityID === key) {
+      if (this.currentTable[j].id === key) {
         return this.currentTable[j][fieldName]
       }
     }
@@ -140,7 +143,7 @@ export default class VDataSet {
   getOriginalValue(key, fieldName) {
     // 寻找DataSet的记录
     for (var j = 0; j < this.originalTable.length; j++) {
-      if (this.originalTable[j].entityID === key) {
+      if (this.originalTable[j].id === key) {
         return this.originalTable[j][fieldName]
       }
     }
@@ -150,8 +153,13 @@ export default class VDataSet {
   deleteRecord(key) {
     // 寻找DataSet的记录
     for (var j = 0; j < this.currentTable.length; j++) {
-      if (this.currentTable[j].entityID === key) {
-        this.currentTable[j].entityStatus = 'D'
+      if (this.currentTable[j].id === key) {
+        if (this.currentTable[j].entityStatus === 'I') {
+          // 如果记录是增加,需要删除增加记录
+          this.currentTable.splice(j, 1)
+        } else {
+          this.currentTable[j].entityStatus = 'D'
+        }
         this._logRemove(key)
         return true
       }
@@ -163,8 +171,13 @@ export default class VDataSet {
      */
   deleteAllRecord() {
     if (this.recordCount() > 0) {
-      for (var j = 0; j < this.currentTable.length; j++) {
-        this.currentTable[j].entityStatus = 'D'
+      for (var j = this.currentTable.length - 1; j >= 0; j--) {
+        if (this.currentTable[j].entityStatus === 'I') {
+          // 如果记录是增加,需要删除增加记录
+          this.currentTable[j].splice(j, 1)
+        } else {
+          this.currentTable[j].entityStatus = 'D'
+        }
       }
       this._logRemoveAll()
       return true

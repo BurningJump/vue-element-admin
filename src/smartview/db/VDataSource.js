@@ -203,8 +203,16 @@ export default class VDataSource {
   appendRecord() {
     var record = this.dataset.appendRecord()
     this.dataList.push(record)
-    this.rowIndex = this.rowIndex + 1
+    this.rowIndex = this.dataList.length - 1
     this._loadComponentData(this.rowIndex)
+  }
+  deleteRecord() {
+    var deleteRecord = this.getRecord()
+    if (this.dataset.deleteRecord(deleteRecord['id']) === true) {
+      this.dataList.splice(this.rowIndex, 1)
+      this.rowIndex = this.rowIndex - 1
+      this._loadComponentData(this.rowIndex)
+    }
   }
 }
 

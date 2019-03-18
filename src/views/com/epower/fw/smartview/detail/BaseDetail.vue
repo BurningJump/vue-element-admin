@@ -20,10 +20,10 @@
           <base-detail-grid
             v-if="tab.componentSetModel.style === 'grid'"
             :tab="tab"
-            :dataLoaded="true"
             :activeTab="form.activeDetailPage"
+            :page ="form.getComponent(tab.name)"
             :height="height"
-            :componentSet="form.getComponent(tab.componentSetModel.name)"
+             @onButtonClick = "handleButtonClick"
           />
           <base-detail-a-grid
             v-else-if="tab.componentSetModel.style === 'aGrid'"
@@ -34,7 +34,6 @@
             :height="height"
             :componentSet="form.getComponent(tab.componentSetModel.name)"
           />
-
           <base-detail-column
             v-else-if="tab.componentSetModel.style === 'column'"
             :tab="tab"
@@ -89,8 +88,7 @@ export default {
     handleTabClick() {},
     handleButtonClick(params){
       params['form'] = this.form;
-   //     Object.extend(params,{form:this.form});
-        var button = params.component;
+      var button = params.component;
         button.fire('click',params)
         console.log(params.component.fun);
     }
