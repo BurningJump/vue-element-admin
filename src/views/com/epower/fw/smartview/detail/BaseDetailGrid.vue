@@ -23,7 +23,10 @@
         </el-button-group>
       </div> -->
       <div class="tree-container">
-        <el-tree :data="tab.treeModel" :props="defaultProps" highlight-current @node-expand="handleNodeExpand" @node-click="handleNodeClick">
+        <el-tree :data="tab.treeModel"
+                  :props="defaultProps" highlight-current
+                  @node-expand="handleNodeExpand"
+                  @node-click="handleNodeClick">
         </el-tree>
       </div>
     </el-aside>
@@ -96,41 +99,107 @@ export default {
         data: this.componentSet.dataSource.dataList,
         dataSchema: {},
         colHeaders: [],
-        rowHeaders: false,
+        rowHeaders: true,// 显示序列号 by max
         columns: [],
         colWidths: [],
         rowHeights: 55,
         className: "htCenter htMiddle",
-        contextMenu: true,
+        activeHeaderClassName: 'ht__active_highlight',
+        currentRowClassName: 'currentRow',
+        autoWrapCol:false,
+        autoWrapRow:true,
+        manualColumnResize: true,
+        manualRowResize: true,
+        contextMenu: false ,
+        fillHandle: {
+            // enable plugin in vertical direction and with autoInsertRow as false
+            autoInsertRow: false,
+            direction: 'vertical'
+        }, //启用填充句柄（向下拖放和向下复制）功能 by max
         manualColumnFreeze: true,
         fixedColumnsLeft: 0, // 冻结前n列
         fixedRowsTop: 0 ,// 冻结前n行
+        selectionMode: 'single',//Only a single cell can be selected.  by max
+        observeChanges: true,//切换表成为单向数据绑定
         afterSelection: (row, column, row2, column2, preventScrolling, selectionLayerLevel) => {
           //光标移动的时候，datasource的光标也要移动
            // console.log('to row ' + row)
             this.componentSet.dataSource.scrollTo(row);
 
-          }
+          },
+        afterChange:(changes,source)=>{
+          if (source == "loadData") {
+            //装载数据时不处理
+          } else{
+            changes.forEach(([row, prop, oldValue, newValue]) => {
+                console.log('row:'+row + '  prop:'+prop + ' oldValue:'+oldValue + ' newValue:'+newValue )
+            });
+         }
+        }
       }
-      this.componentSet.children.forEach(theader => {
-        this.settings.colHeaders.push(theader.label);
-        this.settings.dataSchema[theader.fieldName] = null;
+      this.componentSet.children.forEach(component => {
+        this.settings.colHeaders.push(component.label);
+        this.settings.dataSchema[component.fieldName] = null;
         this.settings.colWidths.push(
-          theader.width > 1
-            ? theader.width
+          component.width > 1
+            ? component.width
             : ""
         );
-        this.settings.columns.push({
+        this.settings.columns.push(this.createColumn(component));
+      });
+    },
+    createColumn(component){
+      var column
+      if (component.ctype==='image'){
+         column ={
           type: "autocomplete",
           allowHtml: true,
-          renderer: this.coverRenderer,
-          data: theader.fieldName
-        });
-      });
-
-
+          renderer: this.imageCoverRenderer,
+          data: component.fieldName
+        }
+      } else   if (component.ctype==='checkboxField'){
+         column ={
+          type: "checkbox",
+          data: component.fieldName,
+          checkedTemplate: 1 ,
+          uncheckedTemplate: 0
+        }
+      } else  if (component.ctype==='dateField'){
+         column ={
+          type: "date",
+          dateFormat: 'YYYY-MM-DD',
+          correctFormat: true,
+          data: component.fieldName
+        }
+      } else if (component.ctype==='dateTimeField'){
+         column ={
+          type: "date",
+          dateFormat: component.format,
+          correctFormat: true,
+          data: component.fieldName
+        }
+      } else if (component.ctype==='numberfield'){
+         column ={
+          type: "numeric",
+          data: component.fieldName
+        }
+      } else  {
+       column ={
+          type: "text",
+          allowHtml: true,
+          data: component.fieldName
+        }
+      }
+     return column
     },
-    coverRenderer (instance, td, row, col, prop, value, cellProperties) {
+    safeHtmlRenderer(instance, td, row, col, prop, value, cellProperties) {
+        var escaped = Handsontable.helper.stringify(value);
+        escaped = strip_tags(escaped, '<em><b><strong><a><big>'); //be sure you only allow certain HTML tags to avoid XSS threats (you should also remove unwanted HTML attributes)
+        td.innerHTML = escaped;
+        return td;
+    },
+
+    imageCoverRenderer (instance, td, row, col, prop, value, cellProperties) {
       var escaped = Handsontable.helper.stringify(value),
         img;
 

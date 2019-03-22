@@ -6,9 +6,9 @@ export default class VDataSet {
   bizClassName = null;// 对应的类名
   dataFrom = null; // 名称
   source = null; // dataPackage / ajaxRequest
-  currentTable = null;// 当前记录
-  originalTable = null;// 原始记录
-  updateLogs = null; // 更新记录
+  currentTable = [];// 当前记录
+  originalTable = [];// 原始记录
+  updateLogs = []; // 更新记录
 
   /**
 * 預設默認值集
@@ -52,8 +52,8 @@ export default class VDataSet {
     var k = 0
     if (this.updateLogs != null) {
       for (k = this.updateLogs.length - 1; k > -1; k--) {
-        if (key === this.updateLogs[k].entityID && fieldName === this.updateLogs[k].fieldName) {
-          this.updateLogs.remove(this.updataLogs[k])
+        if (key === this.updateLogs[k].entityID && fieldName === this.updateLogs[k].fieldname) {
+          this.updateLogs.splice(k, 1)
           break
         }
       }
@@ -90,8 +90,12 @@ export default class VDataSet {
     // 寻找DataSet的记录
     for (var j = 0; j < ADataPackage.dataSets.length; j++) {
       if (ADataPackage.dataSets[j].name === this.name) {
-        this.currentTable = ADataPackage.dataSets[j].originalTable// 当前记录
-        this.originalTable = ADataPackage.dataSets[j].originalTable// 原始记录
+        //  Object.assign(this.currentTable, ADataPackage.dataSets[j].originalTable)// 当前记录
+        // this.copyTable(this.currentTable, ADataPackage.dataSets[j].originalTable)
+        this.currentTable = this.copyTableByProxy(ADataPackage.dataSets[j].originalTable)
+        //  Object.assign(this.originalTable, ADataPackage.dataSets[j].originalTable)// 原始记录
+        //  this.copyTable(this.originalTable, ADataPackage.dataSets[j].originalTable)
+        this.originalTable = this.copyTable(ADataPackage.dataSets[j].originalTable)
         this.updateLogs = [] // 更新记录
         this.dataFrom = 'dataPackage'
         break
@@ -99,10 +103,59 @@ export default class VDataSet {
     }
   }
 
+  proxyRecordWithUpdateLog(record) {
+    var dataset = this
+    var logHandle = {
+      set: function(obj, prop, value) {
+        obj[prop] = value
+        if (prop !== 'id' &&
+              prop !== 'entityStatus' &&
+               (obj['entityStatus' ] === 'U' || obj['entityStatus' ] === 'L')
+        ) {
+          if (dataset.updatedLog(obj['id'], prop, value) === true) {
+            // 如果修改日志成功
+            if (obj['entityStatus'] === 'L') {
+              obj['entityStatus'] = 'U'
+            }
+          } else {
+            // 如果修改日志不成功
+            if (dataset._logCount(obj['id']) === 0) {
+              // 如果没有其他修改日志
+              obj['entityStatus'] = 'L'
+            }
+          }
+        }
+        return true
+      }
+    }
+    return new Proxy(record, logHandle)
+  }
+
+  /** *
+   * 复制一个TABLE
+   */
+  copyTableByProxy(sourceTable) {
+    var targetTable = []
+    for (const rec of sourceTable) {
+      var newRecord = this.proxyRecordWithUpdateLog(Object.assign({}, rec))
+      targetTable.push(newRecord)
+    }
+    return targetTable
+  }
+
+  copyTable(sourceTable) {
+    var targetTable = []
+    for (const rec of sourceTable) {
+      var newRecord = Object.assign({}, rec)
+      targetTable.push(newRecord)
+    }
+    return targetTable
+  }
+
   // 装载DataPackage数据
   loadList(dataList) {
-    this.currentTable = dataList// 当前记录
-    this.originalTable = dataList// 原始记录
+    this.currentTable = this.copyTableByProxy(dataList) // 当前记录
+    this.originalTable = this.copyTable(dataList) // 当前记录// 原始记录
     this.updateLogs = [] // 更新记录
     this.dataFrom = 'ajaxRequest'
   }
@@ -117,11 +170,16 @@ export default class VDataSet {
       if (record['entityStatus'] === 'D') {
         continue
       }
+      // var newRec = null
       if (filter != null) {
         if (filter(record) === true) {
+          // newRec = Object.assign({}, record)
+          // result.push(newRec)
           result.push(record)
         }
       } else {
+        // newRec = Object.assign({}, record)
+        // result.push(newRec)
         result.push(record)
       }
     }
@@ -215,7 +273,30 @@ export default class VDataSet {
     return (this.currentTable == null && this.datasetInfo == null)
   }
 
-  // 修改Dataset数据 单个字段的单个数据
+  updatedLog(key, fieldName, newValue) {
+    // 初始化更新记录
+    if (this.updateLogs === null || this.updateLogs.length === 0) {
+      this.updateLogs = []
+    }
+    // 清除日志
+    this._logRemoveByField(key, fieldName)
+    // 寻找原始值
+    const originalValue = this.getOriginalValue(key, fieldName)
+    // 和原始值不一致时
+    if (newValue !== originalValue) {
+      // 记录日志 log
+      this.updateLogs.push({
+        entityID: key,
+        fieldname: fieldName,
+        newValue: newValue,
+        OldValue: originalValue
+      })
+      return true
+    }
+    return false
+  }
+
+  // TODO 需要修改算法 因为使用了Proxy 修改Dataset数据 单个字段的单个数据
   updateByFieldName(key, fieldName, newValue) {
     var result = false
     // 初始化更新记录
@@ -326,6 +407,7 @@ export default class VDataSet {
     var dataId = new UID.UUID().toString()
     var newData = { id: dataId, entityStatus: 'I' }
     newData = this.replaceDefaultValue(newData)
+    // var result = this.proxyRecordWithUpdateLog(newData) 新增的数据不需有监控修改日志
     this.currentTable.push(newData)
     return newData
   }

@@ -36,12 +36,14 @@ export default class VBaseDetailForm extends VBaseForm {
    */
   init() {
     // 创建数据存储
-    this.dataStore = new VDataStore(this.formMeta.datasetInfo)
+    this.createDataStore(this.formMeta.datasetInfo)
+    // this.dataStore = new VDataStore(this.formMeta.datasetInfo)
     // 创建数据感知
-    for (const dataset of this.dataStore.datasets) {
-      var dataSource = new VDataSource(dataset.name, dataset)
-      this.dataSources.set(dataSource.name, dataSource)
-    }
+    this.createDefultDataSource()
+    // for (const dataset of this.dataStore.datasets) {
+    //   var dataSource = new VDataSource(dataset.name, dataset)
+    //   this.dataSources.set(dataSource.name, dataSource)
+    // }
     // 建立UI
     this.createUI(this.formMeta)
     // 建立UI的默认业务依赖

@@ -14,7 +14,7 @@ import VDBComponent from '../component/VDBComponent.js'
 
 export default class VBaseForm extends VForm {
   // 所有有关的数据源
-  dataSources = new Map();
+  dataSources = [];
 
   // 操作代码
   operationCode = null;
@@ -59,16 +59,15 @@ export default class VBaseForm extends VForm {
     this.formMeta = formMeta
   }
 
-  createDataStore(metaValue) {
-    this.dataStore = new VDataStore(metaValue)
+  createDataStore(dataStoreValue) {
+    this.dataStore = new VDataStore(dataStoreValue)
     this.dataStore.dataView = this
-    this.createDefultDataSource()
   }
 
   createDefultDataSource() {
     for (const dataset of this.dataStore.datasets) {
       var dataSource = new VDataSource(dataset.name, dataset)
-      this.dataSources.set(dataSource.name, dataSource)
+      this.dataSources.push(dataSource)
     }
   }
 
@@ -76,7 +75,7 @@ export default class VBaseForm extends VForm {
    * 返回数据是否修改过 curd
    */
   isChanged() {
-    for (const ds of this.dataSources.values()) {
+    for (const ds of this.dataSources) {
       if (ds.isChanged() === true) return true
     }
     return false
@@ -87,7 +86,7 @@ export default class VBaseForm extends VForm {
   }
 
   openDataSources() {
-    for (const ds of this.dataSources.values()) {
+    for (const ds of this.dataSources) {
       ds.open()
     }
   }
@@ -97,12 +96,19 @@ export default class VBaseForm extends VForm {
   }
 
   getDataSource(datasourceName) {
-    return this.dataSources.get(datasourceName)
+    var result
+    for (var ds of this.dataSources) {
+      if (ds.name === datasourceName) {
+        result = ds
+        break
+      }
+    }
+    return result
   }
 
   addRefDataSource(dataSource) {
     if (dataSource !== undefined || dataSource === null) {
-      this.dataSources.set(dataSource.name, dataSource)
+      this.dataSources.push(dataSource)
     }
   }
 

@@ -23,7 +23,10 @@
         </el-button-group>
       </div> -->
       <div class="tree-container">
-        <el-tree :data="tab.treeModel" :props="defaultProps" highlight-current @node-expand="handleNodeExpand" @node-click="handleNodeClick">
+        <el-tree :data="tab.treeModel"
+                  :props="defaultProps" highlight-current
+                  @node-expand="handleNodeExpand"
+                  @node-click="handleNodeClick">
         </el-tree>
       </div>
     </el-aside>
