@@ -33,7 +33,7 @@ export default class VDataSource {
     if (this.dataList == null || this.dataList === undefined) {
       return null
     }
-    return this.dataList.length()
+    return this.dataList.length
   }
 
   /**
@@ -77,6 +77,7 @@ export default class VDataSource {
   * 当前光标移到第几行
   */
   scrollTo(newRowIndex) {
+    if (newRowIndex > this.getRecordCount() - 1) return false
     if (this.rowIndex === newRowIndex) return true
     this.rowIndex = newRowIndex
     this._loadComponentData(this.rowIndex)
@@ -92,7 +93,11 @@ export default class VDataSource {
   _loadComponentData(index) {
     for (const component of this.components) {
       if (component.fieldName !== undefined) {
-        component.loadData(this.dataList[index][component.fieldName])
+        if (index === -1) {
+          component.loadData(null)
+        } else {
+          component.loadData(this.dataList[index][component.fieldName])
+        }
       }
     }
   }
@@ -122,6 +127,7 @@ export default class VDataSource {
         this._clearComponentData()
       }
     }
+    this.isOpen = true
   }
 
   /**
@@ -198,7 +204,8 @@ export default class VDataSource {
 
   emptyData(filter = null) {
     this.filter = filter
-    this.dataList = []
+    // this.dataList =[] handsontable无法清空数据
+    this.dataList.splice(0, this.dataList.length)
     this.rowIndex = -1
     this._clearComponentData()
   }
@@ -209,6 +216,7 @@ export default class VDataSource {
     this.rowIndex = this.dataList.length - 1
     this._loadComponentData(this.rowIndex)
   }
+
   deleteRecord() {
     var deleteRecord = this.getRecord()
     if (this.dataset.deleteRecord(deleteRecord['id']) === true) {

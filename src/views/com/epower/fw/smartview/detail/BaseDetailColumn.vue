@@ -58,7 +58,7 @@
           </el-select>
 
           <remote-combox v-else-if="input.ctype === 'remoteComboBox'" :input="input" :bandValue="input.inputValue"
-            :allowcreate="input.allowcreate" :multiple="true" :disabled="!input.enable" :clearable="input.clearable">
+            :allowcreate="input.allowcreate" :multiple="false" :disabled="!input.enable" :clearable="input.clearable">
           </remote-combox>
 
         </el-form-item>
@@ -73,8 +73,8 @@ export default {
   name: "com-epower-fw-smartview-detail-BaseDetailColumn",
   data() {
     return {
-      componentSet:this.page.findChild(this.tab.componentSetModel.name),
-      toolbar:this.page.findChild(this.tab.toolbarModel.name)
+      componentSet:this.page.findChild(this.pageModel.componentSetModel.name),
+      toolbar:this.page.findChild(this.pageModel.toolbarModel.name)
     };
   },
   components: {
@@ -87,7 +87,7 @@ export default {
        this.$emit('onButtonClick',{component:button});  //使用$emit()引入父组件中的方法
     }
    },
-  props: ["tab", "page"]
+  props: ["pageModel", "page"]
 };
 </script>
 

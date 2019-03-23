@@ -1,9 +1,9 @@
 <template>
   <el-container class="base-detail-grid-container">
-    <el-aside v-if="tab.treeModel" width="200px" :style="{'height': treeHeight, 'padding': '0 5px'}">
+    <el-aside v-if="pageModel.treeModel" width="200px" :style="{'height': treeHeight, 'padding': '0 5px'}">
       <!-- <div class="tree-toolbar">
         <el-button-group>
-          <el-tooltip class="item" effect="dark" v-for="btn in tab.tree.toolbar.components" :content="btn.label" placement="top">
+          <el-tooltip class="item" effect="dark" v-for="btn in pageModel.tree.toolbar.components" :content="btn.label" placement="top">
             <el-button v-if="btn.fun === 'new'" size="mini" icon="el-icon-document"></el-button>
             <el-button v-else-if="btn.fun === 'view'" size="mini" icon="el-icon-view"></el-button>
           </el-tooltip>
@@ -23,7 +23,7 @@
         </el-button-group>
       </div> -->
       <div class="tree-container">
-        <el-tree :data="tab.treeModel"
+        <el-tree :data="pageModel.treeModel"
                   :props="defaultProps" highlight-current
                   @node-expand="handleNodeExpand"
                   @node-click="handleNodeClick">
@@ -42,7 +42,7 @@
             <svg-icon :icon-class="`${btn.iconcls}`"/>
             {{ btn.label }}
           </el-button>
-          <el-dropdown v-if="tab.toolbarModel.showMoreButton" trigger="click" placement="bottom" szie="mini">
+          <el-dropdown v-if="pageModel.toolbarModel.showMoreButton" trigger="click" placement="bottom" szie="mini">
             <el-button size="mini">
               更多<i class="el-icon-arrow-down el-icon--right" style="margin-left:0;"></i>
             </el-button>
@@ -55,7 +55,7 @@
           </el-dropdown>
         </el-button-group>
       </el-header>
-      <el-main v-if="activeTab === tab.name">
+      <el-main>
         <div class="handson-table-container" :style="{height: height+'px'}">
           <div class="wrapper">
             <hot-table v-if="settings" :root="root" :settings="settings"></hot-table>
@@ -76,11 +76,11 @@ export default {
     return {
       root: 'test-hot',
       settings: null,
-      componentSet:this.page.findChild(this.tab.componentSetModel.name),
-      toolbar:this.page.findChild(this.tab.toolbarModel.name)
+      componentSet:this.page.findChild(this.pageModel.componentSetModel.name),
+      toolbar:this.page.findChild(this.pageModel.toolbarModel.name)
     }
   },
-  props: ['tab', 'activeTab', 'height','page'],
+  props: ['pageModel', 'activeTab', 'height','page'],
   components: {
     HotTable
   },
@@ -96,7 +96,7 @@ export default {
     },
     getSettings() {
       this.settings = {
-        data: this.componentSet.dataSource.dataList,
+        data: this.componentSet.datasource.dataList,
         dataSchema: {},
         colHeaders: [],
         rowHeaders: true,// 显示序列号 by max
@@ -120,11 +120,11 @@ export default {
         fixedColumnsLeft: 0, // 冻结前n列
         fixedRowsTop: 0 ,// 冻结前n行
         selectionMode: 'single',//Only a single cell can be selected.  by max
-        observeChanges: true,//切换表成为单向数据绑定
+       // observeChanges: true,//切换表成为单向数据绑定
         afterSelection: (row, column, row2, column2, preventScrolling, selectionLayerLevel) => {
           //光标移动的时候，datasource的光标也要移动
            // console.log('to row ' + row)
-            this.componentSet.dataSource.scrollTo(row);
+            this.componentSet.datasource.scrollTo(row);
 
           },
         afterChange:(changes,source)=>{

@@ -55,7 +55,7 @@ export default class VSmartView {
       .then(module => {
         this.getUIMeta(formKey).then(formMeta => {
           vform = module.default.NewInstant(this, formMeta)
-          vform.cvar = ACvar
+          vform.addCVar(ACvar)
           vform.requestDetailData(id).then(dataPackage => {
             vform.loadDataByPackage(dataPackage) // add by max
             vform.show(states)

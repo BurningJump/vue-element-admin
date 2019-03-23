@@ -2,13 +2,23 @@ import * as UID from '@/smartview/util/uuid.js'
 
 export default class VDataSet {
   name;// 名称
+
   dataStore = null; // 数据仓库
   bizClassName = null;// 对应的类名
-  dataFrom = null; // 名称
-  source = null; // dataPackage / ajaxRequest
+  dataFrom = 'ajaxRequest'; // 获取数据的方法( dataPackage / ajaxRequest)
+
+  actionMethod ;// 如果是 ajaxRequest， 获取数据的url
   currentTable = [];// 当前记录
   originalTable = [];// 原始记录
   updateLogs = []; // 更新记录
+
+  _isOpen =false;
+
+  isMaster; // 是否主数据
+
+  masterIdFieldName; //  当是从数据时，数据集的从字段名称
+  parentDatasetName; //  当是从数据时，父数据集的名称
+  parentIdFieldName; //  当是从数据时，父数据集的的主字段名称
 
   /**
 * 預設默認值集
@@ -19,10 +29,45 @@ export default class VDataSet {
     this.init(datasetMeta)
   }
 
+  get isOpen() {
+    return this._isOpen
+  }
+  set isOpen(value) {
+    this._isOpen = value
+  }
+
   init(datasetMeta) {
     if (datasetMeta != null) {
-      this.bizClassName = datasetMeta.bizClassName
-      this.name = datasetMeta.name
+      if (datasetMeta.bizClassName !== undefined) {
+        this.bizClassName = datasetMeta.bizClassName
+      }
+      if (datasetMeta.name !== undefined) {
+        this.name = datasetMeta.name
+      }
+
+      if (datasetMeta.actionMethod !== undefined) {
+        this.actionMethod = datasetMeta.actionMethod
+      }
+
+      if (datasetMeta.datasource !== undefined) {
+        this.dataFrom = datasetMeta.datasource
+      }
+
+      if (datasetMeta.isMaster !== undefined) {
+        this.isMaster = (datasetMeta.isMaster === 'true')
+      }
+
+      if (datasetMeta.masterIdField !== undefined) {
+        this.masterIdFieldName = datasetMeta.masterIdField
+      }
+
+      if (datasetMeta.parentDataset !== undefined) {
+        this.parentDatasetName = datasetMeta.parentDataset
+      }
+
+      if (datasetMeta.parentIdField !== undefined) {
+        this.parentIdFieldName = datasetMeta.parentIdField
+      }
     }
     this.currentTable = []// 当前记录
     this.originalTable = []// 原始记录
@@ -98,6 +143,7 @@ export default class VDataSet {
         this.originalTable = this.copyTable(ADataPackage.dataSets[j].originalTable)
         this.updateLogs = [] // 更新记录
         this.dataFrom = 'dataPackage'
+        this.isOpen = true
         break
       }
     }
@@ -137,7 +183,13 @@ export default class VDataSet {
   copyTableByProxy(sourceTable) {
     var targetTable = []
     for (const rec of sourceTable) {
-      var newRecord = this.proxyRecordWithUpdateLog(Object.assign({}, rec))
+      var newRecord
+      // 如果是新增状态的数据不会获取到修改日志
+      if (rec['entityStatus'] === 'I') {
+        newRecord = Object.assign({}, rec)
+      } else {
+        newRecord = this.proxyRecordWithUpdateLog(Object.assign({}, rec))
+      }
       targetTable.push(newRecord)
     }
     return targetTable
@@ -157,7 +209,7 @@ export default class VDataSet {
     this.currentTable = this.copyTableByProxy(dataList) // 当前记录
     this.originalTable = this.copyTable(dataList) // 当前记录// 原始记录
     this.updateLogs = [] // 更新记录
-    this.dataFrom = 'ajaxRequest'
+    this.isOpen = true
   }
 
   /**
@@ -167,19 +219,15 @@ export default class VDataSet {
   getDatasetData(filter = null) {
     var result = []
     for (const record of this.currentTable) {
+      // 如果删除的数据不会获取
       if (record['entityStatus'] === 'D') {
         continue
       }
-      // var newRec = null
       if (filter != null) {
         if (filter(record) === true) {
-          // newRec = Object.assign({}, record)
-          // result.push(newRec)
           result.push(record)
         }
       } else {
-        // newRec = Object.assign({}, record)
-        // result.push(newRec)
         result.push(record)
       }
     }
@@ -296,61 +344,78 @@ export default class VDataSet {
     return false
   }
 
-  // TODO 需要修改算法 因为使用了Proxy 修改Dataset数据 单个字段的单个数据
+  /**
+ * 修改记录的值
+ * 因为使用了Proxy时，自动会处理日志
+ * 新增状态的数据没有用Proxy,就不会用记录日志
+ * @param {*} key
+ * @param {*} fieldName
+ * @param {*} newValue
+ */
   updateByFieldName(key, fieldName, newValue) {
-    var result = false
-    // 初始化更新记录
-    if (this.updateLogs === null || this.updateLogs.length === 0) {
-      this.updateLogs = []
-    }
-    var datas = this.currentTable
-    // 查找对应的数据
-    for (var j = 0; j < datas.length; j++) {
-      var check = false
-      if (datas[j].id === key) check = true
-
-      if (check) {
-        var oldValue = datas[j][fieldName]
-        var entityStatus = datas[j].entityStatus
-        datas[j][fieldName] = newValue
-        if (entityStatus === 'I') { // 当前是插入
-          datas[j][fieldName] = newValue // 更新修改数据
-        }
-        if (entityStatus === 'L') { // 当前是浏览
-          datas[j].entityStatus = 'U'
-          this.updateLogs.push({ // 记录日志 log
-            entityID: key,
-            fieldname: fieldName,
-            newValue: newValue,
-            OldValue: oldValue
-          })
-          datas[j][fieldName] = newValue
-        }
-        if (entityStatus === 'U') { // 当前是修改
-          this._logRemoveByField(key, fieldName)
-          // 防止 A ->B ->C->A的情况
-          const originalValue = this.getOriginalValue(key, fieldName)
-          if (originalValue !== newValue) {
-            this.updateLogs.push({ // 记录日志 log
-              entityID: key,
-              fieldname: fieldName,
-              newValue: newValue,
-              OldValue: oldValue
-            })
-            datas[j][fieldName] = newValue // 更新修改数据
-          } else {
-            if (this._logCount(key) === 0) { // 如果没有修改日志
-              datas[j].entityStatus = 'L'
-            }
-          }
-        }
-        break// 退出循环
+    for (var record of this.currentTable) {
+      if (record.id === key) {
+        record[fieldName] = newValue
+        return true
       }
     }
-
-    result = true
-    return result
+    return false
   }
+  //  需要修改算法 因为使用了Proxy 修改Dataset数据 单个字段的单个数据
+  // updateByFieldName(key, fieldName, newValue) {
+  //   var result = false
+  //   // 初始化更新记录
+  //   if (this.updateLogs === null || this.updateLogs.length === 0) {
+  //     this.updateLogs = []
+  //   }
+  //   var datas = this.currentTable
+  //   // 查找对应的数据
+  //   for (var j = 0; j < datas.length; j++) {
+  //     var check = false
+  //     if (datas[j].id === key) check = true
+
+  //     if (check) {
+  //       var oldValue = datas[j][fieldName]
+  //       var entityStatus = datas[j].entityStatus
+  //       datas[j][fieldName] = newValue
+  //       if (entityStatus === 'I') { // 当前是插入
+  //         datas[j][fieldName] = newValue // 更新修改数据
+  //       }
+  //       if (entityStatus === 'L') { // 当前是浏览
+  //         datas[j].entityStatus = 'U'
+  //         this.updateLogs.push({ // 记录日志 log
+  //           entityID: key,
+  //           fieldname: fieldName,
+  //           newValue: newValue,
+  //           OldValue: oldValue
+  //         })
+  //         datas[j][fieldName] = newValue
+  //       }
+  //       if (entityStatus === 'U') { // 当前是修改
+  //         this._logRemoveByField(key, fieldName)
+  //         // 防止 A ->B ->C->A的情况
+  //         const originalValue = this.getOriginalValue(key, fieldName)
+  //         if (originalValue !== newValue) {
+  //           this.updateLogs.push({ // 记录日志 log
+  //             entityID: key,
+  //             fieldname: fieldName,
+  //             newValue: newValue,
+  //             OldValue: oldValue
+  //           })
+  //           datas[j][fieldName] = newValue // 更新修改数据
+  //         } else {
+  //           if (this._logCount(key) === 0) { // 如果没有修改日志
+  //             datas[j].entityStatus = 'L'
+  //           }
+  //         }
+  //       }
+  //       break// 退出循环
+  //     }
+  //   }
+
+  //   result = true
+  //   return result
+  // }
 
   /**
 	 * 設置默認值
@@ -410,11 +475,23 @@ export default class VDataSet {
     // var result = this.proxyRecordWithUpdateLog(newData) 新增的数据不需有监控修改日志
     this.currentTable.push(newData)
     return newData
-  }
+   }
 
+  /**
+   * 清空数据
+   */
   emptyData() {
     this.currentTable = []// 当前记录
     this.originalTable = []// 原始记录
     this.updateLogs = [] // 更新记录
+  }
+
+  /**
+   * 关闭数据集
+   */
+
+  close() {
+    this._isOpen = false
+    this.emptyData()
   }
 }

@@ -50,7 +50,7 @@ export default class VDBComponent extends VComponent {
     if (this._value !== v) {
       let canUpdate = true
       if (this.loading === false) {
-        canUpdate = this.dataSource.updateFieldValue(this.fieldName, v)
+        canUpdate = this.datasource.updateFieldValue(this.fieldName, v)
       }
       if (canUpdate) {
         this.oldValue = this._value

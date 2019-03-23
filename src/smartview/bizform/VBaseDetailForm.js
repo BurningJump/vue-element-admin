@@ -9,14 +9,13 @@ import * as cf from '../util/commonFun'
 import {
   basicConstant
 } from '../VBasicConstant.js'
-import VDataStore from '../db/VDataStore.js'
-import VDataSource from '../db/VDataSource.js'
 
 import request from '@/utils/request'
+import VBaseDetailFormMetaUtil from './VBaseDetailFormMetaUtil'
 
 export default class VBaseDetailForm extends VBaseForm {
   // 当前活动的Tab
-  activeDetailPage = '';
+  _activeDetailPage = '';
 
   // 当前状态
   state = basicConstant.VIEWSTATE_VIEW;
@@ -27,8 +26,40 @@ export default class VBaseDetailForm extends VBaseForm {
     this.init()
   }
 
+  createMetaUtil(value) {
+    this.metaUtil = new VBaseDetailFormMetaUtil(value)
+  }
+
   static NewInstant(parent, formMeta) {
     return new VBaseDetailForm(parent, formMeta)
+  }
+
+  get activeDetailPage() {
+    return this._activeDetailPage
+  }
+
+  set activeDetailPage(value) {
+    if (this._activeDetailPage !== value) {
+      this._activeDetailPage = value
+      this.activePage(value)
+    }
+  }
+
+  activePage(pageName) {
+    var pageMeta = this.metaUtil.getPageConfigByName(pageName)
+    if (pageMeta !== null) {
+      var componentSet = this.getComponent(pageMeta.componentSetModel.name)
+      var datasource = componentSet.datasource
+      var aDataset = datasource.dataset
+      if (aDataset.dataFrom === 'ajaxRequest' && aDataset.isOpen === false) {
+        this.requestAjaxTableData(aDataset).then(dataList => {
+          aDataset.loadList(dataList)
+          datasource.open()
+        }).catch(err => {
+          console.log(err.message)
+        })
+      }
+    }
   }
 
   /**
@@ -41,8 +72,8 @@ export default class VBaseDetailForm extends VBaseForm {
     // 创建数据感知
     this.createDefultDataSource()
     // for (const dataset of this.dataStore.datasets) {
-    //   var dataSource = new VDataSource(dataset.name, dataset)
-    //   this.dataSources.set(dataSource.name, dataSource)
+    //   var datasource = new VDataSource(dataset.name, dataset)
+    //   this.datasources.set(datasource.name, datasource)
     // }
     // 建立UI
     this.createUI(this.formMeta)
@@ -470,7 +501,7 @@ export default class VBaseDetailForm extends VBaseForm {
 
     // 2.视图中建立toolbar
     var mToolbar = new VToolbar(masterPanel)
-    this._initToolbar(this, mToolbar, formMeta.masterPage.toolbarModel, mComponentSet.dataSource)
+    this._initToolbar(this, mToolbar, formMeta.masterPage.toolbarModel, mComponentSet.datasource)
 
     // 3.建立detialpage视图
     for (var page of formMeta.detailPages) {
@@ -484,7 +515,7 @@ export default class VBaseDetailForm extends VBaseForm {
 
       //  2.视图中建立toolbar
       var dToolbar = new VToolbar(detailPanel)
-      this._initToolbar(this, dToolbar, page.toolbarModel, dComponentSet.dataSource)
+      this._initToolbar(this, dToolbar, page.toolbarModel, dComponentSet.datasource)
     }
 
     if (formMeta.detailPages !== undefined && formMeta.detailPages.length > 0) {
@@ -520,7 +551,7 @@ export default class VBaseDetailForm extends VBaseForm {
         cmp = new VDBComponent(componentSet)
         this._initDBComponent(detailForm, cmp, componentMeta)
       }
-      cmp.dataSource = componentSet.dataSource
+      cmp.datasource = componentSet.datasource
     }
   }
 
@@ -596,7 +627,7 @@ export default class VBaseDetailForm extends VBaseForm {
     // 数据连接
     if (aComponentMeta.dataset !== undefined) {
       var ds = form.getDataSource(aComponentMeta.dataset)
-      component.dataSource = ds
+      component.datasource = ds
     }
 
     // 添加form的组件
@@ -629,8 +660,8 @@ export default class VBaseDetailForm extends VBaseForm {
       cmp.funParams = cf.parseFunctionParams(cmpMeta.fun)
       // 如果定义了function 会强制赋予一个datasouce
       if (cmp.funName !== undefined && cmp.funName !== null && cmp.funName.trim() !== '') {
-        if (cmp.dataSource === null && datasource !== null) {
-          cmp.dataSource = datasource
+        if (cmp.datasource === null && datasource !== null) {
+          cmp.datasource = datasource
         }
         // 添加标准响应
         cmp.on('click', this.doStandFunction)
@@ -641,7 +672,7 @@ export default class VBaseDetailForm extends VBaseForm {
   doStandFunction(param) {
     var funName = param.component.funName
     var params = param.component.funParams
-    var datasource = param.component.dataSource
+    var datasource = param.component.datasource
     var form = param.form
     var result = false
     if (funName === 'save') {
@@ -774,7 +805,7 @@ export default class VBaseDetailForm extends VBaseForm {
       this.dataStore.commitToDB(this.formMeta.actionUrl + '!save.action',
         { sVars: JSON.stringify(this.svars) })
         .then(resdate => {
-          for (const ds of this.dataSources.values()) {
+          for (const ds of this.datasources.values()) {
             ds.emptyData()
           }
           this.state = basicConstant.VIEWSTATE_NULL
@@ -810,7 +841,7 @@ export default class VBaseDetailForm extends VBaseForm {
 
     // 清空数据集中的数据
     this.dataStore.emptyDataSet()
-    for (const ds of this.dataSources.values()) {
+    for (const ds of this.datasources.values()) {
       ds.emptyData()
     }
 
@@ -875,15 +906,14 @@ export default class VBaseDetailForm extends VBaseForm {
     datasource.appendRecord()
   }
 
-
   /**
      * 根据DetailPage的增加记录
      * @param cmpSetName
      * @returns {Boolean}
   */
- deleteRow(datasource) {
-  datasource.deleteRecord()
-}
+  deleteRow(datasource) {
+    datasource.deleteRecord()
+  }
 
   getIdValue() {
     var result = null
@@ -892,6 +922,31 @@ export default class VBaseDetailForm extends VBaseForm {
       result = recData['id']
     }
     return result
+  }
+
+  requestAjaxTableData(dataset) {
+    var me = this
+    var dataId = me.getIdValue()
+    // ID 赋值
+
+    var params = {
+      dataId: dataId,
+      language: '', // TODO设置语言
+      sVars: JSON.stringify(me.svars)
+    }
+    return new Promise(
+      (resolve, reject) => {
+        request({
+          url: '/api/' + dataset.actionMethod,
+          //   params: params,
+          method: 'get'
+        }).then(resData => {
+          this.respData = resData.data
+          resolve(resData.data.resultList)
+        }).catch(err => {
+          console.log(err.message)
+        })
+      })
   }
 
   requestDetailData(id = null) {
