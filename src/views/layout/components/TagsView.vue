@@ -6,7 +6,7 @@
         ref="tag"
         :class="isActive(tag)?'active':''"
         :to="{ path: tag.path, query: tag.query, fullPath: tag.fullPath }"
-        :key="tag.path"
+        :key="tag.fullPath"
         tag="span"
         class="tags-view-item"
         @click.middle.native="closeSelectedTag(tag)"
@@ -45,8 +45,8 @@ export default {
   },
   watch: {
     $route() {
-      this.addViewTags()
-      this.moveToCurrentTag()
+       this.addViewTags()
+       this.moveToCurrentTag()
     },
     visible(value) {
       if (value) {
@@ -62,7 +62,7 @@ export default {
   methods: {
     generateTitle, // generateTitle by vue-i18n
     isActive(route) {
-      return route.path === this.$route.path
+      return route.fullPath === this.$route.fullPath
     },
     addViewTags() {
       const { name } = this.$route
@@ -75,13 +75,13 @@ export default {
       const tags = this.$refs.tag
       this.$nextTick(() => {
         for (const tag of tags) {
-          if (tag.to.path === this.$route.path) {
+          if (tag.to.fullPath === this.$route.fullPath) {
             this.$refs.scrollPane.moveToTarget(tag)
 
             // when query is different then update
-            if (tag.to.fullPath !== this.$route.fullPath) {
-              this.$store.dispatch('updateVisitedView', this.$route)
-            }
+            // if (tag.to.fullPath !== this.$route.fullPath) {
+            //   this.$store.dispatch('updateVisitedView', this.$route)
+            // }
 
             break
           }

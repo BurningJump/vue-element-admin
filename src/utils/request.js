@@ -7,7 +7,7 @@ import { getToken } from '@/utils/auth'
 const service = axios.create({
   // baseURL: process.env.BASE_API, // api 的 base_url
   baseURL: '', // api 的 base_url
-  timeout: 5000 // request timeout
+  timeout: 50000 // request timeout
 })
 
 // request interceptor
@@ -19,7 +19,7 @@ service.interceptors.request.use(
       config.headers['X-Token'] = getToken()
     }
     console.log(config, 'config');
-    
+
     return config
   },
   error => {

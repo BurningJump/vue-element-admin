@@ -60,7 +60,7 @@ export default class VSmartView {
             vform.loadDataByPackage(dataPackage) // add by max
             vform.show(states)
             // TODO 需要替代一下ID
-            var routerPath = res.fullpath
+            var routerPath = res.fullpath.replace(/:id/g, id)
             // 调用vue-router call出form
             // TODO var myRouter 的赋值是否会导致分险，需要再次评估。
             var myRouter = router
