@@ -1,6 +1,7 @@
 <template>
   <div class="tags-view-container">
     <scroll-pane ref="scrollPane" class="tags-view-wrapper">
+      <!--      -->
       <router-link
         v-for="tag in visitedViews"
         ref="tag"
@@ -14,6 +15,7 @@
         {{ generateTitle(tag.title) }}
         <span class="el-icon-close" @click.prevent.stop="closeSelectedTag(tag)" />
       </router-link>
+
     </scroll-pane>
     <ul v-show="visible" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
       <li @click="refreshSelectedTag(selectedTag)">{{ $t('tagsView.refresh') }}</li>

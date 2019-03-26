@@ -13,6 +13,10 @@ import * as VMessage from '../util/VMessage.js'
 import VDBComponent from '../component/VDBComponent.js'
 
 export default class VBaseForm extends VForm {
+
+   // smartview视图化对象后的唯一值，可以理解为windows的句炳
+   formId;
+
   // 所有有关的数据源
   datasources = [];
 

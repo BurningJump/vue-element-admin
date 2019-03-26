@@ -20,6 +20,9 @@ export default class VBaseDetailForm extends VBaseForm {
   // 当前状态
   state = basicConstant.VIEWSTATE_VIEW;
 
+  //当前DetailID
+   dataId;
+
   constructor(parent, formMeta) {
     super(parent, formMeta)
     this.ctype = basicConstant.FORMTYPE_DETAIL

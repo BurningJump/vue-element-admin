@@ -2,27 +2,34 @@ import request from '@/utils/request'
 import router from '@/router'
 import { basicConstant } from '@/smartview/VBasicConstant.js'
 import { asyncRouterMap } from '@/router'
+import * as UID from './util/uuid.js'
 
 export default class VSmartView {
-  // 窗体
+  // 窗体对象
   forms = [];
 
-  findDetailForm(formName) {
-    var form = this.findForm(formName)
-    if (form == null || form === undefined) return null
-    if (form.ctype === basicConstant.FORMTYPE_DETAIL) {
-      return form
-    } else {
-      return null
-    }
-  }
+  // 窗体元数据定义
+  formMetas = new Map();
 
-  findForm(formName) {
+  findDetailForm(formName, dataId) {
     for (var form of this.forms) {
-      if (form.componentName === formName) {
+      if (form.componentName === formName &&
+            form.ctype === basicConstant.FORMTYPE_DETAIL &&
+           form.dataId === dataId) {
         return form
       }
     }
+  }
+
+  findFormById(formId) {
+    for (var form of this.forms) {
+      if (form.formId === formId) {
+        return form
+      }
+    }
+  }
+  addForm(form) {
+    this.forms.push(form)
   }
 
   getRouter(routes, formKey, parentPath) {
@@ -48,38 +55,56 @@ export default class VSmartView {
 
   // 通过router call from
   callForm(formKey, id, states, ACvar = null) {
-    var vform = null
+    // 获取路游表
     var maper = asyncRouterMap
     var res = this.getRouter(maper, formKey, '')
-    res.route.control()
-      .then(module => {
-        this.getUIMeta(formKey).then(formMeta => {
-          vform = module.default.NewInstant(this, formMeta)
-          vform.addCVar(ACvar)
-          vform.requestDetailData(id).then(dataPackage => {
-            vform.loadDataByPackage(dataPackage) // add by max
-            vform.show(states)
-            // TODO 需要替代一下ID
-            var routerPath = res.fullpath.replace(/:id/g, id)
-            // 调用vue-router call出form
-            // TODO var myRouter 的赋值是否会导致分险，需要再次评估。
-            var myRouter = router
-            myRouter.push({
-              path: routerPath,
-              query: {
-                form: vform
-              }
+    var routerPath = res.fullpath.replace(/:id/g, id)
+
+    // 是否有名称+detailId的缓存
+    var vform = this.findDetailForm(formKey, id)
+    if (vform !== undefined && vform !== null) {
+      var myRouter = router
+      myRouter.push({
+        path: routerPath,
+        query: {
+          formId: vform.formId
+        }
+      })
+    } else {
+      // 没有缓存
+      res.route.control()
+        .then(module => {
+          this.getDetailUIMeta(formKey).then(formMeta => {
+            vform = module.default.NewInstant(this, formMeta)
+            vform.addCVar(ACvar)
+            var formId = new UID.UUID().toString()
+            vform.formId = formId
+            vform.dataId = id
+            this.addForm(vform)
+            vform.requestDetailData(id).then(dataPackage => {
+              vform.loadDataByPackage(dataPackage) // add by max
+              vform.show(states)
+              // TODO 需要替代一下ID
+              // 调用vue-router call出form
+              // TODO var myRouter 的赋值是否会导致分险，需要再次评估。
+              var myRouter = router
+              myRouter.push({
+                path: routerPath,
+                query: {
+                  formId: formId
+                }
+              })
+            }).catch(err => {
+              console.log(err.message)
             })
           }).catch(err => {
             console.log(err.message)
           })
-        }).catch(err => {
+        })
+        .catch(err => {
           console.log(err.message)
         })
-      })
-      .catch(err => {
-        console.log(err.message)
-      })
+    }
   }
   // TODO 通过动态加载js call from 目前没有搞定，原因import时提示模块不存在
   // callForm(formKey, id, states) {
@@ -118,17 +143,24 @@ export default class VSmartView {
   //     })
   // }
 
-  getUIMeta(formKey) {
+  getDetailUIMeta(formKey) {
     return new Promise(
       (resolve, reject) => {
-        request({
-          url: '/api/getDetailUIMeta/' + formKey,
-          method: 'get'
-        }).then(resData => {
-          resolve(resData.data.detailViewModel)
-        }).catch(err => {
-          console.log(err.message)
-        })
+        if (this.formMetas[formKey] !== undefined && this.formMetas[formKey] !== null) {
+          resolve(this.formMetas[formKey])
+        } else {
+          request({
+            url: '/api/getDetailUIMeta/' + formKey,
+            method: 'get'
+          }).then(resData => {
+            if (resData.data.detailViewModel !== null) {
+              this.formMetas[resData.data.detailViewModel.name] = resData.data.detailViewModel
+            }
+            resolve(resData.data.detailViewModel)
+          }).catch(err => {
+            console.log(err.message)
+          })
+        }
       })
   }
 

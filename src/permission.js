@@ -4,6 +4,7 @@ import { Message } from 'element-ui'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css'// progress bar style
 import { getToken } from '@/utils/auth' // getToken from cookie
+import VUE from 'vue'
 
 NProgress.configure({ showSpinner: false })// NProgress Configuration
 
@@ -58,6 +59,10 @@ router.beforeEach((to, from, next) => {
   }
 })
 
-router.afterEach(() => {
+// router.afterEach(() => {
+//   NProgress.done() // finish progress bar
+// })
+
+router.afterEach((to, from) => {
   NProgress.done() // finish progress bar
 })
