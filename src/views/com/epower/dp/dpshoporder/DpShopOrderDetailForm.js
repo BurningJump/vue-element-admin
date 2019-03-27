@@ -40,8 +40,8 @@ export default class DpShopOrderDetailForm extends VBaseDetailForm {
     var newStockOrder = form.getCmpByName('newStockOrder')
     newStockOrder.on('click',
       function(params = null) {
-         form.showFailMesg({ msg: '生成要货单失败!' })
-       // form.setCmpValue('DemandShopId', null)
+        // form.showFailMesg({ msg: '生成要货单失败!' })
+        form.setCmpValue('SellerMemo', '深圳直营仓-1  已换36 东莞自营渠道 郑/24K')
       }
     )
   }

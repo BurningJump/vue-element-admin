@@ -21,8 +21,8 @@ export default class VDataSet {
   parentIdFieldName; //  当是从数据时，父数据集的的主字段名称
 
   /**
-* 預設默認值集
-*/
+  * 預設默認值集
+  */
   defaultValueSet = [];
 
   constructor(datasetMeta) {
@@ -90,9 +90,9 @@ export default class VDataSet {
   }
 
   /**
- * 删除log中的文件
- * @param {*} key 和fieldName相同的字段
- */
+   * 删除log中的文件
+   * @param {*} key 和fieldName相同的字段
+   */
   _logRemoveByField(key, fieldName) {
     var k = 0
     if (this.updateLogs != null) {
@@ -118,9 +118,9 @@ export default class VDataSet {
   }
 
   /**
-* 删除log中的文件
-* @param {*} key
-*/
+  * 删除log中的文件
+  * @param {*} key
+  */
   _logRemoveAll() {
     var k = 0
     if (this.updateLogs != null) {
@@ -137,7 +137,8 @@ export default class VDataSet {
       if (ADataPackage.dataSets[j].name === this.name) {
         //  Object.assign(this.currentTable, ADataPackage.dataSets[j].originalTable)// 当前记录
         // this.copyTable(this.currentTable, ADataPackage.dataSets[j].originalTable)
-        this.currentTable = this.copyTableByProxy(ADataPackage.dataSets[j].originalTable)
+        // this.currentTable = this.copyTableByProxy(ADataPackage.dataSets[j].originalTable)
+        this.currentTable = this.copyTable(ADataPackage.dataSets[j].originalTable, true)
         //  Object.assign(this.originalTable, ADataPackage.dataSets[j].originalTable)// 原始记录
         //  this.copyTable(this.originalTable, ADataPackage.dataSets[j].originalTable)
         this.originalTable = this.copyTable(ADataPackage.dataSets[j].originalTable)
@@ -147,6 +148,27 @@ export default class VDataSet {
         break
       }
     }
+  }
+  /**
+   * 给记录增加代理监听： 值变更的时候同步修改日志及触值依赖
+   * @param {Array} record 源记录
+   */
+  addProxyOnRecord(record) {
+    var dataset = this
+    var logHandle = {
+      set: function(obj, prop, value) {
+        if (obj[prop] !== value && prop !== 'id' && prop !== 'entityStatus') {
+          // 同步日志
+          dataset.syncLog(obj, prop, value)
+          // 记录状态控制
+          dataset.syncEntityStatus(obj)
+        }
+        // 写入值
+        // obj[prop] = value
+        return true
+      }
+    }
+    return new Proxy(record, logHandle)
   }
 
   proxyRecordWithUpdateLog(record) {
@@ -177,28 +199,35 @@ export default class VDataSet {
     return new Proxy(record, logHandle)
   }
 
-  /** *
+  // /** *
+  //  * 复制一个TABLE
+  //  */
+  // copyTableByProxy(sourceTable) {
+  //   var targetTable = []
+  //   for (const rec of sourceTable) {
+  //     var newRecord
+  //     // 如果是新增状态的数据不会获取到修改日志
+  //     if (rec['entityStatus'] === 'I') {
+  //       newRecord = Object.assign({}, rec)
+  //     } else {
+  //       newRecord = this.proxyRecordWithUpdateLog(Object.assign({}, rec))
+  //     }
+  //     targetTable.push(newRecord)
+  //   }
+  //   return targetTable
+  // }
+  /**
    * 复制一个TABLE
+   * @param {Array} sourceTable 源table
+   * @param {boolean} needProxy 是否需要添加代理监听
    */
-  copyTableByProxy(sourceTable) {
-    var targetTable = []
-    for (const rec of sourceTable) {
-      var newRecord
-      // 如果是新增状态的数据不会获取到修改日志
-      if (rec['entityStatus'] === 'I') {
-        newRecord = Object.assign({}, rec)
-      } else {
-        newRecord = this.proxyRecordWithUpdateLog(Object.assign({}, rec))
-      }
-      targetTable.push(newRecord)
-    }
-    return targetTable
-  }
-
-  copyTable(sourceTable) {
+  copyTable(sourceTable, needProxy = false) {
     var targetTable = []
     for (const rec of sourceTable) {
       var newRecord = Object.assign({}, rec)
+      if (needProxy) {
+        newRecord = this.addProxyOnRecord(Object.assign({}, rec))
+      }
       targetTable.push(newRecord)
     }
     return targetTable
@@ -206,7 +235,8 @@ export default class VDataSet {
 
   // 装载DataPackage数据
   loadList(dataList) {
-    this.currentTable = this.copyTableByProxy(dataList) // 当前记录
+    // this.currentTable = this.copyTableByProxy(dataList) // 当前记录
+    this.currentTable = this.copyTable(dataList, true) // 当前记录
     this.originalTable = this.copyTable(dataList) // 当前记录// 原始记录
     this.updateLogs = [] // 更新记录
     this.isOpen = true
@@ -313,7 +343,19 @@ export default class VDataSet {
   recordCount() {
     return (this.currentTable === null || this.currentTable === undefined ? 0 : this.currentTable.length)
   }
-
+  /**
+   * 同步记录状态
+   * @param {Array} record 记录
+   */
+  syncEntityStatus(record) {
+    if (record['entityStatus'] === 'U' || record['entityStatus'] === 'L') {
+      if (this._logCount(record['id']) > 0) {
+        record['entityStatus'] = 'U'
+      } else {
+        record['entityStatus'] = 'I'
+      }
+    }
+  }
   /**
      * DataSet是否初始化
      */
@@ -321,28 +363,60 @@ export default class VDataSet {
     return (this.currentTable == null && this.datasetInfo == null)
   }
 
-  updatedLog(key, fieldName, newValue) {
-    // 初始化更新记录
-    if (this.updateLogs === null || this.updateLogs.length === 0) {
-      this.updateLogs = []
+  /**
+   * 同步日志
+   * @param {Array} record 记录对象
+   * @param {string} fieldName 字段名称
+   * @param {*} newValue 更新的值
+   */
+  syncLog(record, fieldName, newValue) {
+    record[fieldName] = newValue
+    if (fieldName !== 'id' && fieldName !== 'entityStatus' && record['entityStatus' ] !== 'I') {
+      const key = record['id']
+      // 初始化更新记录
+      if (this.updateLogs === null || this.updateLogs.length === 0) {
+        this.updateLogs = []
+      }
+      // 清除日志
+      this._logRemoveByField(key, fieldName)
+      // 寻找原始值
+      const originalValue = this.getOriginalValue(key, fieldName)
+      // 和原始值不一致时
+      if (newValue !== originalValue) {
+        // 记录日志 log
+        this.updateLogs.push({
+          entityID: key,
+          fieldname: fieldName,
+          newValue: newValue,
+          OldValue: originalValue
+        })
+      }
+      // this.updatedLog(record['id'], fieldName, newValue)
     }
-    // 清除日志
-    this._logRemoveByField(key, fieldName)
-    // 寻找原始值
-    const originalValue = this.getOriginalValue(key, fieldName)
-    // 和原始值不一致时
-    if (newValue !== originalValue) {
-      // 记录日志 log
-      this.updateLogs.push({
-        entityID: key,
-        fieldname: fieldName,
-        newValue: newValue,
-        OldValue: originalValue
-      })
-      return true
-    }
-    return false
   }
+
+  // updatedLog(key, fieldName, newValue) {
+  //   // 初始化更新记录
+  //   if (this.updateLogs === null || this.updateLogs.length === 0) {
+  //     this.updateLogs = []
+  //   }
+  //   // 清除日志
+  //   this._logRemoveByField(key, fieldName)
+  //   // 寻找原始值
+  //   const originalValue = this.getOriginalValue(key, fieldName)
+  //   // 和原始值不一致时
+  //   if (newValue !== originalValue) {
+  //     // 记录日志 log
+  //     this.updateLogs.push({
+  //       entityID: key,
+  //       fieldname: fieldName,
+  //       newValue: newValue,
+  //       OldValue: originalValue
+  //     })
+  //     return true
+  //   }
+  //   return false
+  // }
 
   /**
  * 修改记录的值
@@ -472,10 +546,12 @@ export default class VDataSet {
     var dataId = new UID.UUID().toString()
     var newData = { id: dataId, entityStatus: 'I' }
     newData = this.replaceDefaultValue(newData)
+    // 添加代理监控值更新
+    var result = this.addProxyOnRecord(newData)
     // var result = this.proxyRecordWithUpdateLog(newData) 新增的数据不需有监控修改日志
-    this.currentTable.push(newData)
-    return newData
-   }
+    this.currentTable.push(result)
+    return result
+  }
 
   /**
    * 清空数据
