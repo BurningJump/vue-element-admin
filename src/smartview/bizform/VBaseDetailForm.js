@@ -591,14 +591,8 @@ export default class VBaseDetailForm extends VBaseForm {
    * 初始化ComponentSet
    *  @param {*} componentSetMeta 元数据
    */
-<<<<<<< HEAD
    _initComponentSet(detailForm, componentSet, componentSetMeta) {
      this._initComponent(detailForm, componentSet, componentSetMeta)
-     // 数据连接
-     if (componentSetMeta.dataset !== undefined) {
-       var ds = detailForm.getDataSource(componentSetMeta.dataset)
-       componentSet.datasource = ds
-     }
 
      for (var componentMeta of componentSetMeta.components) {
        var cmp
@@ -607,51 +601,27 @@ export default class VBaseDetailForm extends VBaseForm {
          this._initRemoteCombox(detailForm, cmp, componentMeta)
        }
        // TODO 初始化valuelistCompoent
-       // else if (componentMeta.ctype === 'valuelistField') {
-       //   cmp = new VRemoteCombox(componentSet)
-       //   this._initValuelist(detailForm, cmp, componentMeta)
-       // }
-       else {
+       else if (componentMeta.ctype === 'valuelistField') {
+         cmp = new VRemoteCombox(componentSet)
+         this._initValuelist(detailForm, cmp, componentMeta)
+       } else {
          cmp = new VDBComponent(componentSet)
          this._initDBComponent(detailForm, cmp, componentMeta)
        }
        cmp.datasource = componentSet.datasource
      }
    }
-=======
-  _initComponentSet(detailForm, componentSet, componentSetMeta) {
-    this._initComponent(detailForm, componentSet, componentSetMeta)
 
-    for (var componentMeta of componentSetMeta.components) {
-      var cmp
-      if (componentMeta.ctype === 'remoteComboBox') {
-        cmp = new VRemoteCombox(componentSet)
-        this._initRemoteCombox(detailForm, cmp, componentMeta)
-      }
-      // TODO 初始化valuelistCompoent
-      else if (componentMeta.ctype === 'valuelistField') {
-        cmp = new VRemoteCombox(componentSet)
-        this._initValuelist(detailForm, cmp, componentMeta)
-      }
-      else {
-        cmp = new VDBComponent(componentSet)
-        this._initDBComponent(detailForm, cmp, componentMeta)
-      }
-      cmp.datasource = componentSet.datasource
-    }
-  }
->>>>>>> 6efac59a235b7a431db735841d3c748f3d962c11
-
-  _initValuelist(form, component, aComponentMeta) {
-    this._initDBComponent(form, component, aComponentMeta)
-    if (aComponentMeta.valueListModel !== undefined && aComponentMeta.valueListModel !== null) {
-      component.fromAction = aComponentMeta.valueListModel.fromAction // 远程数据请求地址
-      component.valueField = aComponentMeta.valueListModel.saveField // 数据存储的字段
-      component.valueFieldType = aComponentMeta.valueListModel.valueFieldType // ：//数据存储字段的类型
-      component.displayField = aComponentMeta.valueListModel.displayField // ：前端显示字段
-      component.displayFieldType = aComponentMeta.valueListModel.displayFieldType // ：前端显示字段的类型
-    }
-  }
+   _initValuelist(form, component, aComponentMeta) {
+     this._initDBComponent(form, component, aComponentMeta)
+     if (aComponentMeta.valueListModel !== undefined && aComponentMeta.valueListModel !== null) {
+       component.fromAction = aComponentMeta.valueListModel.fromAction // 远程数据请求地址
+       component.valueField = aComponentMeta.valueListModel.saveField // 数据存储的字段
+       component.valueFieldType = aComponentMeta.valueListModel.valueFieldType // ：//数据存储字段的类型
+       component.displayField = aComponentMeta.valueListModel.displayField // ：前端显示字段
+       component.displayFieldType = aComponentMeta.valueListModel.displayFieldType // ：前端显示字段的类型
+     }
+   }
 
    _initRemoteCombox(form, component, aComponentMeta) {
      this._initDBComponent(form, component, aComponentMeta)
