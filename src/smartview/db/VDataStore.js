@@ -1,13 +1,8 @@
-import VDataSet from './VDataSet.js'
 import request from '@/utils/request'
 
 export default class VDataStore {
   // 数据存放
   datasets = [];
-
-  constructor(datastoreMeta) {
-    this.init(datastoreMeta)
-  }
 
   commitToDB(AUrl, AParams = null) {
     return new Promise(
@@ -43,16 +38,6 @@ export default class VDataStore {
     for (var j = 0; j < this.datasets.length; j++) {
       if (this.datasets[j].name === dataSetName) {
         return this.datasets[j].getDatasetData(filter)
-      }
-    }
-  }
-
-  init(dataStoreMeta) {
-    for (var j = 0; j < dataStoreMeta.datasets.length; j++) {
-      if (dataStoreMeta.datasets[j]) {
-        var dataset = new VDataSet(dataStoreMeta.datasets[j])
-        dataset.dataStore = this
-        this.datasets.push(dataset)
       }
     }
   }

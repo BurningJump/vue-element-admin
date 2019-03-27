@@ -82,12 +82,12 @@ class CustomEditor extends Handsontable.editors.AutocompleteEditor {
   }
 
   createElements() {
-    super.createElements(); 
+    super.createElements();
 
     this.TEXTAREA = document.createElement("input");
     this.TEXTAREA.setAttribute("type", "search");
     this.TEXTAREA.setAttribute('placeholder', '输入');
-    
+
     // this.TEXTAREA.source= ['BMW', 'Chrysler', 'Nissan', 'Suzuki', 'Toyota', 'Volvo'];
     // this.TEXTAREA.select
 
@@ -109,7 +109,7 @@ export default {
       toolbar:this.page.findChild(this.pageModel.toolbarModel.name)
     }
   },
-  props: ['pageModel', 'activeTab', 'height','page'],
+  props: ['pageModel','page', 'activeTab', 'height'],
   components: {
     HotTable
   },
@@ -120,7 +120,7 @@ export default {
     })
   },
   methods: {
-    
+
      beforeKeyDown(instance,e){
        var hottable = this.$refs.hotInstance.hotInstance;
        var selection = hottable.getSelected();
@@ -182,23 +182,63 @@ export default {
             ? component.width
             : ""
         );
+        this.settings.columns.push(this.createColumn(component));
         // console.log('theader.ctype:'+theader.ctype);
-        if('valuelistField' === theader.ctype){
+
+
+      });
+    },
+     createColumn(component){
+      var column
+      if (component.ctype==='image'){
+         column ={
+          type: "autocomplete",
+          allowHtml: true,
+          renderer: this.imageCoverRenderer,
+          data: component.fieldName
+        }
+      } else   if (component.ctype==='checkboxField'){
+         column ={
+          type: "checkbox",
+          data: component.fieldName,
+          checkedTemplate: 1 ,
+          uncheckedTemplate: 0
+        }
+      } else  if (component.ctype==='dateField'){
+         column ={
+          type: "date",
+          dateFormat: 'YYYY-MM-DD',
+          correctFormat: true,
+          data: component.fieldName
+        }
+      } else if (component.ctype==='dateTimeField'){
+         column ={
+          type: "date",
+          dateFormat: component.format,
+          correctFormat: true,
+          data: component.fieldName
+        }
+      } else if (component.ctype==='numberfield'){
+         column ={
+          type: "numeric",
+          data: component.fieldName
+        }
+      } else if('valuelistField' === component.ctype){
           this.settings.columns.push({
               // type:"yu.gridValueList",
               editor:"YU_Grid_ValueList",
-              fromAction:'http://root.yiuser.com:3001/'+theader.fromAction,
-              valueField:theader.valueField,//theader.valueListModel.saveField,
-              displayField:theader.displayField,//theader.valueListModel.displayField,
-              data: theader.fieldName,     
+              fromAction:'http://root.yiuser.com:3001/'+component.fromAction,
+              valueField:component.valueField,//theader.valueListModel.saveField,
+              displayField:component.displayField,//theader.valueListModel.displayField,
+              data: component.fieldName,
               //renderer 渲染显示字段
               //TODO 后续要写到类型内，以便前端框架移植
               renderer: function(hotInstance, td, row, column, prop, value, cellProperties){
                 Handsontable.renderers.TextRenderer.apply(this, arguments);
-                var cellValue = Handsontable.helper.stringify(value); 
+                var cellValue = Handsontable.helper.stringify(value);
                 if(Object.prototype.toString.call(value) === '[object Object]'){
-                  cellValue = value[theader.displayField];
-                }                       
+                  cellValue = value[component.displayField];
+                }
                 td.innerHTML = cellValue;
               },
 
@@ -206,26 +246,19 @@ export default {
                 colHeaders: ['列1', '列2', '列3'],
                 autoColumnSize: true,
                 data: [],
-                columns: [{data: "id"},{data: "materialNo"},{data: "materialName"}]         
+                columns: [{data: "id"},{data: "materialNo"},{data: "materialName"}]
               }
-            
-          });
-        }else{
-          this.settings.columns.push({
-            type: "text",
 
-            source:[],        //提示框列表
-            strict: true,     //是否严格匹配source[]提示框列表内的值
-            allowInvalid: false,  //是否允许录入提示框内容之外的值，如果允许，单元格背景颜色变红色
-            search:true,
-
-            allowHtml: true,
-            renderer: this.coverRenderer,
-            data: theader.fieldName
           });
         }
-        
-      });
+        else  {
+       column ={
+          type: "text",
+          allowHtml: true,
+          data: component.fieldName
+        }
+      }
+     return column
     },
     safeHtmlRenderer(instance, td, row, col, prop, value, cellProperties) {
         var escaped = Handsontable.helper.stringify(value);
@@ -250,7 +283,7 @@ export default {
         td.className = "htCenter htMiddle";
         td.appendChild(img);
       }else if(prop=='baseSize'){
-        
+
         td.style.color = 'red';
         // td.innerHtml = "<button>button</button>";
         // td.remoteCombox.createElement('remote-combox');

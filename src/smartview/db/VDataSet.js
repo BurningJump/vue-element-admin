@@ -25,8 +25,10 @@ export default class VDataSet {
   */
   defaultValueSet = [];
 
-  constructor(datasetMeta) {
-    this.init(datasetMeta)
+  constructor() {
+    this.currentTable = []// 当前记录
+    this.originalTable = []// 原始记录
+    this.updateLogs = [] // 更新记录
   }
 
   get isOpen() {
@@ -34,44 +36,6 @@ export default class VDataSet {
   }
   set isOpen(value) {
     this._isOpen = value
-  }
-
-  init(datasetMeta) {
-    if (datasetMeta != null) {
-      if (datasetMeta.bizClassName !== undefined) {
-        this.bizClassName = datasetMeta.bizClassName
-      }
-      if (datasetMeta.name !== undefined) {
-        this.name = datasetMeta.name
-      }
-
-      if (datasetMeta.actionMethod !== undefined) {
-        this.actionMethod = datasetMeta.actionMethod
-      }
-
-      if (datasetMeta.datasource !== undefined) {
-        this.dataFrom = datasetMeta.datasource
-      }
-
-      if (datasetMeta.isMaster !== undefined) {
-        this.isMaster = (datasetMeta.isMaster === 'true')
-      }
-
-      if (datasetMeta.masterIdField !== undefined) {
-        this.masterIdFieldName = datasetMeta.masterIdField
-      }
-
-      if (datasetMeta.parentDataset !== undefined) {
-        this.parentDatasetName = datasetMeta.parentDataset
-      }
-
-      if (datasetMeta.parentIdField !== undefined) {
-        this.parentIdFieldName = datasetMeta.parentIdField
-      }
-    }
-    this.currentTable = []// 当前记录
-    this.originalTable = []// 原始记录
-    this.updateLogs = [] // 更新记录
   }
 
   /**
