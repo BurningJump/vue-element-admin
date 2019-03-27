@@ -593,6 +593,11 @@ export default class VBaseDetailForm extends VBaseForm {
    */
    _initComponentSet(detailForm, componentSet, componentSetMeta) {
      this._initComponent(detailForm, componentSet, componentSetMeta)
+     // 数据连接
+     if (componentSetMeta.dataset !== undefined) {
+       var ds = detailForm.getDataSource(componentSetMeta.dataset)
+       componentSet.datasource = ds
+     }
 
      for (var componentMeta of componentSetMeta.components) {
        var cmp

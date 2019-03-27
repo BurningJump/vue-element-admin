@@ -95,14 +95,14 @@ export default class VSmartView {
                 }
               })
             }).catch(err => {
-              console.log(err.message)
+              console.log(err.stack)
             })
           }).catch(err => {
-            console.log(err.message)
+            console.log(err.stack)
           })
         })
         .catch(err => {
-          console.log(err.message)
+          console.log(err.stack)
         })
     }
   }
