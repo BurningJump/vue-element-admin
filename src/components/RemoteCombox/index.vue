@@ -39,7 +39,7 @@
       <span style="float: right; color: #8492a6; font-size: 13px">{{getObjectValueByKey(item,input.valueField)}}</span>
     </el-option>
   </el-select>
-  <el-button icon="el-icon-search" class="remotecombox-search" @click="callValueListFrom"></el-button>
+  <el-button v-if="input.selectform" icon="el-icon-search" class="remotecombox-search" @click="callValueListFrom"></el-button>
   </div>
 </template>
 
@@ -57,7 +57,7 @@
       }
     },
     props: {input:{},
-            bandValue:[],
+            bandValue:'',
             extraFilter:'', //业务人员在前端自定义的过滤条件
             multiple:true,
             disabled:false,
@@ -81,22 +81,27 @@
     },
     mounted() {
       //初始值显示
-      console.log('input:'+this.input);
+      // console.log('input:'+this.input);
       // if(!this.multiple){
       //   this.comValue = this.input.inputValue;
       // }else{
       //   this.comValue.push(this.input.inputValue);
       // }
-      this.loadRemoteData('',2);
+
+      //实时远程抓取数据
+      if(!this.input.fetchInTime)
+        this.loadRemoteData('',2);
     },
     methods: {
       //调用valueList窗口
       callValueListFrom(){
-        // var formJsPath = formKey.replace(/\./g, '/')
-        this.$router.push({path:'/com/epower/am/operation/SelectList',
-              query: {
-                selectType:this.multiple?'multi':'single',
-                callValueListFromRefeed: this.callValueListFromRefeed} })
+          let formJsPath = (this.input.fromJsclass||'').replace(/\./g, '/')
+          this.$router.push({
+                path:formJsPath,
+                query:{
+                  selectType:this.multiple?'multi':'single',
+                  callValueListFromRefeed: this.callValueListFromRefeed} 
+          })
       },
       //调用valueList窗口回调函数，1.填充bandValue，2.filterList，3.保存结果到datapackage
       callValueListFromRefeed(resData){
@@ -125,6 +130,7 @@
         // 多选模式下移除tag时触发;
       },
       fireFocusEvent(){
+        // this.label=this.getObjectValueByKey(item,input.valueFieldType)
        /// console.log('fireFocusEvent:');
         // 当 input 获得焦点时触发;
       },
@@ -173,7 +179,10 @@
       remoteMethod(query,initFlag) {
         //无值及空值时全列表可选
         if ( (query||'').trim() !== '') {
-          // this.this.loadRemoteData('',1);;
+          
+          //实时远程抓取数据
+          if(this.input.fetchInTime)
+            this.loadRemoteData(query,1);;
 
           this.filterList = this.fullList.filter(item => {
             let itemValue ='';

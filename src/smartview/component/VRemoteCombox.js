@@ -4,7 +4,12 @@ import { basicConstant } from '../VBasicConstant.js'
 export default class VRemoteCombox extends VDBComponent {
     allowcreate=false;// ：是否允许用户自定义选项，即新增系统中不存在的选项
     multiple=false;// 是否支持多选
-    clearable=true;// 是否支持一键清空，仅单选模式下生效
+    clearable=false;// 是否支持一键清空，仅单选模式下生效
+      
+    fetchInTime = false; //是否实时远程获取数据
+
+    selectform=true; //是否弹窗供用户选择
+    fromJsclass='/com/epower/am/operation/SelectList'; //弹出窗口ID 
     // disabled;是否不可用
 
     fromAction;// 远程数据请求地址
@@ -20,5 +25,18 @@ export default class VRemoteCombox extends VDBComponent {
       super(parent)
       this.ctype = basicConstant.CMP_REMOTECOMBOX
     }
+ /**
+   * 装载数据
+   * @param {*} aValue
+   */
+  loadData(aValue) {
+    super.loadData(aValue);
+    if(this.multiple){
+      this.inputValue = [].concat(aValue)
+    }else{
+      this.inputValue =aValue
+    }
+    this.value = aValue
+  }
 }
 
