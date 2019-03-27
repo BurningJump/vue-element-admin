@@ -31,15 +31,15 @@
     >
     <el-option
       v-for="item in filterList"
-      :key=getObjectValueByKey(item,input.remoteComboBoxModel.valueField)
-      :label=getObjectValueByKey(item,input.remoteComboBoxModel.displayField)
-      :value=getObjectValueByKey(item,input.remoteComboBoxModel.valueField)>
-      <span style="float: left" class="option_coloum">{{getObjectValueByKey(item,input.remoteComboBoxModel.displayField)}}</span>
-      <span style="float: left" class="option_coloum">{{getObjectValueByKey(item,input.remoteComboBoxModel.displayField)}}</span>
-      <span style="float: right; color: #8492a6; font-size: 13px">{{getObjectValueByKey(item,input.remoteComboBoxModel.valueField)}}</span>
+      :key=getObjectValueByKey(item,input.valueField)
+      :label=getObjectValueByKey(item,input.displayField)
+      :value=getObjectValueByKey(item,input.valueField)>
+      <span style="float: left" class="option_coloum">{{getObjectValueByKey(item,input.displayField)}}</span>
+      <span style="float: left" class="option_coloum">{{getObjectValueByKey(item,input.displayField)}}</span>
+      <span style="float: right; color: #8492a6; font-size: 13px">{{getObjectValueByKey(item,input.valueField)}}</span>
     </el-option>
   </el-select>
-  <el-button icon="el-icon-search" class="remotecombox-search" @click="callValueListFrom"></el-button>
+  <el-button v-if="input.selectform" icon="el-icon-search" class="remotecombox-search" @click="callValueListFrom"></el-button>
   </div>
 </template>
 
@@ -57,7 +57,7 @@
       }
     },
     props: {input:{},
-            bandValue:[],
+            bandValue:'',
             extraFilter:'', //业务人员在前端自定义的过滤条件
             multiple:true,
             disabled:false,
@@ -87,16 +87,21 @@
       // }else{
       //   this.comValue.push(this.input.inputValue);
       // }
-      this.loadRemoteData('',2);
+
+      //实时远程抓取数据
+      if(!this.input.fetchInTime)
+        this.loadRemoteData('',2);
     },
     methods: {
       //调用valueList窗口
       callValueListFrom(){
-        // var formJsPath = formKey.replace(/\./g, '/')
-        this.$router.push({path:'/com/epower/am/operation/SelectList',
-              query: {
-                selectType:this.multiple?'multi':'single',
-                callValueListFromRefeed: this.callValueListFromRefeed} })
+          let formJsPath = (this.input.fromJsclass||'').replace(/\./g, '/')
+          this.$router.push({
+                path:formJsPath,
+                query:{
+                  selectType:this.multiple?'multi':'single',
+                  callValueListFromRefeed: this.callValueListFromRefeed} 
+          })
       },
       //调用valueList窗口回调函数，1.填充bandValue，2.filterList，3.保存结果到datapackage
       callValueListFromRefeed(resData){
@@ -106,10 +111,10 @@
         let selectValues=[];
         this.filterList = [];
         if(!this.multiple){
-          selectValues=resData[0][this.input.remoteComboBoxModel.valueField];
+          selectValues=resData[0][this.input.valueField];
         }else{
           for(let item of resData){
-            selectValues.push(item[this.input.remoteComboBoxModel.valueField]);
+            selectValues.push(item[this.input.valueField]);
           }
         }
         this.filterList = resData;
@@ -125,7 +130,7 @@
         // 多选模式下移除tag时触发;
       },
       fireFocusEvent(){
-        // this.label=this.getObjectValueByKey(item,input.remoteComboBoxModel.valueFieldType)
+        // this.label=this.getObjectValueByKey(item,input.valueFieldType)
        /// console.log('fireFocusEvent:');
         // 当 input 获得焦点时触发;
       },
@@ -140,7 +145,7 @@
       //获取远程数据
       getRomteData(param){
         return new Promise((resolve, reject) => {
-        this.$http.get(`http://root.yiuser.com:3001/`+this.input.remoteComboBoxModel.fromAction,{
+        this.$http.get(`http://root.yiuser.com:3001/`+this.input.fromAction,{
               params:param
             },{
               emulateJSON: true
@@ -158,11 +163,11 @@
           let filterStr = ' ';
           // let fieldType = 'string';
           if(initFlag==1){
-            filterStr = this.getFilterStr(this.input.remoteComboBoxModel.valueFieldType,'=',this.input.remoteComboBoxModel.valueField,query);
+            filterStr = this.getFilterStr(this.input.valueFieldType,'=',this.input.valueField,query);
           }else if(initFlag==2){
 
           }else{
-            filterStr = this.getFilterStr(this.input.remoteComboBoxModel.displayFieldType,'like',this.input.remoteComboBoxModel.displayField,query);
+            filterStr = this.getFilterStr(this.input.displayFieldType,'like',this.input.displayField,query);
           }
           filterStr=this.extraFilter + filterStr;
 
@@ -174,14 +179,17 @@
       remoteMethod(query,initFlag) {
         //无值及空值时全列表可选
         if ( (query||'').trim() !== '') {
-          // this.this.loadRemoteData('',1);;
+          
+          //实时远程抓取数据
+          if(this.input.fetchInTime)
+            this.loadRemoteData(query,1);;
 
           this.filterList = this.fullList.filter(item => {
             let itemValue ='';
             if(initFlag==1){
-              itemValue = (this.getObjectValueByKey(item,this.input.remoteComboBoxModel.valueField));
+              itemValue = (this.getObjectValueByKey(item,this.input.valueField));
             }else{
-              itemValue = (this.getObjectValueByKey(item,this.input.remoteComboBoxModel.displayField));
+              itemValue = (this.getObjectValueByKey(item,this.input.displayField));
             }
             return itemValue.indexOf(query.toLowerCase()) > -1;
           });

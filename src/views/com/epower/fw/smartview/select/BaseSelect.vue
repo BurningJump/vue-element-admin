@@ -395,7 +395,7 @@ export default {
     },
     getUIMeta() {
       return new Promise((resolve,reject) => {
-        this.$http.get('/api/getSelectUIMeta/com.epower.abd.abdworkteam.AbdWorkTeamList').then((res) => {
+        this.$http.get('/api/getSelectUIMeta/com.epower.abd.material.MaterialList').then((res) => {
           this.UIMeta = res.data
           this.grid = []
           this.UIMeta.selectViewModel.view.components.forEach((item, index) => {
@@ -412,7 +412,7 @@ export default {
     },
     getListData() {
       return new Promise((resolve,reject) => {
-        this.$http.get('/api/openapi/workTeamListData').then((res) => {
+        this.$http.get('/api/openapi/materialListData').then((res) => {
           this.list = [...res.data.resultList]
           // this.$set(this.list, res.data.resultList)
           // res.data.resultList.forEach((item, index) => {

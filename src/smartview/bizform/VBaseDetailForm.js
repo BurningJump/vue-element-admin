@@ -510,10 +510,10 @@ export default class VBaseDetailForm extends VBaseForm {
         this._initRemoteCombox(detailForm, cmp, componentMeta)
       }
       // TODO 初始化valuelistCompoent
-      // else if (componentMeta.ctype === 'valuelistField') {
-      //   cmp = new VRemoteCombox(componentSet)
-      //   this._initValuelist(detailForm, cmp, componentMeta)
-      // }
+      else if (componentMeta.ctype === 'valuelistField') {
+        cmp = new VRemoteCombox(componentSet)
+        this._initValuelist(detailForm, cmp, componentMeta)
+      }
       else {
         cmp = new VDBComponent(componentSet)
         this._initDBComponent(detailForm, cmp, componentMeta)
@@ -522,16 +522,16 @@ export default class VBaseDetailForm extends VBaseForm {
     }
   }
 
-  // _initValuelist(form, component, aComponentMeta) {
-  //   this._initDBComponent(form, component, aComponentMeta)
-  //   if (aComponentMeta.valueListModel !== undefined && aComponentMeta.valueListModel !== null) {
-  //     component.fromAction = aComponentMeta.valueListModel.fromAction // 远程数据请求地址
-  //     component.valueField = aComponentMeta.valueListModel.valueField // 数据存储的字段
-  //     component.valueFieldType = aComponentMeta.valueListModel.valueFieldType // ：//数据存储字段的类型
-  //     component.displayField = aComponentMeta.valueListModel.displayField // ：前端显示字段
-  //     component.displayFieldType = aComponentMeta.valueListModel.displayFieldType // ：前端显示字段的类型
-  //   }
-  // }
+  _initValuelist(form, component, aComponentMeta) {
+    this._initDBComponent(form, component, aComponentMeta)
+    if (aComponentMeta.valueListModel !== undefined && aComponentMeta.valueListModel !== null) {
+      component.fromAction = aComponentMeta.valueListModel.fromAction // 远程数据请求地址
+      component.valueField = aComponentMeta.valueListModel.saveField // 数据存储的字段
+      component.valueFieldType = aComponentMeta.valueListModel.valueFieldType // ：//数据存储字段的类型
+      component.displayField = aComponentMeta.valueListModel.displayField // ：前端显示字段
+      component.displayFieldType = aComponentMeta.valueListModel.displayFieldType // ：前端显示字段的类型
+    }
+  }
 
   _initRemoteCombox(form, component, aComponentMeta) {
     this._initDBComponent(form, component, aComponentMeta)
