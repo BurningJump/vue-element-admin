@@ -9,7 +9,6 @@
 </template>
 
 <script>
-import  * as UID  from '@/smartview/util/uuid.js';
 
 export default {
   name: 'AppMain',
@@ -18,8 +17,7 @@ export default {
       return this.$store.state.tagsView.cachedViews
     },
     key() {
-       var akey = new UID.UUID().toString()
-      return this.$route.fullPath +'/'+  akey
+      return this.$route.fullPath
     }
   }
 }

@@ -6,6 +6,7 @@
 <script>
 import BaseBillDetail from "@/views/com/epower/fw/smartview/detail/BaseBillDetail";
 import VBaseDetailForm from "@/smartview/bizform/VBaseDetailForm.js";
+import {vsmartview} from '@/smartview/VSmartView.js'
 
 export default {
   name: 'com-epower-fw-smartview-detail-CustomBillDetail',
@@ -16,8 +17,7 @@ export default {
     };
   },
   created(){
-    this.form =  this.$route.query.form
-
+    this.form =vsmartview.findFormById(this.$route.query.formId)
   },
 };
 </script>

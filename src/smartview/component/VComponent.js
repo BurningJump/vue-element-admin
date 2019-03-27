@@ -13,7 +13,7 @@ export default class VComponent {
   ctype; // 组件类型
   children = []; // 组件类型
 
-  _dataSource = null;// 数据源,可用为空
+  _datasource = null;// 数据源,可用为空
 
 
 
@@ -73,8 +73,8 @@ export default class VComponent {
   }
 
   dataList() {
-    if (this._dataSource === null || this._dataSource === undefined) {
-      return this._dataSource.dataList
+    if (this._datasource === null || this._datasource === undefined) {
+      return this._datasource.dataList
     }
   }
 
@@ -130,21 +130,21 @@ export default class VComponent {
     this.setEnable(this.originalEnable)
   }
 
-  get dataSource() {
-    return this._dataSource
+  get datasource() {
+    return this._datasource
   }
-  set dataSource(value) {
-    this._dataSource = value
-    if (this._dataSource !== null || this._dataSource !== undefined) {
-      this._dataSource.addComponent(this)
+  set datasource(value) {
+    this._datasource = value
+    if (this._datasource !== null || this._datasource !== undefined) {
+      this._datasource.addComponent(this)
     }
   }
 
   getDataSet() {
-    if (this._dataSource == null || this._dataSource === undefined) {
+    if (this._datasource == null || this._datasource === undefined) {
       return null
     } else {
-      return this._dataSource.getDataSet()
+      return this._datasource.getDataSet()
     }
   }
 }

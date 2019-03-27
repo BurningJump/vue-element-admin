@@ -2,44 +2,41 @@
   <div class="base-bill-detail-container" v-if="form">
     <slot name="header"></slot>
     <base-detail-column
-      :tab="form.formMeta.masterPage"
+      :pageModel="form.formMeta.masterPage"
       :page ="form.getComponent(form.formMeta.masterPage.name)"
       @onButtonClick = "handleButtonClick"
     />
     <el-tabs v-model="form.activeDetailPage" type="card" @tab-click="handleTabClick">
       <el-tab-pane
-        v-for="(tab,tabIndex) in form.formMeta.detailPages"
-        :key="tab.name"
-        :name="tab.name"
+        v-for="(pageModel,pageIndex) in form.formMeta.detailPages"
+        :key="pageModel.name"
+        :name="pageModel.name"
       >
         <span slot="label">
-          <svg-icon :icon-class="`${tab.iconcls}`"/>
-          {{tab.label}}
+          <svg-icon :icon-class="`${pageModel.iconcls}`"/>
+          {{pageModel.label}}
         </span>
         <div class="base-detail-container">
           <base-detail-grid
-            v-if="tab.componentSetModel.style === 'grid'"
-            :tab="tab"
-            :dataLoaded="true"
+            v-if="pageModel.componentSetModel.style === 'grid'"
+            :pageModel="pageModel"
             :activeTab="form.activeDetailPage"
+            :page ="form.getComponent(pageModel.name)"
             :height="height"
-            :componentSet="form.getComponent(tab.componentSetModel.name)"
+             @onButtonClick = "handleButtonClick"
           />
           <base-detail-a-grid
-            v-else-if="tab.componentSetModel.style === 'aGrid'"
-            :url="form.formMeta.datasetInfo.datasets[tabIndex].actionMethod"
-            :tab="tab"
+            v-else-if="pageModel.componentSetModel.style === 'aGrid'"
             :activeTab="form.activeDetailPage"
-            :listLoading="listLoading"
+            :pageModel="pageModel"
+            :page ="form.getComponent(pageModel.name)"
             :height="height"
-            :componentSet="form.getComponent(tab.componentSetModel.name)"
           />
-
           <base-detail-column
-            v-else-if="tab.componentSetModel.style === 'column'"
-            :tab="tab"
+            v-else-if="pageModel.componentSetModel.style === 'column'"
+            :pageModel="pageModel"
             :activeTab="form.activeDetailPage"
-            :page ="form.getComponent(tab.name)"
+            :page ="form.getComponent(pageModel.name)"
             @buttonOnClick = "handleButtonClick"
           />
         </div>
@@ -89,8 +86,7 @@ export default {
     handleTabClick() {},
     handleButtonClick(params){
       params['form'] = this.form;
-   //     Object.extend(params,{form:this.form});
-        var button = params.component;
+      var button = params.component;
         button.fire('click',params)
         console.log(params.component.fun);
     }

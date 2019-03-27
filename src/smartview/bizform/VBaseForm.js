@@ -13,8 +13,12 @@ import * as VMessage from '../util/VMessage.js'
 import VDBComponent from '../component/VDBComponent.js'
 
 export default class VBaseForm extends VForm {
+
+   // smartview视图化对象后的唯一值，可以理解为windows的句炳
+   formId;
+
   // 所有有关的数据源
-  dataSources = new Map();
+  datasources = [];
 
   // 操作代码
   operationCode = null;
@@ -23,8 +27,10 @@ export default class VBaseForm extends VForm {
   dataStore;
 
   // form的元数据定义
-  formMeta;
+  _formMeta;
 
+  // 处理元数据的工具对象
+    metaUtil;
   /**
      * 本地变量集
      */
@@ -59,16 +65,31 @@ export default class VBaseForm extends VForm {
     this.formMeta = formMeta
   }
 
-  createDataStore(metaValue) {
-    this.dataStore = new VDataStore(metaValue)
+  get formMeta() {
+    return this._formMeta
+  }
+
+  set formMeta(value) {
+    this._formMeta = value
+    if (this.metaUtil == null) {
+      this.createMetaUtil(value)
+    }
+    this.metaUtil.modelConfig = value
+  }
+
+  createMetaUtil(value) {
+    this.metaUtil = null
+  }
+
+  createDataStore(dataStoreValue) {
+    this.dataStore = new VDataStore(dataStoreValue)
     this.dataStore.dataView = this
-    this.createDefultDataSource()
   }
 
   createDefultDataSource() {
     for (const dataset of this.dataStore.datasets) {
-      var dataSource = new VDataSource(dataset.name, dataset)
-      this.dataSources.set(dataSource.name, dataSource)
+      var datasource = new VDataSource(dataset.name, dataset)
+      this.datasources.push(datasource)
     }
   }
 
@@ -76,7 +97,7 @@ export default class VBaseForm extends VForm {
    * 返回数据是否修改过 curd
    */
   isChanged() {
-    for (const ds of this.dataSources.values()) {
+    for (const ds of this.datasources) {
       if (ds.isChanged() === true) return true
     }
     return false
@@ -87,7 +108,7 @@ export default class VBaseForm extends VForm {
   }
 
   openDataSources() {
-    for (const ds of this.dataSources.values()) {
+    for (const ds of this.datasources) {
       ds.open()
     }
   }
@@ -97,12 +118,19 @@ export default class VBaseForm extends VForm {
   }
 
   getDataSource(datasourceName) {
-    return this.dataSources.get(datasourceName)
+    var result
+    for (var ds of this.datasources) {
+      if (ds.name === datasourceName) {
+        result = ds
+        break
+      }
+    }
+    return result
   }
 
-  addRefDataSource(dataSource) {
-    if (dataSource !== undefined || dataSource === null) {
-      this.dataSources.set(dataSource.name, dataSource)
+  addRefDataSource(datasource) {
+    if (datasource !== undefined || datasource === null) {
+      this.datasources.push(datasource)
     }
   }
 
@@ -310,8 +338,8 @@ export default class VBaseForm extends VForm {
       if (findit === true) {
         var isEditable = true
         var record = null
-        if (ds.cmp.dataSource !== null) {
-          record = ds.cmp.dataSource.getRecord()
+        if (ds.cmp.datasource !== null) {
+          record = ds.cmp.datasource.getRecord()
         }
         if (typeof ds.condition === 'function') {
           isEditable = ds.condition({
@@ -343,8 +371,8 @@ export default class VBaseForm extends VForm {
       if (findit === true) {
         var isReadOnly = true
         var record = null
-        if (ds.cmp.dataSource !== null) {
-          record = ds.cmp.dataSource.getRecord()
+        if (ds.cmp.datasource !== null) {
+          record = ds.cmp.datasource.getRecord()
         }
         if (typeof ds.condition === 'function') {
           isReadOnly = ds.condition({
@@ -376,8 +404,8 @@ export default class VBaseForm extends VForm {
       if (findit === true) {
         var isEnable = true
         var record = null
-        if (ds.cmp.dataSource !== null) {
-          record = ds.cmp.dataSource.getRecord()
+        if (ds.cmp.datasource !== null) {
+          record = ds.cmp.datasource.getRecord()
         }
         if (typeof ds.condition === 'function') {
           isEnable = ds.condition({
@@ -409,8 +437,8 @@ export default class VBaseForm extends VForm {
       if (findit === true) {
         var isHidden = true
         var record = null
-        if (ds.cmp.dataSource !== null) {
-          record = ds.cmp.dataSource.getRecord()
+        if (ds.cmp.datasource !== null) {
+          record = ds.cmp.datasource.getRecord()
         }
         if (typeof ds.condition === 'function') {
           isHidden = ds.condition({
@@ -442,10 +470,10 @@ export default class VBaseForm extends VForm {
       if (findit === true) {
         var isRequired = true
         var record
-        if (ds.cmp.dataSource === null || ds.cmp.dataSource === undefined) {
+        if (ds.cmp.datasource === null || ds.cmp.datasource === undefined) {
           record = null
         } else {
-          record = ds.cmp.dataSource.getRecord()
+          record = ds.cmp.datasource.getRecord()
         }
         if (typeof ds.condition === 'function') {
           isRequired = ds.condition({
@@ -483,7 +511,7 @@ export default class VBaseForm extends VForm {
     if (me.cvars == null) {
       me.cvars = varObject
     } else {
-      Object.extend(me.cvars, varObject)
+      Object.assign(me.cvars, varObject)
     }
   }
 

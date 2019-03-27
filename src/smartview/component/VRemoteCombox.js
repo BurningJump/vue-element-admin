@@ -11,15 +11,16 @@ export default class VRemoteCombox extends VDBComponent {
     selectform=true; //是否弹窗供用户选择
     fromJsclass='/com/epower/am/operation/SelectList'; //弹出窗口ID 
     // disabled;是否不可用
+
     fromAction;// 远程数据请求地址
     valueField;// 数据存储的字段
     valueFieldType;// ：//数据存储字段的类型
     displayField;// ：前端显示字段
     displayFieldType;// ：前端显示字段的类型
 
-      //远程combox的配置
-    //remoteComboBoxModel;
-    
+  // 远程combox的配置
+    // remoteComboBoxModel;
+
     constructor(parent) {
       super(parent)
       this.ctype = basicConstant.CMP_REMOTECOMBOX
