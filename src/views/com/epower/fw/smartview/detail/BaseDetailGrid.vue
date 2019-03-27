@@ -80,7 +80,7 @@ export default {
       toolbar:this.page.findChild(this.pageModel.toolbarModel.name)
     }
   },
-  props: ['pageModel', 'activeTab', 'height','page'],
+  props: ['pageModel','page', 'activeTab', 'height'],
   components: {
     HotTable
   },

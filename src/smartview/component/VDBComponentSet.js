@@ -1,15 +1,18 @@
-import VValueComponent from './VValueComponent.js'
+import VComponentSet from './VComponentSet.js'
+import { basicConstant } from '../VBasicConstant.js'
 
-export default class VDBComponent extends VValueComponent {
-  // 对应的数据字段数据源,可用为空
-  _datasource = null;
+export default class VDBComponentSet extends VComponentSet {
+  constructor(parent) {
+    super(parent)
+    this.ctype = basicConstant.CMP_COMPONENTSET
+  }
 
-  // 对应的数据字段名称
-  fieldName; // 对应的数据字段名称
+  _datasource = null;// 数据源,可用为空
 
   get datasource() {
     return this._datasource
   }
+
   set datasource(value) {
     this._datasource = value
     if (this._datasource !== null || this._datasource !== undefined) {
@@ -23,10 +26,6 @@ export default class VDBComponent extends VValueComponent {
     } else {
       return this._datasource.getDataSet()
     }
-  }
-
-  canSetValue(newValue) {
-    return this.datasource.updateFieldValue(this.fieldName, newValue)
   }
 }
 

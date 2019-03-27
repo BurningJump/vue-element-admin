@@ -7,7 +7,6 @@ import {
   vEventType
 } from '../VEventBus.js'
 import VDataSource from '../db/VDataSource.js'
-import VDataStore from '../db/VDataStore.js'
 
 import * as VMessage from '../util/VMessage.js'
 import VDBComponent from '../component/VDBComponent.js'
@@ -81,10 +80,6 @@ export default class VBaseForm extends VForm {
     this.metaUtil = null
   }
 
-  createDataStore(dataStoreValue) {
-    this.dataStore = new VDataStore(dataStoreValue)
-    this.dataStore.dataView = this
-  }
 
   createDefultDataSource() {
     for (const dataset of this.dataStore.datasets) {
@@ -537,4 +532,6 @@ export default class VBaseForm extends VForm {
       }
     }
   }
+
+
 }
