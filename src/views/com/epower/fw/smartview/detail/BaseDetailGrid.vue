@@ -223,13 +223,17 @@ export default {
           type: "numeric",
           data: component.fieldName
         }
-      } else if('valuelistField' === component.ctype){
-          this.settings.columns.push({
+      } else if(component.ctype === 'valuelistField'){
+          column ={
               // type:"yu.gridValueList",
               editor:"YU_Grid_ValueList",
               fromAction:'http://root.yiuser.com:3001/'+component.fromAction,
+              inputField:component.inputField,
               valueField:component.valueField,//theader.valueListModel.saveField,
               displayField:component.displayField,//theader.valueListModel.displayField,
+              maps: component.maps,
+              component:component,
+              form:this.page.parent,//TODO 要传form 进来 xie处理
               data: component.fieldName,
               //renderer 渲染显示字段
               //TODO 后续要写到类型内，以便前端框架移植
@@ -249,7 +253,7 @@ export default {
                 columns: [{data: "id"},{data: "materialNo"},{data: "materialName"}]
               }
 
-          });
+          }
         }
         else  {
        column ={

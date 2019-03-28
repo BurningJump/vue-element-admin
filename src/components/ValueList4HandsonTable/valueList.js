@@ -42,6 +42,15 @@ import request from '@/utils/request'
     //在这里设置cell的值 
     this.instance.setDataAtCell(this.row,this.col,choiceRes);
     //TODO 设置map的值
+    let component = this.cellProperties.component;
+    let maps = this.cellProperties.maps;
+    let form = this.cellProperties.form;
+    for(let m of maps){
+      
+      // this.instance.setDataAtCell(this.row,  ,choiceRes[m['fromField']]);
+      form.setCmpValue(m['toComponent'],choiceRes[m['fromField']]);
+      
+    }
     // this.instance.setDataAtRowProp(this.row,fieldName,value);
     return choiceRes; //返回任何值都不起效果
   };
@@ -122,7 +131,7 @@ import request from '@/utils/request'
     let _cellProp = editor.cellProperties;    
     let objValue = this.getDataAtCell(row,column);
     if(_cellProp !== void 0  && objValue !== void 0 && objValue != null)
-      editor.TEXTAREA.value=objValue[_cellProp.valueField];
+      editor.TEXTAREA.value=objValue[_cellProp.inputField];
       // editor.TEXTAREA.value=objValue['teamName'];
   };
   
