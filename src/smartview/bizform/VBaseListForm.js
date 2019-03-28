@@ -26,7 +26,7 @@ import VDataSet from '../db/VDataSet.js'
 
 export default class VBaseListForm extends VBaseForm {
   // 当前活动的Tab
-  _activeListPage = '';
+  _activeView = '';
 
   // 查询对象值
   queryCondition ={}
@@ -45,13 +45,13 @@ export default class VBaseListForm extends VBaseForm {
     return new VBaseListForm(parent, formMeta)
   }
 
-  get activeListPage() {
-    return this._activeListPage
+  get activeView() {
+    return this._activeView
   }
 
-  set activeListPage(value) {
-    if (this._activeListPage !== value) {
-      this._activeListPage = value
+  set activeView(value) {
+    if (this._activeView !== value) {
+      this._activeView = value
       this.activePage(value)
     }
   }
@@ -482,39 +482,38 @@ export default class VBaseListForm extends VBaseForm {
     var conditionCS = new VDOComponentSet(this)
     this._initConditionComponentSet(this, conditionCS, formMeta.qCondition)
 
-    // 建立Condition视图
+    // 建立Tree视图
     var conditionTree = new VTree(this)
     this._initConditionVTree(this, conditionTree, formMeta.tree)
 
-    // 建立Master视图
-    var masterPanel = new VPanel(this)
-    this._initPanel(this, masterPanel, formMeta.masterPage)
+    // 3.建立dataView视图
+    var dataViewMeta = formMeta.dataView
 
-    // 1.视图中建立componentSet
-    var mComponentSet = new VComponentSet(masterPanel)
-    this._initComponentSet(this, mComponentSet, formMeta.masterPage.componentSetModel)
+    if (dataViewMeta.defaultView !== undefined && dataViewMeta.defaultView !== null) {
+      this.activeView = dataViewMeta.defaultView
+    } else if (dataViewMeta.views !== undefined && dataViewMeta.views.length > 0) {
+      this.activeView = dataViewMeta.views[0].name
+    }
 
-    // 2.视图中建立toolbar
-    var mToolbar = new VToolbar(masterPanel)
-    this._initToolbar(this, mToolbar, formMeta.masterPage.toolbarModel, mComponentSet.datasource)
-
-    // 3.建立detialpage视图
-    for (var page of formMeta.detailPages) {
+    for (var page of dataViewMeta.views) {
       // 建立Detail视图
+
       var detailPanel = new VPanel(this)
       this._initPanel(this, detailPanel, page)
+      detailPanel.viewType = page.viewType
+       //  2.视图中建立toolbar
+            var tToolbar = new VToolbar(detailPanel)
+            this._initToolbar(this, dToolbar, page.toolbarModel, dComponentSet.datasource)
 
       // 1.视图中建立componentSet
       var dComponentSet = new VComponentSet(detailPanel)
       this._initComponentSet(this, dComponentSet, page.componentSetModel)
 
-      //  2.视图中建立toolbar
-      var dToolbar = new VToolbar(detailPanel)
-      this._initToolbar(this, dToolbar, page.toolbarModel, dComponentSet.datasource)
-    }
+               //  2.视图中建立toolbar
+               var fToolbar = new VToolbar(detailPanel)
+               this._initToolbar(this, dToolbar, page.toolbarModel, dComponentSet.datasource)
 
-    if (formMeta.detailPages !== undefined && formMeta.detailPages.length > 0) {
-      this.activeListPage = formMeta.detailPages[0].name
+
     }
 
     return true
@@ -537,7 +536,20 @@ export default class VBaseListForm extends VBaseForm {
     if (treeMeta.method !== undefined) {
       tree.method = treeMeta.method
     }
-    // TODO 初始化 tree
+    // 初始化 tree
+    if (treeMeta.toolbar !== undefined && treeMeta.toolbar !== null) {
+      var TreeToolbar = new VToolbar(tree)
+      var treeToolbarMeta = treeMeta.toolbar
+      this._initComponent(form, TreeToolbar, treeToolbarMeta)
+      toolbar.showMoreButton = treeToolbarMeta.showMoreButton
+      // 初始化 tree
+      for (var componentMeta of treeToolbarMeta.components) {
+        if (componentMeta.ctype === 'button') {
+          var cmp = new VButton(toolbar)
+          this._initToolbarButton(form, cmp, componentMeta)
+        }
+      }
+    }
   }
 
   _initConditionComponentSet(form, componentSet, componentSetMeta) {
@@ -556,15 +568,7 @@ export default class VBaseListForm extends VBaseForm {
    */
   _initConditionComponent(form, component, aComponentMeta) {
     this._initComponent(form, component, aComponentMeta)
-
-    component.editable = (aComponentMeta.editable === undefined) ? true : (aComponentMeta.editable === 'true')
-    component.originalEditable = component.editable
-
-    component.readOnly = (aComponentMeta.readOnly === undefined) ? false : (aComponentMeta.readOnly === 'true')
-    component.originalReadOnly = component.readOnly
-
-    component.allowBlank = (aComponentMeta.allowBlank === undefined) ? false : (aComponentMeta.allowBlank === 'true')
-    component.originalAllowBlank = component.allowBlank
+    this._initValueComponent(component, aComponentMeta)
 
     component.fieldName = aComponentMeta.name
 
@@ -697,7 +701,7 @@ export default class VBaseListForm extends VBaseForm {
    * 初始化按钮
    *  @param {*} componentSetMeta 元数据
    */
-  _initToolbarButton(form, cmp, cmpMeta, datasource) {
+  _initToolbarButton(form, cmp, cmpMeta, datasource = null) {
     this._initComponent(form, cmp, cmpMeta)
     cmp.fun = cmpMeta.fun
     cmp.iconcls = cmpMeta.iconcls

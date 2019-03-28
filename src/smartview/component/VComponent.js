@@ -1,7 +1,6 @@
 import VEventBus from '@/smartview/VEventBus.js'
 
 export default class VComponent {
-
   parent;
 
   componentName;// 组件名称
@@ -13,10 +12,6 @@ export default class VComponent {
   ctype; // 组件类型
   children = []; // 组件类型
 
-
-
-
-
   // 是否有效
   enable = true;
   originalEnable = true;
@@ -27,6 +22,9 @@ export default class VComponent {
 
   // 事件处理中心
   eventBus = new VEventBus();
+
+  // 组件所在的form
+  form;
 
   /**
    * 添加监听
@@ -71,8 +69,6 @@ export default class VComponent {
       }
     }
   }
-
-
 
   addChild(component) {
     component.parent = this
@@ -126,13 +122,10 @@ export default class VComponent {
     this.setEnable(this.originalEnable)
   }
 
-
-
   // dataList() {
   //   if (this._datasource === null || this._datasource === undefined) {
   //     return this._datasource.dataList
   //   }
   // }
-
 }
 
