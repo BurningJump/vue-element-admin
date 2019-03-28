@@ -225,8 +225,8 @@ export default {
         }
       } else if(component.ctype === 'valuelistField'){
           column ={
-              // type:"yu.gridValueList",
-              editor:"YU_Grid_ValueList",
+              type:"yu.gridValueList",
+              // editor:"YU_Grid_ValueList",
               fromAction:'http://root.yiuser.com:3001/'+component.fromAction,
               inputField:component.inputField,
               valueField:component.valueField,//theader.valueListModel.saveField,
@@ -237,14 +237,14 @@ export default {
               data: component.fieldName,
               //renderer 渲染显示字段
               //TODO 后续要写到类型内，以便前端框架移植
-              renderer: function(hotInstance, td, row, column, prop, value, cellProperties){
-                Handsontable.renderers.TextRenderer.apply(this, arguments);
-                var cellValue = Handsontable.helper.stringify(value);
-                if(Object.prototype.toString.call(value) === '[object Object]'){
-                  cellValue = value[component.displayField];
-                }
-                td.innerHTML = cellValue;
-              },
+              // renderer: function(hotInstance, td, row, column, prop, value, cellProperties){
+              //   Handsontable.renderers.TextRenderer.apply(this, arguments);
+              //   var cellValue = Handsontable.helper.stringify(value);
+              //   if(Object.prototype.toString.call(value) === '[object Object]'){
+              //     cellValue = value[component.displayField];
+              //   }
+              //   td.innerHTML = cellValue;
+              // },
 
               handsontable: {
                 colHeaders: ['列1', '列2', '列3'],

@@ -10,7 +10,7 @@ import request from '@/utils/request'
     Handsontable.editors.HandsontableEditor.prototype.prepare.apply(this, arguments);
     // if(_selectObject !== void 0)
     // console.log('_selectObject:'+_selectObject['teamName']);
-  }
+  };
 
   ValueListEdit.prototype.open = function () {
     Handsontable.editors.HandsontableEditor.prototype.open.apply(this, arguments);
@@ -21,11 +21,7 @@ import request from '@/utils/request'
     choicesListHot.updateSettings({
       getValue:function() {
         var selection = this.getSelectedLast();
-        return this.getSourceDataAtRow(selection[0]);
-        // Get always manufacture name of clicked row
-        //TODO 更新datasource
-        // return this.getSourceDataAtRow(selection[0]).teamName;
-        // return _selectObject;
+        return this.getSourceDataAtRow(selection[0]);        
       }
     }); 
   };
@@ -110,18 +106,18 @@ import request from '@/utils/request'
       method: 'get'
     }).then(resData => {
       var options=resData.data.resultList;  
-      for(let item of options){
+      // for(let item of options){
         // item['teamNo']=this.query;
         // item['user1']='';  
         // item['user2']='';
         // item['user3']='';  
-      }       
-      cellProp['source']=options;
+      // }       
+      // cellProp['source']=options;
       //更新可选列表
       htEditorInstance.loadData(options);//(Handsontable.helper.pivot([options]));
     }).catch(err => {
       console.log(err.message)
-    })
+    });
        
   };
   
@@ -133,19 +129,21 @@ import request from '@/utils/request'
     if(_cellProp !== void 0  && objValue !== void 0 && objValue != null)
       editor.TEXTAREA.value=objValue[_cellProp.inputField];
       // editor.TEXTAREA.value=objValue['teamName'];
-  };
+  }
   
   //renderer 渲染显示字段
   //TODO 后续要写到类型内，以便前端框架移植
   function  cellRenderer(hotInstance, td, row, column, prop, value, cellProperties){
     Handsontable.renderers.TextRenderer.apply(this, arguments);
     let _cellProp = cellProperties; 
-    var cellValue = Handsontable.helper.stringify(value); 
+    let cellValue = Handsontable.helper.stringify(value); 
     if(Object.prototype.toString.call(value) === '[object Object]'){
       cellValue = value[_cellProp.displayField];
-    }                       
-    td.innerHTML = cellValue;
-  };
+    }         
+     // this is faster than innerHTML. See: https://github.com/handsontable/handsontable/wiki/JavaScript-&-DOM-performance-tips
+    Handsontable.helper.fastInnerText(td,cellValue);              
+    // td.innerHTML = cellValue;
+  }
 
   // Put editor in dedicated namespace
   Handsontable.editors.YU_Grid_ValueList = ValueListEdit;
@@ -153,14 +151,14 @@ import request from '@/utils/request'
   // Register alias
   Handsontable.editors.registerEditor('YU_Grid_ValueList', ValueListEdit);
 
-  // Handsontable.cellTypes.registerCellType('yu.gridValueList', {
-  //   editor: ValueListEdit,
-  //   renderer: cellRenderer,
-  //   // validator: customValidator,
-  //   // You can add additional options to the cell type based on Handsontable settings
-  //   className: 'yu_gridValueList',
-  //   allowInvalid: true,
-  //   // Or you can add custom properties which will be accessible in `cellProperties`
-  //   myCustomCellState: 'complete',
-  // });
+  Handsontable.cellTypes.registerCellType('yu.gridValueList', {
+    editor: ValueListEdit,
+    renderer: cellRenderer,
+    // validator: customValidator,
+    // You can add additional options to the cell type based on Handsontable settings
+    className: 'yu_gridValueList',
+    allowInvalid: true,
+    // Or you can add custom properties which will be accessible in `cellProperties`
+    myCustomCellState: 'complete',
+  });
 })(Handsontable);
