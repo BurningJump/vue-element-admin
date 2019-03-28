@@ -18,6 +18,8 @@ export default class VRemoteCombox extends VDBComponent {
     displayField;// ：前端显示字段
     displayFieldType;// ：前端显示字段的类型
 
+    maps;       //数组，valuelist maps
+    inputField; //编辑时显示值
   // 远程combox的配置
     // remoteComboBoxModel;
 
