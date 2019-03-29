@@ -1,25 +1,57 @@
 
 export default class VDataSource {
-  // dataStore
-  // datasetName
   name; // 名称
+
+  _isOpen;
+
+  _type = 'dataset';// dataset模式 还是 对象模式 dataset、object
+
+  // 单记录模式
+  _record;
+
   dataset;// 数据集
   dataList; // 保存可视数据列表
-  rowIndex = -1;// 当前数据展现行号,零代表第一行，因为js的数组是从零开始
+  rowIndex;// 当前数据展现行号,零代表第一行，因为js的数组是从零开始
   filter;// 获取过滤
+
   components = []; // 数据可视控件
-  _isOpen;
 
   /**
    * 构造函数
    * @param {*} componentSetMeta
    */
-  constructor(name, dataset) {
+  constructor(name, dataset = null) {
     // this.dataStore = dataStore
     // this.datasetName = datasetName
     this.name = name
-    this.dataset = dataset
+    if (dataset === null) {
+      this._type = 'dataset'
+      this.dataset = dataset
+      this.rowIndex = -1 // 当前数据展现行号,零代表第一行，因为js的数组是从零开始
+    } else {
+      this._type = 'object'
+      this._record = {}
+    }
   }
+
+  get record() {
+    if (this._type === 'object') {
+      return this._record
+    } else {
+      if (this.dataList == null || this.dataList === undefined) {
+        return null
+      }
+      return this.dataList[this.rowIndex]
+    }
+  }
+  set record(value) {
+    if (this._type === 'object') {
+      this._record = value
+    } else {
+      this.dataList[this.rowIndex] = value
+    }
+  }
+
   get isOpen() {
     return this._isOpen
   }
@@ -30,25 +62,28 @@ export default class VDataSource {
    * 获取可见数据列表的个数
    */
   getRecordCount() {
-    if (this.dataList == null || this.dataList === undefined) {
-      return null
+    if (this._type === 'object') {
+      return 1
+    } else {
+      if (this.dataList == null || this.dataList === undefined) {
+        return 0
+      } else {
+        return this.dataList.length
+      }
     }
-    return this.dataList.length
   }
 
   /**
      * 获取当前记录
      */
   getRecord() {
-    if (this.dataList == null || this.dataList === undefined) {
-      return null
-    }
-    return this.dataList[this.rowIndex]
+    return this.record
   }
   /**
    * 当前光标移到第一笔
    */
   first() {
+    if (this._type === 'object') return false
     if (this.getRecordCount() > 0) {
       return this.scrollTo(0)
     }
@@ -58,6 +93,7 @@ export default class VDataSource {
    * 当前光标下移
    */
   next() {
+    if (this._type === 'object') return false
     if (this.rowIndex < this.getRecordCount()) {
       return this.scrollTo(this.rowIndex + 1)
     }
@@ -68,6 +104,7 @@ export default class VDataSource {
   * 当前光标上移
   */
   proio() {
+    if (this._type === 'object') return false
     if (this.rowIndex > 0) {
       return this.scrollTo(this.rowIndex - 1)
     }
@@ -77,6 +114,7 @@ export default class VDataSource {
   * 当前光标移到第几行
   */
   scrollTo(newRowIndex) {
+    if (this._type === 'object') return false
     if (newRowIndex > this.getRecordCount() - 1) return false
     if (this.rowIndex === newRowIndex) return true
     this.rowIndex = newRowIndex
@@ -90,15 +128,20 @@ export default class VDataSource {
   // }
 
   // 装载元件数据
-  _loadComponentData(index) {
+  _loadComponentTableData(index) {
     for (const component of this.components) {
-      if (component.fieldName !== undefined) {
-        if (index === -1) {
-          component.loadData(null)
-        } else {
-          component.loadData(this.dataList[index][component.fieldName])
-        }
+      if (index === -1) {
+        component.loadData(null)
+      } else {
+        component.loadData(this.dataList[index])
       }
+    }
+  }
+
+  // 装载元件数据
+  _loadComponentData() {
+    for (const component of this.components) {
+      component.loadData(this.record)
     }
   }
 
@@ -117,11 +160,12 @@ export default class VDataSource {
    * @param {*} listData
    */
   openByDataList(listData) {
+    if (this._type === 'object') return false
     this.dataList = listData
     if (this.dataList !== null || this.dataList !== undefined) {
       if (this.dataList.length > 0) {
         this.rowIndex = 0
-        this._loadComponentData(this.rowIndex)
+        this._loadComponentTableData(this.rowIndex)
       } else {
         this.rowIndex = -1
         this._clearComponentData()
@@ -135,6 +179,7 @@ export default class VDataSource {
    *    * @param {*} filter
    */
   open(filter = null) {
+    if (this._type === 'object') return false
     this.filter = filter
     var data = this.dataset.getDatasetData(this.datasetName, this.filter)
     this.openByDataList(data)
@@ -147,6 +192,14 @@ export default class VDataSource {
    * @param {*} listData
    */
   refresh() {
+    if (this._type === 'object') {
+      return this._loadComponentData()
+    } else {
+      return this.listRefresh()
+    }
+  }
+
+  listRefresh() {
     var curIndex = this.rowIndex
     var data = this.dataset.getDatasetData(this.datasetName, this.filter)
     this.dataList = data
@@ -154,7 +207,7 @@ export default class VDataSource {
       if (this.dataList.length > 0) {
         // TODO  这里有Bug，需要按Key重新定位index
         this.rowIndex = curIndex
-        this._loadComponentData(this.rowIndex)
+        this._loadComponentTableData(this.rowIndex)
       } else {
         this.rowIndex = -1
         this._clearComponentData()
@@ -163,10 +216,14 @@ export default class VDataSource {
   }
 
   isChanged() {
-    return this.dataset.isChanged()
+    if (this._type === 'object') {
+      return false
+    } else return this.dataset.isChanged()
   }
+
   // 是否最底
   isEof() {
+    if (this._type === 'object') return false
     if (this.dataList != null && this.dataList !== undefined && this.dataList.length > 0) {
       return (this.rowIndex === this.dataList.length)
     }
@@ -174,6 +231,7 @@ export default class VDataSource {
   }
 
   isfirst() {
+    if (this._type === 'object') return false
     if (this.dataList != null && this.dataList !== undefined && this.dataList.length > 0) {
       return (this.rowIndex === 0)
     }
@@ -181,17 +239,19 @@ export default class VDataSource {
   }
 
   updateFieldValue(fieldName, newValue) {
-    var result = false
-    // 修改dataset的数据
-    const key = this.dataList[this.rowIndex]['id']
-    const dataset = this.getDataSet()
-    if (key !== null && dataset !== null) {
-      if (dataset.updateByFieldName(key, fieldName, newValue)) { // 修改存储数据
-        this.dataList[this.rowIndex][fieldName] = newValue // 修改展示数据
-        result = true
-      }
-    }
-    return result
+    this.record[fieldName] = newValue // 修改展示数据
+    return true
+    // var result = false
+    // // 修改dataset的数据
+    // const key = this.record['id']
+    // const dataset = this.getDataSet()
+    // if (key !== null && dataset !== null) {
+    //   if (dataset.updateByFieldName(key, fieldName, newValue)) { // 修改存储数据
+    //     this.record[fieldName] = newValue // 修改展示数据
+    //     result = true
+    //   }
+    // }
+    // return result
   }
 
   addComponent(component) {
@@ -199,10 +259,18 @@ export default class VDataSource {
   }
 
   getDataSet() {
+    if (this._type === 'object') return null
     return this.dataset
   }
 
   emptyData(filter = null) {
+    if (this._type === 'object') {
+      this._record = {}
+    } else {
+      return this.emptyListData(filter)
+    }
+  }
+  emptyListData(filter = null) {
     this.filter = filter
     // this.dataList =[] handsontable无法清空数据
     this.dataList.splice(0, this.dataList.length)
@@ -211,6 +279,7 @@ export default class VDataSource {
   }
 
   appendRecord() {
+    if (this._type === 'object') return false
     var record = this.dataset.appendRecord()
     this.dataList.push(record)
     this.rowIndex = this.dataList.length - 1
@@ -218,6 +287,11 @@ export default class VDataSource {
   }
 
   deleteRecord() {
+    if (this._type === 'object') {
+      this._record = {}
+      return true
+    }
+
     var deleteRecord = this.getRecord()
     if (this.dataset.deleteRecord(deleteRecord['id']) === true) {
       this.dataList.splice(this.rowIndex, 1)

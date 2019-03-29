@@ -5,7 +5,7 @@ export default class VDBComponent extends VValueComponent {
   _datasource = null;
 
   // 对应的数据字段名称
-  fieldName; // 对应的数据字段名称
+  fieldName;
 
   get datasource() {
     return this._datasource
@@ -25,8 +25,17 @@ export default class VDBComponent extends VValueComponent {
     }
   }
 
-  canSetValue(newValue) {
-    return this.datasource.updateFieldValue(this.fieldName, newValue)
+  get value() {
+    return this.datasource.record[this.fieldName]
+  }
+
+  set value(v) {
+    super.value(v)
+    this.datasource.record[this.fieldName] = v
+  }
+
+  loadData(record) {
+    return super.loadData(record[this.fieldName])
   }
 }
 

@@ -54,14 +54,58 @@ export default class VSmartView {
   }
 
   // 通过router call from
-  callForm(formKey, id, states, ACvar = null) {
+  callListForm(formKey, formId, ACvar = null) {
     // 获取路游表
     var maper = asyncRouterMap
     var res = this.getRouter(maper, formKey, '')
-    var routerPath = res.fullpath.replace(/:id/g, id)
+    var routerPath = res.fullpath.replace(/:id/g, formId)
 
     // 是否有名称+detailId的缓存
-    var vform = this.findDetailForm(formKey, id)
+    var vform = this.findFormById(formId)
+    if (vform !== undefined && vform !== null) {
+      var myRouter = router
+      myRouter.push({
+        path: routerPath,
+        query: {
+          formId: vform.formId
+        }
+      })
+    } else {
+      // 没有缓存
+      res.route.control()
+        .then(module => {
+          this.getListUIMeta(formKey).then(formMeta => {
+            vform = module.default.NewInstant(this, formMeta)
+            vform.addCVar(ACvar)
+            vform.formId = formId
+            this.addForm(vform)
+            vform.show()
+            var myRouter = router
+            myRouter.push({
+              path: routerPath,
+              query: {
+                formId: formId
+              }
+            })
+          }).catch(err => {
+            console.log(err.stack)
+          })
+        })
+        .catch(err => {
+          console.log(err.stack)
+        })
+    }
+  }
+
+  // 通过router call from
+  callDetailForm(formKey, dataId, states, ACvar = null) {
+    // 获取路游表
+    var maper = asyncRouterMap
+    var res = this.getRouter(maper, formKey, '')
+    var routerPath = res.fullpath.replace(/:id/g, dataId)
+
+    // 是否有名称+detailId的缓存
+    var vform = this.findDetailForm(formKey, dataId)
     if (vform !== undefined && vform !== null) {
       var myRouter = router
       myRouter.push({
@@ -79,9 +123,9 @@ export default class VSmartView {
             vform.addCVar(ACvar)
             var formId = new UID.UUID().toString()
             vform.formId = formId
-            vform.dataId = id
+            vform.dataId = dataId
             this.addForm(vform)
-            vform.requestDetailData(id).then(dataPackage => {
+            vform.requestDetailData(dataId).then(dataPackage => {
               vform.loadDataByPackage(dataPackage) // add by max
               vform.show(states)
               // TODO 需要替代一下ID
@@ -157,6 +201,27 @@ export default class VSmartView {
               this.formMetas[resData.data.detailViewModel.name] = resData.data.detailViewModel
             }
             resolve(resData.data.detailViewModel)
+          }).catch(err => {
+            console.log(err.message)
+          })
+        }
+      })
+  }
+
+  getListUIMeta(formKey) {
+    return new Promise(
+      (resolve, reject) => {
+        if (this.formMetas[formKey] !== undefined && this.formMetas[formKey] !== null) {
+          resolve(this.formMetas[formKey])
+        } else {
+          request({
+            url: '/api/getListUIMeta/' + formKey,
+            method: 'get'
+          }).then(resData => {
+            if (resData.data.listViewModel !== null) {
+              this.formMetas[resData.data.listViewModel.name] = resData.data.listViewModel
+            }
+            resolve(resData.data.listViewModel)
           }).catch(err => {
             console.log(err.message)
           })

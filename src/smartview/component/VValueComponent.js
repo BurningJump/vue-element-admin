@@ -47,7 +47,7 @@ export default class VValueComponent extends VComponent {
     if (this._value !== v) {
       let canUpdate = true
       if (this.loading === false) {
-        canUpdate = this.canSetValue(v)
+        canUpdate = this.beforeSetValue(this._value, v)
       }
       if (canUpdate) {
         this.oldValue = this._value
@@ -56,7 +56,7 @@ export default class VValueComponent extends VComponent {
     }
   }
 
-  canSetValue(newValue) {
+  beforeSetValue(oldValue, newValue) {
     return true
   }
 

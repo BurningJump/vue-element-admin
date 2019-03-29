@@ -2,12 +2,17 @@ import VComponentSet from './VComponentSet.js'
 import { basicConstant } from '../VBasicConstant.js'
 
 export default class VDBComponentSet extends VComponentSet {
+
+
+
+// 数据源,可用为空
+  _datasource = null;
+
+
   constructor(parent) {
     super(parent)
-    this.ctype = basicConstant.CMP_COMPONENTSET
+    this.ctype = basicConstant.CMP_COMPONENTSET_DB
   }
-
-  _datasource = null;// 数据源,可用为空
 
   get datasource() {
     return this._datasource

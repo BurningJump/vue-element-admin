@@ -4,16 +4,11 @@ import VToolbar from '../component/VToolbar.js'
 import VPanel from '../component/VPanel.js'
 
 import VDBComponent from '../component/VDBComponent.js'
-import VDOComponent from '../component/VDOComponent.js'
-
-import VComponentSet from '../component/VComponentSet.js'
-import VDOComponentSet from '../component/VDOComponent.js'
 import VDBComponentSet from '../component/VDBComponent.js'
 
 import VButton from '../component/VButton.js'
 import VTree from '../component/VTree.js'
 
-import VRemoteCombox from '../component/VRemoteCombox.js'
 import * as cf from '../util/commonFun'
 import {
   basicConstant
@@ -23,6 +18,7 @@ import request from '@/utils/request'
 import VBaseListFormMetaUtil from './VBaseListFormMetaUtil'
 import VDataStore from '../db/VDataStore.js'
 import VDataSet from '../db/VDataSet.js'
+import VDataSource from '../db/VDataSource.js'
 
 export default class VBaseListForm extends VBaseForm {
   // 当前活动的Tab
@@ -31,9 +27,13 @@ export default class VBaseListForm extends VBaseForm {
   // 查询对象值
   queryCondition ={}
 
+  // 条件存储对象
+  conditionDataSource;
+
   constructor(parent, formMeta) {
     super(parent, formMeta)
     this.ctype = basicConstant.FORMTYPE_LIST
+    this.conditionDataSource = new VDataSource(formMeta.qCondition.name)
     this.init()
   }
 
@@ -54,6 +54,22 @@ export default class VBaseListForm extends VBaseForm {
       this._activeView = value
       this.activePage(value)
     }
+  }
+
+  resetCondition() {
+    Object.keys(this.conditionDataSource).forEach(key => obj[key] = null)
+  }
+
+  /**
+   *  懒装载数据节点
+   * @param {*} node
+   * @param {*} resolve
+   */
+  loadTreeNode(node, resolve) {
+    if (node.level === 0) {
+      return resolve([{ name: 'region' }])
+    }
+    if (node.level > 1) return resolve([])
   }
 
   activePage(pageName) {
@@ -479,7 +495,7 @@ export default class VBaseListForm extends VBaseForm {
     this.formMeta = formMeta
 
     // 建立Condition视图
-    var conditionCS = new VDOComponentSet(this)
+    var conditionCS = new VDBComponentSet(this)
     this._initConditionComponentSet(this, conditionCS, formMeta.qCondition)
 
     // 建立Tree视图
@@ -489,31 +505,29 @@ export default class VBaseListForm extends VBaseForm {
     // 3.建立dataView视图
     var dataViewMeta = formMeta.dataView
 
+    for (var page of dataViewMeta.views) {
+      // 建立Detail视图
+      var pagePanel = new VPanel(this)
+      this._initComponent(this, pagePanel, page)
+
+      // 1.视图中建立componentSet
+      var dComponentSet = new VDBComponentSet(pagePanel)
+      this._initDBComponentSet(this, dComponentSet, page.componentSetModel)
+
+      // 2.视图中建立toolbar
+      var topToolbar = new VToolbar(pagePanel)
+      this._initToolbar(this, topToolbar, page.topToolbar, dComponentSet.datasource)
+
+      //  3.视图中建立toolbar
+      var footerToolbar = new VToolbar(pagePanel)
+      this._initToolbar(this, footerToolbar, page.footerToolbar, dComponentSet.datasource)
+    }
+
+    // TODO 重新设置 activeView
     if (dataViewMeta.defaultView !== undefined && dataViewMeta.defaultView !== null) {
       this.activeView = dataViewMeta.defaultView
     } else if (dataViewMeta.views !== undefined && dataViewMeta.views.length > 0) {
       this.activeView = dataViewMeta.views[0].name
-    }
-
-    for (var page of dataViewMeta.views) {
-      // 建立Detail视图
-
-      var detailPanel = new VPanel(this)
-      this._initPanel(this, detailPanel, page)
-      detailPanel.viewType = page.viewType
-       //  2.视图中建立toolbar
-            var tToolbar = new VToolbar(detailPanel)
-            this._initToolbar(this, dToolbar, page.toolbarModel, dComponentSet.datasource)
-
-      // 1.视图中建立componentSet
-      var dComponentSet = new VComponentSet(detailPanel)
-      this._initComponentSet(this, dComponentSet, page.componentSetModel)
-
-               //  2.视图中建立toolbar
-               var fToolbar = new VToolbar(detailPanel)
-               this._initToolbar(this, dToolbar, page.toolbarModel, dComponentSet.datasource)
-
-
     }
 
     return true
@@ -554,11 +568,11 @@ export default class VBaseListForm extends VBaseForm {
 
   _initConditionComponentSet(form, componentSet, componentSetMeta) {
     this._initComponent(form, componentSet, componentSetMeta)
-    componentSet.dataObject = form.dataObject
+    componentSet.datasource = this.conditionDataSource
     for (var componentMeta of componentSetMeta.components) {
-      var cmp = new VDOComponent(componentSet)
+      var cmp = new VDBComponent(componentSet)
       this._initConditionComponent(form, cmp, componentMeta)
-      cmp.dataObject = componentSet.dataObject
+      cmp.datasource = componentSet.datasource
     }
   }
   /**
@@ -573,6 +587,7 @@ export default class VBaseListForm extends VBaseForm {
     component.fieldName = aComponentMeta.name
 
     if (aComponentMeta.findField !== undefined) {
+      component.fieldName = aComponentMeta.findField
       component.findField = aComponentMeta.findField
     }
 
@@ -593,8 +608,8 @@ export default class VBaseListForm extends VBaseForm {
     this._initComponent(form, componentSet, componentSetMeta)
 
     // 数据连接
-    if (componentSetMeta.dataset !== undefined) {
-      var ds = form.getDataSource(componentSetMeta.dataset)
+    if (componentSetMeta.queryName !== undefined) {
+      var ds = form.getDataSource(componentSetMeta.queryName)
       componentSet.datasource = ds
     }
 
@@ -616,16 +631,16 @@ export default class VBaseListForm extends VBaseForm {
   //   }
   // }
 
-  _initRemoteCombox(form, component, aComponentMeta) {
-    this._initDBComponent(form, component, aComponentMeta)
-    if (aComponentMeta.remoteComboBoxModel !== undefined && aComponentMeta.remoteComboBoxModel !== null) {
-      component.fromAction = aComponentMeta.remoteComboBoxModel.fromAction // 远程数据请求地址
-      component.valueField = aComponentMeta.remoteComboBoxModel.valueField // 数据存储的字段
-      component.valueFieldType = aComponentMeta.remoteComboBoxModel.valueFieldType // ：//数据存储字段的类型
-      component.displayField = aComponentMeta.remoteComboBoxModel.displayField // ：前端显示字段
-      component.displayFieldType = aComponentMeta.remoteComboBoxModel.displayFieldType // ：前端显示字段的类型
-    }
-  }
+  // _initRemoteCombox(form, component, aComponentMeta) {
+  //   this._initDBComponent(form, component, aComponentMeta)
+  //   if (aComponentMeta.remoteComboBoxModel !== undefined && aComponentMeta.remoteComboBoxModel !== null) {
+  //     component.fromAction = aComponentMeta.remoteComboBoxModel.fromAction // 远程数据请求地址
+  //     component.valueField = aComponentMeta.remoteComboBoxModel.valueField // 数据存储的字段
+  //     component.valueFieldType = aComponentMeta.remoteComboBoxModel.valueFieldType // ：//数据存储字段的类型
+  //     component.displayField = aComponentMeta.remoteComboBoxModel.displayField // ：前端显示字段
+  //     component.displayFieldType = aComponentMeta.remoteComboBoxModel.displayFieldType // ：前端显示字段的类型
+  //   }
+  // }
   /**
    * 初始化DBComponent
    * @param {*} component
