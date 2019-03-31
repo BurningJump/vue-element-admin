@@ -27,6 +27,7 @@ export default class VForm extends VComponent {
   }
 
   addComponent(component) {
+    component.form = this
     return this.components.set(component.componentName, component)
   }
 
