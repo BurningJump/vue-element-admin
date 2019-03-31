@@ -17,11 +17,7 @@ export default class DpShopOrderDetailForm extends VBaseDetailForm {
         var bs = ds.currentTable[0].bstatus
       }
 
-      if (
-        form.state == basicConstant.VIEWSTATE_VIEW &&
-        rs == 1 &&
-        (bs == 1 || bs == 2)
-      ) {
+      if (form.state === basicConstant.VIEWSTATE_VIEW && rs === 1 && (bs === 1 || bs === 2)) {
         return true
       } else {
         return false
@@ -40,8 +36,8 @@ export default class DpShopOrderDetailForm extends VBaseDetailForm {
     var newStockOrder = form.getCmpByName('newStockOrder')
     newStockOrder.on('click',
       function(params = null) {
-        // form.showFailMesg({ msg: '生成要货单失败!' })
-        form.setCmpValue('SellerMemo', '深圳直营仓-1  已换36 东莞自营渠道 郑/24K')
+        form.showFailMesg({ msg: '生成要货单失败!' })
+        // form.setCmpValue('BuyerMemo', '深圳直营仓-1  已换36 东莞自营渠道 郑/24eeeeK')
       }
     )
   }
@@ -62,6 +58,15 @@ export default class DpShopOrderDetailForm extends VBaseDetailForm {
     form.setDefaultValue('dpShopOrderDetail', 'discount', 0)
     form.setDefaultValue('dpShopOrderDetail', 'taxRate', 0)
     form.setDefaultValue('dpShopOrderDetail', 'adjustAmount', 0)
+  }
+  setFormValueDependence(form) {
+    var doFun = function(e) {
+      return e.record['sellerMemo']
+    }
+    form.setValueDependence('Remarks', 'SellerMemo', true, doFun)
+    form.addCmpValueChangedListener('SellerMemo', function(e) {
+      // form.showFailMesg({ msg: e.record['sellerMemo'] })
+    })
   }
 }
 

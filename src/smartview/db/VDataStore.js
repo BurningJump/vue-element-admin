@@ -3,6 +3,8 @@ import request from '@/utils/request'
 export default class VDataStore {
   // 数据存放
   datasets = [];
+  // 对应的视图：detail、list等form
+  dataView = null;
 
   commitToDB(AUrl, AParams = null) {
     return new Promise(

@@ -24,6 +24,8 @@ export default class VDataSet {
   * 預設默認值集
   */
   defaultValueSet = [];
+  // 值变更事件集
+  valueChangedListeners = [];
 
   constructor() {
     this.currentTable = []// 当前记录
@@ -119,49 +121,52 @@ export default class VDataSet {
    */
   addProxyOnRecord(record) {
     var dataset = this
-    var logHandle = {
+    var valueChangedHandle = {
       set: function(obj, prop, value) {
-        if (obj[prop] !== value && prop !== 'id' && prop !== 'entityStatus') {
+        // 写入值
+        obj[prop] = value
+        // 字段是id/entityStatus时，不用监听变动
+        if (prop !== 'id' && prop !== 'entityStatus') {
           // 同步日志
           dataset.syncLog(obj, prop, value)
           // 记录状态控制
           dataset.syncEntityStatus(obj)
+          // 触发值变更事件
+          dataset.fireValueChangedListener(prop, obj)
         }
-        // 写入值
-        // obj[prop] = value
         return true
       }
     }
-    return new Proxy(record, logHandle)
+    return new Proxy(record, valueChangedHandle)
   }
 
-  proxyRecordWithUpdateLog(record) {
-    var dataset = this
-    var logHandle = {
-      set: function(obj, prop, value) {
-        obj[prop] = value
-        if (prop !== 'id' &&
-              prop !== 'entityStatus' &&
-               (obj['entityStatus' ] === 'U' || obj['entityStatus' ] === 'L')
-        ) {
-          if (dataset.updatedLog(obj['id'], prop, value) === true) {
-            // 如果修改日志成功
-            if (obj['entityStatus'] === 'L') {
-              obj['entityStatus'] = 'U'
-            }
-          } else {
-            // 如果修改日志不成功
-            if (dataset._logCount(obj['id']) === 0) {
-              // 如果没有其他修改日志
-              obj['entityStatus'] = 'L'
-            }
-          }
-        }
-        return true
-      }
-    }
-    return new Proxy(record, logHandle)
-  }
+  // proxyRecordWithUpdateLog(record) {
+  //   var dataset = this
+  //   var logHandle = {
+  //     set: function(obj, prop, value) {
+  //       obj[prop] = value
+  //       if (prop !== 'id' &&
+  //             prop !== 'entityStatus' &&
+  //              (obj['entityStatus' ] === 'U' || obj['entityStatus' ] === 'L')
+  //       ) {
+  //         if (dataset.updatedLog(obj['id'], prop, value) === true) {
+  //           // 如果修改日志成功
+  //           if (obj['entityStatus'] === 'L') {
+  //             obj['entityStatus'] = 'U'
+  //           }
+  //         } else {
+  //           // 如果修改日志不成功
+  //           if (dataset._logCount(obj['id']) === 0) {
+  //             // 如果没有其他修改日志
+  //             obj['entityStatus'] = 'L'
+  //           }
+  //         }
+  //       }
+  //       return true
+  //     }
+  //   }
+  //   return new Proxy(record, logHandle)
+  // }
 
   // /** *
   //  * 复制一个TABLE
@@ -489,7 +494,36 @@ export default class VDataSet {
     }
     return dataObject
   }
-
+  /**
+   * 添加值依赖监听
+   * @param {*} fieldName 字段名称
+   * @param {*} doFunction 执行函数
+   */
+  addValueChangedListener(fieldName, doFunction) {
+    if (fieldName == null) {
+      console.warn('fail to add ValueChangedListener: fieldName is null.')
+    } else if (doFunction == null || typeof doFunction !== 'function') {
+      console.warn('fail to add ValueChangedListener: doFunction is null/not a function.')
+    } else {
+      this.valueChangedListeners.push({ fieldName: fieldName, doFunction: doFunction })
+    }
+  }
+  /**
+   * 触发值变更事件
+   * @param {*} fieldName 字段名称
+   * @param {*} record 当前记录
+   */
+  fireValueChangedListener(fieldName, record) {
+    for (var i = 0; i < this.valueChangedListeners.length; i++) {
+      if (this.valueChangedListeners[i].fieldName === fieldName) {
+        var doFunction = this.valueChangedListeners[i].doFunction
+        doFunction(record, fieldName)
+      }
+    }
+  }
+  /**
+   * 检查当前dataset是否有变更过
+   */
   isChanged() {
     if (this.updateLogs !== null && this.updateLogs.length > 0) {
       return true

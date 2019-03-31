@@ -181,17 +181,18 @@ export default class VDataSource {
   }
 
   updateFieldValue(fieldName, newValue) {
-    var result = false
+    // var result = false
+    this.dataList[this.rowIndex][fieldName] = newValue // 修改展示数据
     // 修改dataset的数据
-    const key = this.dataList[this.rowIndex]['id']
-    const dataset = this.getDataSet()
-    if (key !== null && dataset !== null) {
-      if (dataset.updateByFieldName(key, fieldName, newValue)) { // 修改存储数据
-        this.dataList[this.rowIndex][fieldName] = newValue // 修改展示数据
-        result = true
-      }
-    }
-    return result
+    // const key = this.dataList[this.rowIndex]['id']
+    // const dataset = this.getDataSet()
+    // if (key !== null && dataset !== null) {
+    //   if (dataset.updateByFieldName(key, fieldName, newValue)) { // 修改存储数据
+    //     this.dataList[this.rowIndex][fieldName] = newValue // 修改展示数据
+    //     result = true
+    //   }
+    // }
+    return true
   }
 
   addComponent(component) {
