@@ -230,7 +230,7 @@ export default {
         fixedRowsTop: 0 ,// 冻结前n行
         selectionMode: 'single',//Only a single cell can be selected.  by max
        // observeChanges: true,//切换表成为单向数据绑定
-        afterSelectionEnd: (row, column, row2, column2, selectionLayerLevel) => {
+        afterSelection: (row, column, row2, column2, preventScrolling, selectionLayerLevel) => {
           //光标移动的时候，datasource的光标也要移动
            console.log('to row ' + row)
             this.componentSet.datasource.scrollTo(row);
