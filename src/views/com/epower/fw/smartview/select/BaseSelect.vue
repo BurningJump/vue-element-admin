@@ -1,5 +1,6 @@
 <template>
-  <!-- <div class="app-container" v-if="UiLoaded"> -->
+  <!-- <div class="app-container"> -->
+     <!-- v-if="UiLoaded"> -->
     <el-dialog
       title="施工队"
       :visible.sync="dialogVisible"
@@ -202,8 +203,9 @@ export default {
   components: {
     Pagination
   },
-  // props: ['grid', 'view'],
+  props: {dialogVisiblePop:''},
   computed: {
+    
     cellStyle() {
       return {
         'padding-left': '6px',

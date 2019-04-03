@@ -200,9 +200,11 @@
       //根据配置属性，获取对象属性对应的值
       getObjectValueByKey(item,k) {
         let v = '';
-        if(item||''!='')
+        if((item||'')!='')
           v=item[k];
-        return v.replace(/<[^>]+>/g,""); //去除字符串中所有html标签及&nbsp符号
+        if((v||'')!='')
+          v=v.replace(/<[^>]+>/g,""); //去除字符串中所有html标签及&nbsp符号
+        return v; 
       },
       //拼接过滤条件
       getFilterStr(datatype,filteroperation,filterfield,datavalue){
