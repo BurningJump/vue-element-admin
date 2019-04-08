@@ -58,9 +58,7 @@
       <el-main>
         <div class="handson-table-container" :style="{height: height+'px'}">
           <div class="wrapper">
-            <hot-table ref="hotInstance" v-if="settings"
-                    :root="root"
-                    :settings="settings"></hot-table>
+            <hot-table ref="hotInstance" v-if="settings" :root="root" :settings="settings"></hot-table>
           </div>
         </div>
       </el-main>
@@ -111,9 +109,11 @@ export default {
   name: 'com-epower-fw-smartview-detail-BaseDetailGrid',
   data() {
     return {
-     // dialogVisible:false,
+      dialogVisible:false,
       root: 'test-hot',
-      settings:null
+      settings: null,
+      componentSet:this.page.findChild(this.pageModel.componentSetModel.name),
+      toolbar:this.page.findChild(this.pageModel.toolbarModel.name)
 //       ,
 //       manufacturerData : [
 //   {name: 'BMW', country: 'Germany', owner: 'Bayerische Motoren Werke AG'},
@@ -130,25 +130,13 @@ export default {
     HotTable,
     BaseSelect
   },
-  computed:{
-      componentSet:function(){
-        return this.page.findChild(this.pageModel.componentSetModel.name)
-      },
-      toolbar:function(){
-        return this.page.findChild(this.pageModel.toolbarModel.name)
-      }
-  },
-  created(){
-     this.settings = this.getSettings()
-  },
-
   mounted() {
-  //  this.getSettings()
+    this.getSettings()
+
+    console.log("dataList:"+JSON.stringify(this.componentSet.datasource.dataList))
     // this.$bus.on('getSetting', () => {
     //   this.getSettings()
     // })
-       //data: this.componentSet.datasource.dataList,
-     //  this.$refs.hotInstance.hotInstance.loadData(this.componentSet.datasource.dataList);
   },
   methods: {
 
@@ -191,39 +179,40 @@ export default {
         }
       });
     },
-    //  beforeKeyDown(instance,e){
-    //    var hottable = this.$refs.hotInstance.hotInstance;
-    //    var selection = hottable.getSelected();
-    //    var cellMetea = hottable.getCellMeta(selection[0],selection[1]);
-    //    var cell = hottable.getCell(selection[0],selection[1]);
-    //    console.log("beforeKeyDown"+cellMetea);
-    //  },
+     beforeKeyDown(instance,e){
+       var hottable = this.$refs.hotInstance.hotInstance;
+       var selection = hottable.getSelected();
+       var cellMetea = hottable.getCellMeta(selection[0],selection[1]);
+       var cell = hottable.getCell(selection[0],selection[1]);
+       console.log("beforeKeyDown"+cellMetea);
+     },
     onClickButton:function(button){
        this.$emit('onButtonClick',{component:button});  //使用$emit()引入父组件中的方法
     },
     getSettings() {
-       var columns = []
-       var colHeaders =[]
-       var dataSchema={}
-       var colWidths =[]
-       this.componentSet.children.forEach(component => {
-           colHeaders.push(component.label);
-           colWidths.push(
-               component.width > 1
-                ? component.width
-                : "" );
-          columns.push(this.createColumn(component));
-        // console.log('theader.ctype:'+theader.ctype);
-      });
-
-      var settings = {
+      this.settings = {
         licenseKey:'non-commercial-and-evaluation',  //handsontable 授权
         data: this.componentSet.datasource.dataList,
         dataSchema: {},
-        colHeaders: colHeaders,
+        colHeaders: [],
         rowHeaders: true,// 显示序列号 by max
-        columns: columns,
-        colWidths: colWidths,
+        columns: [
+    //       {
+    //   type: 'handsontable',
+    //   handsontable: {
+    //     colHeaders: ['Marque', 'Country', 'Parent company'],
+    //     autoColumnSize: true,
+    //     data: this.manufacturerData,
+    //     getValue: function() {
+    //     	var selection = this.getSelectedLast();
+
+    //       // Get always manufacture name of clicked row
+    //       return this.getSourceDataAtRow(selection[0]).name;
+    //     },
+    //   }
+    // }
+    ],
+        colWidths: [],
         rowHeights: 55,
         className: "htCenter htMiddle",
         activeHeaderClassName: 'ht__active_highlight',
@@ -234,6 +223,7 @@ export default {
         manualRowResize: true,
         contextMenu: false ,
         fillHandle: {
+            // enable plugin in vertical direction and with autoInsertRow as false
             autoInsertRow: false,
             direction: 'vertical'
         }, //启用填充句柄（向下拖放和向下复制）功能 by max
@@ -242,12 +232,12 @@ export default {
         fixedRowsTop: 0 ,// 冻结前n行
         selectionMode: 'single',//Only a single cell can be selected.  by max
        // observeChanges: true,//切换表成为单向数据绑定
-        // afterSelection: (row, column, row2, column2, preventScrolling, selectionLayerLevel) => {
-        //   //光标移动的时候，datasource的光标也要移动
-        //    console.log('to row ' + row)
-        //     this.componentSet.datasource.scrollTo(row);
+        afterSelection: (row, column, row2, column2, preventScrolling, selectionLayerLevel) => {
+          //光标移动的时候，datasource的光标也要移动
+           console.log('to row ' + row)
+            this.componentSet.datasource.scrollTo(row);
 
-        //   },
+          },
         afterChange:(changes,source)=>{
           if (source == "loadData") {
             //装载数据时不处理
@@ -258,88 +248,99 @@ export default {
          }
         }
       }
-     return settings
+      this.componentSet.children.forEach(component => {
+        this.settings.colHeaders.push(component.label);
+        this.settings.dataSchema[component.fieldName] = null;
+        this.settings.colWidths.push(
+          component.width > 1
+            ? component.width
+            : ""
+        );
+        this.settings.columns.push(this.createColumn(component));
+        // console.log('theader.ctype:'+theader.ctype);
+
+
+      });
     },
-
-
-    createColumn(component){
-      var  column ={
-           type: "text"
-          ,allowHtml: true
-          ,data:component.fieldName
+     createColumn(component){
+      var column
+      if (component.ctype==='image'){
+         column ={
+          type: "autocomplete",
+          allowHtml: true,
+          renderer: this.imageCoverRenderer,
+          data: component.fieldName
         }
+      } else   if (component.ctype==='checkboxField'){
+         column ={
+          type: "checkbox",
+          data: component.fieldName,
+          checkedTemplate: 1 ,
+          uncheckedTemplate: 0
+        }
+      } else  if (component.ctype==='dateField'){
+         column ={
+          type: "date",
+          dateFormat: 'YYYY-MM-DD',
+          correctFormat: true,
+          data: component.fieldName
+        }
+      } else if (component.ctype==='dateTimeField'){
+         column ={
+          type: "date",
+          dateFormat: component.format,
+          correctFormat: true,
+          data: component.fieldName
+        }
+      } else if (component.ctype==='numberfield'){
+         column ={
+          type: "numeric",
+          data: component.fieldName
+        }
+      } else if(component.ctype === 'valuelistField'){
+          column ={
+              type:"yu.gridValueList",
+              fromAction:'http://root.yiuser.com:3001/'+component.fromAction,
+              component:component,
+              inputField:component.inputField,
+              valueField:component.valueField,//theader.valueListModel.saveField,
+              displayField:component.displayField,//theader.valueListModel.displayField,
+              maps: component.maps,
+              form: component.form,
+              cellFunction:this.CallValueListFormInCell,
+              data: component.fieldName,
+              handsontable: {
+                colHeaders: ['列1', '列2', '列3'],  //TODO 增加配置
+                autoColumnSize: true,
+                data: [],
+                columns: [{data: "id"},{data: "materialNo"},{data: "materialName"}]  //TODO 增加配置
+              }
+          }
+        }else if(component.ctype === 'comboBox'){
+          column ={
+              type:"yu.gridCombox",
+              data: component.fieldName,
+              enumModel:component.enumModel,
+              form: component.form
+          }
+        }
+        else  {
+       column ={
+          type: "text",
+          allowHtml: true,
+          data: component.fieldName
+        }
+      }
      return column
-
-    //   if (component.ctype==='image'){
-    //      column ={
-    //       type: "autocomplete",
-    //       allowHtml: true,
-    //       renderer: this.imageCoverRenderer,
-    //       data: component.fieldName
-    //     }
-    //   } else   if (component.ctype==='checkboxField'){
-    //      column ={
-    //       type: "checkbox",
-    //       data: component.fieldName,
-    //       checkedTemplate: 1 ,
-    //       uncheckedTemplate: 0
-    //     }
-    //   } else  if (component.ctype==='dateField'){
-    //      column ={
-    //       type: "date",
-    //       dateFormat: 'YYYY-MM-DD',
-    //       correctFormat: true,
-    //       data: component.fieldName
-    //     }
-    //   } else if (component.ctype==='dateTimeField'){
-    //      column ={
-    //       type: "date",
-    //       dateFormat: component.format,
-    //       correctFormat: true,
-    //       data: component.fieldName
-    //     }
-    //   } else if (component.ctype==='numberfield'){
-    //      column ={
-    //       type: "numeric",
-    //       data: component.fieldName
-    //     }
-    //   } else if(component.ctype === 'valuelistField'){
-    //       column ={
-    //           type:"yu.gridValueList",
-    //           fromAction:'http://root.yiuser.com:3001/'+component.fromAction,
-    //           component:component,
-    //           inputField:component.inputField,
-    //           valueField:component.valueField,//theader.valueListModel.saveField,
-    //           displayField:component.displayField,//theader.valueListModel.displayField,
-    //           maps: component.maps,
-    //           form: component.form,
-    //           cellFunction:this.CallValueListFormInCell,
-    //           data: component.fieldName,
-    //           handsontable: {
-    //             colHeaders: ['列1', '列2', '列3'],  //TODO 增加配置
-    //             autoColumnSize: true,
-    //             data: [],
-    //             columns: [{data: "id"},{data: "materialNo"},{data: "materialName"}]  //TODO 增加配置
-    //           }
-    //       }
-    //     }else if(component.ctype === 'comboBox'){
-    //       column ={
-    //           type:"yu.gridCombox",
-    //           data: component.fieldName,
-    //           enumModel:component.enumModel,
-    //           form: component.form
-    //       }
-    //     }
-    //     else  {
-    //    column ={
-    //       type: "text",
-    //       allowHtml: true,
-    //       data: component.fieldName
-    //     }
-    //   }
-    //  return column
     },
-     imageCoverRenderer (instance, td, row, col, prop, value, cellProperties) {
+    safeHtmlRenderer(instance, td, row, col, prop, value, cellProperties) {
+        var escaped = Handsontable.helper.stringify(value);
+        escaped = strip_tags(escaped, '<em><b><strong><a><big>'); //be sure you only allow certain HTML tags to avoid XSS threats (you should also remove unwanted HTML attributes)
+        td.innerHTML = escaped;
+        return td;
+    },
+
+    imageCoverRenderer (instance, td, row, col, prop, value, cellProperties) {
       var escaped = Handsontable.helper.stringify(value),
         img;
       if (escaped.indexOf('http') === 0) {
