@@ -63,7 +63,12 @@
         </div>
       </el-main>
     </el-container>
+    <!-- <el-dialog :visible.sync="dialogVisible" width="30%"> -->
+          <!-- <base-select :dialogVisiblePop='dialogVisible'></base-select> -->
+   <!-- </el-dialog> --> -->
   </el-container>
+
+
 </template>
 
 <script>
@@ -72,9 +77,10 @@ import Handsontable from 'handsontable'
 
 import request from '@/utils/request'
 
-import YUGridValueList from '@/components/ValueList4HandsonTable/valueList.js'
+import YUGridValueList from '@/components/Component4HandsonTable/valueList.js'
+import YUGridCombox from '@/components/Component4HandsonTable/combox.js'
 
-
+import BaseSelect from '../select/BaseSelect'
 
 class CustomEditor extends Handsontable.editors.AutocompleteEditor {
   constructor(props) {
@@ -95,7 +101,7 @@ class CustomEditor extends Handsontable.editors.AutocompleteEditor {
     btnel.innerText = '选择';
     Handsontable.dom.empty(this.TEXTAREA_PARENT);
     this.TEXTAREA_PARENT.appendChild(this.TEXTAREA);
-    // this.TEXTAREA_PARENT.appendChild(btnel);
+    this.TEXTAREA_PARENT.appendChild(btnel);
   }
 }
 
@@ -103,15 +109,26 @@ export default {
   name: 'com-epower-fw-smartview-detail-BaseDetailGrid',
   data() {
     return {
+      dialogVisible:false,
       root: 'test-hot',
       settings: null,
       componentSet:this.page.findChild(this.pageModel.componentSetModel.name),
       toolbar:this.page.findChild(this.pageModel.toolbarModel.name)
+//       ,
+//       manufacturerData : [
+//   {name: 'BMW', country: 'Germany', owner: 'Bayerische Motoren Werke AG'},
+//   {name: 'Chrysler', country: 'USA', owner: 'Chrysler Group LLC'},
+//   {name: 'Nissan', country: 'Japan', owner: 'Nissan Motor Company Ltd'},
+//   {name: 'Suzuki', country: 'Japan', owner: 'Suzuki Motor Corporation'},
+//   {name: 'Toyota', country: 'Japan', owner: 'Toyota Motor Corporation'},
+//   {name: 'Volvo', country: 'Sweden', owner: 'Zhejiang Geely Holding Group'}
+// ]
     }
   },
   props: ['pageModel','page', 'activeTab', 'height'],
   components: {
-    HotTable
+    HotTable,
+    BaseSelect
   },
   mounted() {
     this.getSettings()
@@ -121,6 +138,45 @@ export default {
   },
   methods: {
 
+    CallValueListFormInCell(row,col,querytxt,cellProp,instance){
+
+      // this.dialogVisible = true;
+
+      var _this = this;
+      function callValueListFromRefeed(resData){
+        let form = cellProp.form;
+        let component = cellProp.component;
+
+        let res = resData;
+        if((resData||'')!='')
+        {
+
+          instance.selectCell(row,col);
+          instance.setDataAtCell(row,col,resData[0]);
+
+          let res = resData[0];
+          let maps = cellProp.maps;
+          let form = cellProp.form;
+          if((res||'')!=''){
+            for(let m of maps){
+              form.setCmpValue(m['toComponent'],res[m['fromField']]);
+            }
+          }
+          // instance.loadData(_this.componentSet.datasource.dataList);
+          instance.view.render();
+          // console.log('materialName'+instance.getDataAtCell(row,col+1));
+        }
+      }
+
+      let formJsPath = '/com/epower/am/operation/SelectList'
+      this.$router.push({
+        path:formJsPath,
+        query:{
+          selectType:this.multiple?'multi':'single' ,
+          callValueListFromRefeed: callValueListFromRefeed
+        }
+      });
+    },
      beforeKeyDown(instance,e){
        var hottable = this.$refs.hotInstance.hotInstance;
        var selection = hottable.getSelected();
@@ -133,11 +189,27 @@ export default {
     },
     getSettings() {
       this.settings = {
+        licenseKey:'non-commercial-and-evaluation',  //handsontable 授权
         data: this.componentSet.datasource.dataList,
         dataSchema: {},
         colHeaders: [],
         rowHeaders: true,// 显示序列号 by max
-        columns: [],
+        columns: [
+    //       {
+    //   type: 'handsontable',
+    //   handsontable: {
+    //     colHeaders: ['Marque', 'Country', 'Parent company'],
+    //     autoColumnSize: true,
+    //     data: this.manufacturerData,
+    //     getValue: function() {
+    //     	var selection = this.getSelectedLast();
+
+    //       // Get always manufacture name of clicked row
+    //       return this.getSourceDataAtRow(selection[0]).name;
+    //     },
+    //   }
+    // }
+    ],
         colWidths: [],
         rowHeights: 55,
         className: "htCenter htMiddle",
@@ -160,7 +232,7 @@ export default {
        // observeChanges: true,//切换表成为单向数据绑定
         afterSelection: (row, column, row2, column2, preventScrolling, selectionLayerLevel) => {
           //光标移动的时候，datasource的光标也要移动
-           // console.log('to row ' + row)
+           console.log('to row ' + row)
             this.componentSet.datasource.scrollTo(row);
 
           },
@@ -224,40 +296,37 @@ export default {
         }
       } else if(component.ctype === 'valuelistField'){
           column ={
-                      // type:"yu.gridValueList",
-                      editor:"YU_Grid_ValueList",
-                      fromAction:'http://root.yiuser.com:3001/'+component.fromAction,
-                      inputField:component.inputField,
-                      valueField:component.valueField,//theader.valueListModel.saveField,
-                      displayField:component.displayField,//theader.valueListModel.displayField,
-                      maps: component.maps,
-                      component:component,
-                      form:this.page.parent,//TODO 要传form 进来 xie处理
-                      data: component.fieldName,
-                      //renderer 渲染显示字段
-                      //TODO 后续要写到类型内，以便前端框架移植
-                      renderer: function(hotInstance, td, row, column, prop, value, cellProperties){
-                        Handsontable.renderers.TextRenderer.apply(this, arguments);
-                        var cellValue = Handsontable.helper.stringify(value);
-                        if(Object.prototype.toString.call(value) === '[object Object]'){
-                          cellValue = value[component.displayField];
-                        }
-                        td.innerHTML = cellValue;
-                      },
-
-                      handsontable: {
-                        colHeaders: ['列1', '列2', '列3'],
-                        autoColumnSize: true,
-                        data: [],
-                        columns: [{data: "id"},{data: "materialNo"},{data: "materialName"}]
-                      }
-                    }
-        }  else  {
-              column ={
-                  type: "text",
-                  allowHtml: true,
-                  data: component.fieldName
-                }
+              type:"yu.gridValueList",
+              fromAction:'http://root.yiuser.com:3001/'+component.fromAction,
+              component:component,
+              inputField:component.inputField,
+              valueField:component.valueField,//theader.valueListModel.saveField,
+              displayField:component.displayField,//theader.valueListModel.displayField,
+              maps: component.maps,
+              form: component.form,
+              cellFunction:this.CallValueListFormInCell,
+              data: component.fieldName,
+              handsontable: {
+                colHeaders: ['列1', '列2', '列3'],  //TODO 增加配置
+                autoColumnSize: true,
+                data: [],
+                columns: [{data: "id"},{data: "materialNo"},{data: "materialName"}]  //TODO 增加配置
+              }
+          }
+        }else if(component.ctype === 'comboBox'){
+          column ={
+              type:"yu.gridCombox",
+              data: component.fieldName,
+              enumModel:component.enumModel,
+              form: component.form
+          }
+        }
+        else  {
+       column ={
+          type: "text",
+          allowHtml: true,
+          data: component.fieldName
+        }
       }
      return column
     },

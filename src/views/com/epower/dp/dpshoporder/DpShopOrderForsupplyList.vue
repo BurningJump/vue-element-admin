@@ -13,9 +13,6 @@ export default{
   mounted() {},
   methods: {
     resetForm(){
-      vsmartview.callDetailForm('com.epower.dp.dpshoporder.DpShopOrderDetail', 1, 'VIEW')
-
-
     }
   }
 }

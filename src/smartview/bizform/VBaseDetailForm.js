@@ -627,6 +627,8 @@ export default class VBaseDetailForm extends VBaseForm {
        component.displayFieldType = aComponentMeta.valueListModel.displayFieldType // ：前端显示字段的类型
 
        component.inputField = aComponentMeta.valueListModel.inputField
+       component.saveField = aComponentMeta.valueListModel.saveField;
+       component.targetField = aComponentMeta.valueListModel.targetField;
        component.maps = aComponentMeta.valueListModel.maps
      }
    }

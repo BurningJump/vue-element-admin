@@ -12,7 +12,6 @@ import * as VMessage from '../util/VMessage.js'
 import VDBComponent from '../component/VDBComponent.js'
 
 export default class VBaseForm extends VForm {
-
    // smartview视图化对象后的唯一值，可以理解为windows的句炳
    formId;
 
@@ -55,8 +54,8 @@ export default class VBaseForm extends VForm {
   requiredDependenceSet = [];
   // 编辑依赖
   editableDependenceSet = [];
-  // 值依赖依赖
-  valueDependenceSet = [];
+  // // 值依赖依赖,具体处理放到dataset里面去处理
+  // valueDependenceSet = [];
 
   constructor(parent, formMeta) {
     super(parent)
@@ -79,7 +78,6 @@ export default class VBaseForm extends VForm {
   createMetaUtil(value) {
     this.metaUtil = null
   }
-
 
   createDefultDataSource() {
     for (const dataset of this.dataStore.datasets) {
@@ -133,7 +131,6 @@ export default class VBaseForm extends VForm {
    * 根据datapackage装载数据
    * @param {*} dataPackage
    */
-
   loadDataByPackage(dataPackage) {
     if (this.fireEvent(vEventType.beforeLoadDataPackage) === false) return
     this.dataStore.loadDataByPackage(dataPackage)
@@ -267,55 +264,109 @@ export default class VBaseForm extends VForm {
       })
     }
   }
+
   /**
-   * 设置值依赖
-   * @param String targetCmpName
-   * @param String[] dependenceFields
-   * @param Boolean/function condition
-   * @param value/function value
+   * 添加cmp值更新事件,兼容旧框架原来的代码
+   * @param {String} cmpNames 字段控件名称/名称[数组]
+   * @param {Function} doFunction 处理函数[参数e = { cmpsetName, cmp, record } ]
+   */
+  addCmpValueChangedListener(cmpNames, doFunction) {
+    var cmpNameSet = []
+    if (typeof cmpNames === 'string') {
+      cmpNameSet.push(cmpNames)
+    } else {
+      cmpNameSet = cmpNames
+    }
+    for (var i = 0; i < cmpNameSet.length; i++) {
+      var cmpName = cmpNameSet[i]
+      var cmp = this.getCmpByName(cmpName)
+      const cmpSetCfg = this.metaUtil.getCmpSetConfig(cmpName)
+      const fieldName = this.metaUtil.getCmpConfig(cmpName).field
+      var dataSet = this.getDataset(cmpSetCfg.dataset)
+      const doFun = function(record, fieldName) {
+        var e = { cmpsetName: cmpSetCfg.name, cmp: cmp, record: record } // 兼容旧框架原来的代码
+        doFunction(e)
+      }
+      dataSet.addValueChangedListener(fieldName, doFun)
+    }
+  }
+  /**
+   * 设置值依赖，根据依赖字段控件变更调整目标字段的值(会影响控件绑定的相应字段值)
+   * @param {string} targetCmpName 目标字段控件名称
+   * @param {string} dependenceCmpNames 依赖的字段控件名称/名称[数组]
+   * @param {boolean} condition 条件布尔值或返回布尔值的函数[参数e = { cmpsetName, cmp, record }]
+   * @param {*} value 值/返回值的函数[参数e = { cmpsetName, cmp, record } ]
    */
   setValueDependence(targetCmpName, dependenceCmpNames, condition, value) {
+    var form = this
     var dependenceCmpNameSet = []
     if (typeof dependenceCmpNames === 'string') {
       dependenceCmpNameSet.push(dependenceCmpNames)
     } else {
       dependenceCmpNameSet = dependenceCmpNames
     }
-    this.valueDependenceSet.push({
-      type: basicConstant.DEPENDENCE_VALUE,
-      cmpName: targetCmpName,
-      dependenceCmpNames: dependenceCmpNameSet,
-      condition: condition,
-      value: value
-    })
-  }
-
-  /**
-   * 根据所依赖的字段，获取对应的依赖集
-   * @param denpendeceCmpName
-   * @returns {Array} denpendeceSet
-   */
-  getValueDependenceSet(dependenceCmpName) {
-    var dependenceSet = []
-    for (var i = 0; i < this.valueDependenceSet.length; i++) {
-      var dependenceCmpNames = this.valueDependenceSet[i].dependenceCmpNames
-      var isDependence = false
-      if (dependenceCmpName == null) {
-        isDependence = true
-      } else {
-        for (var j = 0; j < dependenceCmpNames.length; j++) {
-          if (dependenceCmpNames[j] === dependenceCmpName) {
-            isDependence = true
-            break
+    // this.valueDependenceSet.push({
+    //   type: basicConstant.DEPENDENCE_VALUE,
+    //   cmpName: targetCmpName,
+    //   dependenceCmpNames: dependenceCmpNameSet,
+    //   condition: condition,
+    //   value: value
+    // })
+    // 调整由dataset的值变更代理去处理,不再在form这边处理
+    for (var i = 0; i < dependenceCmpNameSet.length; i++) {
+      var cmpName = dependenceCmpNameSet[i]
+      var cmp = this.getCmpByName(cmpName)
+      const cmpSetCfg = this.metaUtil.getCmpSetConfig(cmpName)
+      const fieldName = this.metaUtil.getCmpConfig(cmpName).field
+      var dataSet = this.getDataset(cmpSetCfg.dataset)
+      const doFunction = function(record, fieldName) {
+        var e = { cmpsetName: cmpSetCfg.name, cmp: cmp, record: record } // 兼容旧框架原来的代码
+        let retCondition = false
+        if (typeof condition === 'function') {
+          retCondition = condition(e)
+        } else {
+          retCondition = condition
+        }
+        if (retCondition) {
+          let retValue = null
+          if (typeof value === 'function') {
+            retValue = value(e)
+          } else {
+            retValue = value
           }
+          form.setCmpValue(targetCmpName, retValue)
         }
       }
-      if (isDependence) {
-        dependenceSet.push(this.valueDependenceSet[i])
-      }
+      dataSet.addValueChangedListener(fieldName, doFunction)
     }
-    return dependenceSet
   }
+
+  // /**
+  //  * 根据所依赖的字段，获取对应的依赖集
+  //  * @param denpendeceCmpName
+  //  * @returns {Array} denpendeceSet
+  //  */
+  // getValueDependenceSet(dependenceCmpName) {
+  //   var dependenceSet = []
+  //   for (var i = 0; i < this.valueDependenceSet.length; i++) {
+  //     var dependenceCmpNames = this.valueDependenceSet[i].dependenceCmpNames
+  //     var isDependence = false
+  //     if (dependenceCmpName == null) {
+  //       isDependence = true
+  //     } else {
+  //       for (var j = 0; j < dependenceCmpNames.length; j++) {
+  //         if (dependenceCmpNames[j] === dependenceCmpName) {
+  //           isDependence = true
+  //           break
+  //         }
+  //       }
+  //     }
+  //     if (isDependence) {
+  //       dependenceSet.push(this.valueDependenceSet[i])
+  //     }
+  //   }
+  //   return dependenceSet
+  // }
   /**
    * 编辑依赖处理
    */
@@ -532,6 +583,4 @@ export default class VBaseForm extends VForm {
       }
     }
   }
-
-
 }

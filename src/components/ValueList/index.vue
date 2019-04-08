@@ -33,7 +33,7 @@
       v-for="item in filterList"
       :key=getObjectValueByKey(item,input.valueField)
       :label=getObjectValueByKey(item,input.displayField)
-      :value=getObjectValueByKey(item,input.valueField)>
+      :value=item>
       <span style="float: left" class="option_coloum">{{getObjectValueByKey(item,input.displayField)}}</span>
       <span style="float: left" class="option_coloum">{{getObjectValueByKey(item,input.displayField)}}</span>
       <span style="float: right; color: #8492a6; font-size: 13px">{{getObjectValueByKey(item,input.valueField)}}</span>
@@ -47,19 +47,24 @@
   import router from '@/router'  //临时代码
 
   export default {
-    name: 'RemoteCombox',
+    name: 'ValueList',
     data() {
       return {
         fullList: [],    //远程获取的结果
         filterList: [],  //过滤后的结果
         // comValue: [],    //保存用户选择的结果
-        loading: false
+        loading: false,
+        editing: false,
+        //TODO 当用户输入停顿1秒，无新的输入，再远程获取数据
+        inputOldValue:'',      //用户输入内容
+        inputBeginTime:'',     //用户输入开始时间
+        inputIntervalTime: ''  //用户输入间隔时长
       }
     },
     props: {input:{},
-            bandValue:'',
-            extraFilter:'', //业务人员在前端自定义的过滤条件
             multiple:true,
+            bandValue:'',
+            extraFilter:'', //业务人员在前端自定义的过滤条件            
             disabled:false,
             clearable:true,
             allowcreate:false,
@@ -67,15 +72,32 @@
     computed: {
       newValue:{
         get: function(){
-          return this.bandValue;
+          // if()
+          // return this.bandValue['projectName'];
+          if((this.bandValue) != void 0){
+            if(this.editing){
+              return this.bandValue[this.input.inputField];
+            }else{
+              return this.bandValue[this.input.displayField];
+            }
+
+            
+          }else{
+            return '';
+          }
+          
         },
         set: function(value){
-          // if(!this.multiple){
-          //   this.comValue = value;
-          // }else{
-          //   this.comValue.push(value);
-          // }
           this.input.saveInputValue(value);
+
+          //保存数据
+          this.input.datasource.updateFieldValue(this.input.targetField,value[this.input.saveField]);
+
+          let maps=this.input.maps;
+          let form = this.input.form;
+          for(let m of maps){     
+            form.setCmpValue(m['toComponent'],value[m['fromField']]);      
+          }
         }
       }
     },
@@ -87,10 +109,10 @@
       // }else{
       //   this.comValue.push(this.input.inputValue);
       // }
-
+      // this.filterList.push(this.newValue);
       //实时远程抓取数据
-      if(!this.input.fetchInTime)
-        this.loadRemoteData('',2);
+      // if(!this.input.fetchInTime)
+      //   this.loadRemoteData('',2);
     },
     methods: {
       //调用valueList窗口
@@ -111,10 +133,10 @@
         let selectValues=[];
         this.filterList = [];
         if(!this.multiple){
-          selectValues=resData[0][this.input.valueField];
+          selectValues=resData[0];
         }else{
           for(let item of resData){
-            selectValues.push(item[this.input.valueField]);
+            selectValues.push(item);
           }
         }
         this.filterList = resData;
@@ -130,13 +152,10 @@
         // 多选模式下移除tag时触发;
       },
       fireFocusEvent(){
-        // this.label=this.getObjectValueByKey(item,input.valueFieldType)
-       /// console.log('fireFocusEvent:');
-        // 当 input 获得焦点时触发;
+        this.editing = true;
       },
       fireBlurEvent(){
-        // console.log('--fireBlurEvent:');
-        // 当 input 失去焦点时触发
+        this.editing = false;
       },
       // fireChangeEvent(){
       //   console.log('--fireChangeEvent:'+this.bandValue+';--filterList:'+this.filterList);
@@ -163,11 +182,11 @@
           let filterStr = ' ';
           // let fieldType = 'string';
           if(initFlag==1){
-            filterStr = this.getFilterStr(this.input.valueFieldType,'=',this.input.valueField,query);
+            filterStr = this.getFilterStr(this.input.valueFieldType===void 0?'string':this.input.valueFieldType,'=',this.input.valueField,query);
           }else if(initFlag==2){
 
           }else{
-            filterStr = this.getFilterStr(this.input.displayFieldType,'like',this.input.displayField,query);
+            filterStr = this.getFilterStr(this.input.valueFieldType===void 0?'string':this.input.valueFieldType,'like',this.input.displayField,query);
           }
           filterStr=this.extraFilter + filterStr;
 
@@ -179,9 +198,13 @@
       remoteMethod(query,initFlag) {
         //无值及空值时全列表可选
         if ( (query||'').trim() !== '') {
+
+          // if(query.trim() !== this.inputOldValue.trim()){
+
+          // }
           
           //实时远程抓取数据
-          if(this.input.fetchInTime)
+          // if(this.input.fetchInTime)
             this.loadRemoteData(query,1);;
 
           this.filterList = this.fullList.filter(item => {
@@ -197,6 +220,9 @@
           this.filterList = this.fullList;
         }
       },
+      // getObjectValueByKey(){
+
+      // },
       //根据配置属性，获取对象属性对应的值
       getObjectValueByKey(item,k) {
         let v = '';

@@ -128,6 +128,7 @@ export const asyncRouterMap = [
       }
     ]
   },
+
   {
     path: '/com/epower/inv/invrequest',
     component: Layout,
@@ -139,10 +140,12 @@ export const asyncRouterMap = [
       roles: ['admin', 'editor'] // you can set roles in root nav
     },
     children: [
-      {
-        path: 'InvRequestDetail',
+        {
+        path: 'InvRequestDetail/:id',
         component: () => import('@/views/com/epower/inv/invrequest/InvRequestDetail'),
+        control: () => import('@/views/com/epower/inv/invrequest/InvRequestDetailForm.js'),
         name: 'com.epower.inv.invrequest.InvRequestDetail',
+        hidden: true,
         meta: {
           title: 'InvRequestDetail',
           roles: ['admin'] // or you can only set roles in sub nav

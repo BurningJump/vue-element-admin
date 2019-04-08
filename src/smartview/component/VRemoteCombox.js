@@ -23,6 +23,8 @@ export default class VRemoteCombox extends VDBComponent {
   // 远程combox的配置
     // remoteComboBoxModel;
 
+    saveField;  //valuelist 对象用于的保存字段
+    targetField;  //保存到哪个字段
     constructor(parent) {
       super(parent)
       this.ctype = basicConstant.CMP_REMOTECOMBOX

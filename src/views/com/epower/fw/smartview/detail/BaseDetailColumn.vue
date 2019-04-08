@@ -58,9 +58,16 @@
           <remote-combox v-else-if="component.ctype === 'remoteComboBox'" :component="component" :bandValue="component.inputValue"
             :allowcreate="component.allowcreate" :multiple="component.multiple" :disabled="!component.enable" :clearable="component.clearable">
           </remote-combox>
+
+          <value-list v-else-if="input.ctype === 'valuelistField'" :input="input" :bandValue="input.inputValue"
+            :allowcreate="input.allowcreate" :multiple="input.multiple" :disabled="!input.enable" :clearable="input.clearable">
+          </value-list>
+
           <el-input v-else
               v-model="component.inputValue" :disabled="!component.enable"  :readonly="component.readOnly"  clearable
             @blur = "component.saveInputValue()"  />
+
+
         </el-form-item>
       </el-form>
     </el-main>
@@ -69,6 +76,7 @@
 
 <script>
 import RemoteCombox from "@/components/RemoteCombox";
+import ValueList from "@/components/ValueList";
 export default {
   name: "com-epower-fw-smartview-detail-BaseDetailColumn",
   data() {
@@ -78,7 +86,8 @@ export default {
     };
   },
   components: {
-    RemoteCombox
+    RemoteCombox,
+    ValueList
   },
   computed:{
   },
