@@ -1,6 +1,5 @@
 import Handsontable from 'handsontable'
 import request from '@/utils/request'
-import { throttleAfterHits } from '_handsontable@7.0.0@handsontable/es/helpers/function';
 // import router from '@/router'  //临时代码
 
 (function(Handsontable){
@@ -34,7 +33,7 @@ import { throttleAfterHits } from '_handsontable@7.0.0@handsontable/es/helpers/f
     function onBlur(event) {
       editor.instance.runHooks('beforeBlur',event);
     }
-    
+
     function onValueListBtnClick(event) {
       let row= editor.row;
       let col = editor.col;
@@ -46,17 +45,17 @@ import { throttleAfterHits } from '_handsontable@7.0.0@handsontable/es/helpers/f
       // editor.instance.selectCell(row,col);  //如果启用，会导致cell getValue() 函数触发
       editor.cellProperties.cellFunction(row,col,textValue,cellProperties,editor.instance);
 
-      //关闭editor, 
+      //关闭editor,
       // var choicesListHot = editor.htEditor;
       // choicesListHot.destroy();
       // editor.close(true);
-      
+
       // choicesListHot.rootElement.style.display = 'none';
-      
+
       // editor.instance.destroyEditor();
-      
+
     }
-    // function callValueListFromRefeed(resData){    
+    // function callValueListFromRefeed(resData){
     //   if((resData||'')!='')
     //   {
     //     editor.instance.setDataAtCell(editor.row,editor.col,resData[0]);
@@ -68,21 +67,21 @@ import { throttleAfterHits } from '_handsontable@7.0.0@handsontable/es/helpers/f
     this.VALUEL_BTN.className = 'valueListBtn';
     this.VALUEL_BTN.onclick = onValueListBtnClick;//(this.row,this.col,this.TEXTAREA.value);
     this.TEXTAREA_PARENT.appendChild(this.VALUEL_BTN);
-    
+
     var DIV = document.createElement('DIV');
     DIV.className = 'handsontableEditor';
     this.TEXTAREA_PARENT.appendChild(DIV);
     this.htContainer = DIV;
-    this.assignHooks();   
+    this.assignHooks();
   }
-  
-  
+
+
 
   ValueListEdit.prototype.prepare = function (td, row, col, prop, value, cellProperties) {
     if (!cellProperties.readOnly) {
-      Handsontable.editors.HandsontableEditor.prototype.prepare.apply(this, arguments);      
-    }   
-    showValueListMaps(this,this.originalValue); 
+      Handsontable.editors.HandsontableEditor.prototype.prepare.apply(this, arguments);
+    }
+    showValueListMaps(this,this.originalValue);
   };
 
   ValueListEdit.prototype.open = function () {
@@ -91,7 +90,7 @@ import { throttleAfterHits } from '_handsontable@7.0.0@handsontable/es/helpers/f
     this.instance.addHook('afterBeginEditing', onAfterBeginEditing);
 
     // this.instance.addHook('afterDocumentKeyDown', onAfterDocumentKeyDown);
-    
+
 
     //自定义的hook
     Handsontable.hooks.register('afterInput');
@@ -123,63 +122,63 @@ import { throttleAfterHits } from '_handsontable@7.0.0@handsontable/es/helpers/f
           _isStrict = false;
           _selectObject =  [];
         }
-        return _selectObject;           
+        return _selectObject;
       }
-    }); 
+    });
   };
 
-  ValueListEdit.prototype.close = function () {    
+  ValueListEdit.prototype.close = function () {
     Handsontable.editors.HandsontableEditor.prototype.close.apply(this, arguments);
     this.instance.removeHook('beforeKeyDown', onBeforeKeyDown);
-    this.instance.removeHook('afterBeginEditing', onAfterBeginEditing); 
+    this.instance.removeHook('afterBeginEditing', onAfterBeginEditing);
     // this.instance.removeHook('afterDocumentKeyDown', onAfterDocumentKeyDown);
     this.instance.removeHook('afterInput', onInput);
     this.instance.removeHook('beforeBlur', onBlur);
   };
 
-  
+
   ValueListEdit.prototype.setValue = function(newValue){
-    var cellValue = Handsontable.helper.stringify(newValue); 
+    var cellValue = Handsontable.helper.stringify(newValue);
     if(isValueObjecgtExists(newValue) ){
       cellValue = newValue[this.cellProperties.displayField];
     }
-    this.TD.innerHTML = cellValue;    
+    this.TD.innerHTML = cellValue;
   };
 
   ValueListEdit.prototype.getValue = function(){
     // let choiceRes = this.htEditor.getInstance().getValue();
-    //在这里设置cell的值 
+    //在这里设置cell的值
     // this.instance.setDataAtCell(this.row,this.col,choiceRes);
     //TODO 设置map的值
-    
+
     // let maps = this.cellProperties.maps;
     // let form = this.cellProperties.form;
     // for(let m of maps){
-      
+
     //   // this.instance.setDataAtCell(this.row,  ,choiceRes[m['fromField']]);
     //   form.setCmpValue(m['toComponent'],choiceRes[m['fromField']]);
-      
+
     // }
     // this.instance.setDataAtRowProp(this.row,fieldName,value);
-    // return choiceRes; 
+    // return choiceRes;
     return _selectObject;
   };
 
-  
+
   ValueListEdit.prototype.saveValue = function(){
     let savevalue = _selectObject;// thisthis.getValue();
     if(!isValueObjecgtExists(savevalue)  && !_allowInvalid){
       _selectObject = this.originalValue;
       savevalue = _selectObject;
       // return;
-    }    
+    }
     this.instance.setDataAtCell(this.row,this.col,savevalue);
     showValueListMaps(this,savevalue);
   };
 
-  
+
   var skipOne = false;  //路过第一个？ 没用上？
-  
+
   ValueListEdit.prototype.queryChoices = function (query) {
     var _this = this;
 
@@ -192,26 +191,26 @@ import { throttleAfterHits } from '_handsontable@7.0.0@handsontable/es/helpers/f
       url: fromaction,
       method: 'get'
     }).then(resData => {
-      var options=resData.data.resultList;  
+      var options=resData.data.resultList;
       // for(let item of options){
       //   item['materialNo']=this.query;
-        // item['user1']='';  
+        // item['user1']='';
         // item['user2']='';
-        // item['user3']='';  
-      // }       
+        // item['user3']='';
+      // }
       // cellProp['source']=options;
       //更新可选列表
       htEditorInstance.loadData(options);//(Handsontable.helper.pivot([options]));
     }).catch(err => {
       console.log(err.message)
     });
-       
+
   };
-  
+
   //TODO valueList组件，输入时显示字段可以此事件中完成？【afterBeginEditing】
   function onAfterBeginEditing(row,column) {
     let editor = this.getActiveEditor();
-    let _cellProp = editor.cellProperties;    
+    let _cellProp = editor.cellProperties;
     let objValue = this.getDataAtCell(row,column);
     if(_cellProp !== void 0  && objValue !== void 0 && objValue != null && _isStrict){
       editor.TEXTAREA.value=objValue[_cellProp.inputField];
@@ -220,20 +219,20 @@ import { throttleAfterHits } from '_handsontable@7.0.0@handsontable/es/helpers/f
     }else{
       // editor.TEXTAREA.value='';
     }
-      
+
       // editor.TEXTAREA.value=objValue['teamName'];
   }
   function onAfterDocumentKeyDown(event){
   }
 
-  function onBeforeKeyDown(event) {    
+  function onBeforeKeyDown(event) {
     skipOne = false;
     _isStrict = false;
     var editor = this.getActiveEditor();
     // console.log('afterDocumentKeyDown---:'+_selectObject);
-    //如果按tab,enter键 
+    //如果按tab,enter键
     if(event.keyCode === Handsontable.helper.KEY_CODES.TAB
-      || event.keyCode === Handsontable.helper.KEY_CODES.ENTER){  
+      || event.keyCode === Handsontable.helper.KEY_CODES.ENTER){
 
       if(!isValueObjecgtExists(editor.getValue())  && !_allowInvalid){
         event.preventDefault();
@@ -246,70 +245,70 @@ import { throttleAfterHits } from '_handsontable@7.0.0@handsontable/es/helpers/f
     if(event.keyCode === Handsontable.helper.KEY_CODES.ESCAPE){
       editor.saveValue();
     }
-    
+
   }
   function showValueListMaps(valueEditor,valueObject){
     var editor = valueEditor;
     let maps = editor.cellProperties.maps;
     let form = editor.cellProperties.form;
-    for(let m of maps){      
+    for(let m of maps){
       // this.instance.setDataAtCell(this.row,  ,choiceRes[m['fromField']]);
       form.setCmpValue(m['toComponent'],'');
-      
+
     }
     if( (valueObject||'') != ''){
-      for(let m of maps){      
-        form.setCmpValue(m['toComponent'],valueObject[m['fromField']]);      
+      for(let m of maps){
+        form.setCmpValue(m['toComponent'],valueObject[m['fromField']]);
       }
     }
-    
+
   };
 
   function onBlur(event){
     var editor = this.getActiveEditor();
-    if(!isValueObjecgtExists(editor.getValue())  && !_allowInvalid){ 
-      editor.TD.innerHTML ='';   
-    }      
+    if(!isValueObjecgtExists(editor.getValue())  && !_allowInvalid){
+      editor.TD.innerHTML ='';
+    }
   }
   //edit 值输入处理
   function onInput(event){
     var editor = this.getActiveEditor();
     var timeOffset = 0;
-  
+
       //TODO 这里减少远程请求，不够全面，待完善->当中文输入法情况下，输入汉字，在汉字没有出来之前，每次键盘动作还是会触发以下代码
       if(_oldValue === editor.TEXTAREA.value || editor.TEXTAREA.value===void 0
         || editor.TEXTAREA.value==='')
         return;
-      
-        _selectObject=editor.TEXTAREA.value; 
-        _oldValue = editor.TEXTAREA.value;  
+
+        _selectObject=editor.TEXTAREA.value;
+        _oldValue = editor.TEXTAREA.value;
         showValueListMaps(editor,_selectObject);
       //如果editor没有open
       if (!editor.isOpened()) {
         timeOffset += 10;
       }
-      
+
       if (editor.htEditor) {
         editor.instance._registerTimeout(function () {
           editor.queryChoices(editor.TEXTAREA.value);
           skipOne = true;
         }, timeOffset);
-      }        
+      }
   }
-  
+
   //renderer 渲染显示字段
   //TODO 后续要写到类型内，以便前端框架移植
   function  cellRenderer(hotInstance, td, row, column, prop, value, cellProperties){
     Handsontable.renderers.TextRenderer.apply(this, arguments);
     Handsontable.dom.addClass(td,"htMiddle");  //居中显示
-    Handsontable.dom.addClass(td,"htCenter"); 
-    let _cellProp = cellProperties; 
-    let cellValue = Handsontable.helper.stringify(value); 
+    Handsontable.dom.addClass(td,"htCenter");
+    let _cellProp = cellProperties;
+    let cellValue = Handsontable.helper.stringify(value);
     if(isValueObjecgtExists(value)){
       cellValue = value[_cellProp.displayField];
-    }         
+    }
     // this is faster than innerHTML. See: https://github.com/handsontable/handsontable/wiki/JavaScript-&-DOM-performance-tips
-    Handsontable.dom.fastInnerText(td,cellValue);              
+    Handsontable.dom.fastInnerText(td,cellValue);
     // td.innerHTML = cellValue;
   }
 

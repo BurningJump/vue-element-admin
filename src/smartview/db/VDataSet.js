@@ -105,6 +105,7 @@ export default class VDataSet {
         // this.copyTable(this.currentTable, ADataPackage.dataSets[j].originalTable)
         // this.currentTable = this.copyTableByProxy(ADataPackage.dataSets[j].originalTable)
         this.currentTable = this.copyTable(ADataPackage.dataSets[j].originalTable, true)
+        // this.currentTable = ADataPackage.dataSets[j].originalTable
         //  Object.assign(this.originalTable, ADataPackage.dataSets[j].originalTable)// 原始记录
         //  this.copyTable(this.originalTable, ADataPackage.dataSets[j].originalTable)
         this.originalTable = this.copyTable(ADataPackage.dataSets[j].originalTable)

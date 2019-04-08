@@ -1,6 +1,4 @@
 import Handsontable from 'handsontable'
-import request from '@/utils/request'
-import { throttleAfterHits } from '_handsontable@7.0.0@handsontable/es/helpers/function';
 // import router from '@/router'  //临时代码
 
 (function(Handsontable){
@@ -36,30 +34,30 @@ import { throttleAfterHits } from '_handsontable@7.0.0@handsontable/es/helpers/f
     function onBlur(event) {
       editor.instance.runHooks('beforeBlur',event);
     }
-        
+
     var DIV = document.createElement('DIV');
     DIV.className = 'handsontableEditor';
     this.TEXTAREA_PARENT.appendChild(DIV);
     this.htContainer = DIV;
-    this.assignHooks();   
+    this.assignHooks();
   }
-  
+
   //edit 值输入处理
   function onInput(event){
-      
+
       var editor = this.getActiveEditor();
 
         if(_oldValue === editor.TEXTAREA.value || editor.TEXTAREA.value===void 0
           || editor.TEXTAREA.value==='')
           return;
-        
+
           _selectObject=editor.TEXTAREA.value; //允许值输入时要做处理
-          _oldValue = editor.TEXTAREA.value;  
+          _oldValue = editor.TEXTAREA.value;
         //如果editor没有open
         if (!editor.isOpened()) {
           timeOffset += 10;
         }
-        
+
         if (editor.htEditor) {
           editor.instance._registerTimeout(function () {
             editor.queryChoices(editor.TEXTAREA.value);
@@ -71,14 +69,14 @@ import { throttleAfterHits } from '_handsontable@7.0.0@handsontable/es/helpers/f
 
   ComboxEdit.prototype.prepare = function (td, row, col, prop, value, cellProperties) {
     if (!cellProperties.readOnly) {
-      Handsontable.editors.HandsontableEditor.prototype.prepare.apply(this, arguments);      
-    }   
+      Handsontable.editors.HandsontableEditor.prototype.prepare.apply(this, arguments);
+    }
   };
 
   ComboxEdit.prototype.open = function () {
     Handsontable.editors.HandsontableEditor.prototype.open.apply(this, arguments);
     this.instance.addHook('beforeKeyDown', onBeforeKeyDown);
-    this.instance.addHook('afterBeginEditing', onAfterBeginEditing); 
+    this.instance.addHook('afterBeginEditing', onAfterBeginEditing);
     Handsontable.hooks.register('beforeBlur');
     this.instance.addHook('beforeBlur', onBlur);
 
@@ -86,7 +84,7 @@ import { throttleAfterHits } from '_handsontable@7.0.0@handsontable/es/helpers/f
     // this.htEditor.getInstance().loadData(this.instance.getDataAtCell(this.row,this.col));
     let _cellProp = this.cellProperties;
     let _enumModelItems= _cellProp['enumModel'].items;
-    
+
     let _objValue = this.instance.getDataAtCell(this.row,this.col);
     for(let item of _enumModelItems){
       if(item['value'] === _objValue){
@@ -111,28 +109,28 @@ import { throttleAfterHits } from '_handsontable@7.0.0@handsontable/es/helpers/f
           _isStrict = false;
           _selectObject =  [];
         }
-        return _selectObject;           
+        return _selectObject;
       }
-    }); 
+    });
   };
 
-  ComboxEdit.prototype.close = function () {    
+  ComboxEdit.prototype.close = function () {
     Handsontable.editors.HandsontableEditor.prototype.close.apply(this, arguments);
     this.instance.removeHook('beforeKeyDown', onBeforeKeyDown);
-    this.instance.removeHook('afterBeginEditing', onAfterBeginEditing); 
+    this.instance.removeHook('afterBeginEditing', onAfterBeginEditing);
     this.instance.removeHook('beforeBlur', onBlur);
   };
 
 
 
   ComboxEdit.prototype.setValue = function(newValue){
-    var cellValue = Handsontable.helper.stringify(newValue); 
+    var cellValue = Handsontable.helper.stringify(newValue);
     if(isValueObjecgtExists(newValue) ){
       cellValue = newValue['label'];
     }else{
       cellValue = '';
     }
-    this.TD.innerHTML = cellValue;    
+    this.TD.innerHTML = cellValue;
   };
 
   ComboxEdit.prototype.getValue = function(){
@@ -142,22 +140,22 @@ import { throttleAfterHits } from '_handsontable@7.0.0@handsontable/es/helpers/f
   ComboxEdit.prototype.saveValue = function(){
     if(isValueObjecgtExists(_selectObject)){
       this.instance.setDataAtCell(this.row,this.col,_selectObject['value']);
-    }    
+    }
   };
 
-  
+
   var skipOne = false;  //路过第一个？ 没用上？
 
-  
+
   ComboxEdit.prototype.queryChoices = function (query) {
     this.query = query;
     // console.log('this.query:'+query);
     let _cellProp = this.cellProperties;
     let _enumModelItems= _cellProp['enumModel'].items;
     var htEditorInstance = this.htEditor.getInstance();
-    htEditorInstance.loadData(_enumModelItems);       
+    htEditorInstance.loadData(_enumModelItems);
   };
-  
+
   //renderer 渲染显示字段
   //TODO 后续要写到类型内，以便前端框架移植
   function  cellRenderer(hotInstance, td, row, column, prop, value, cellProperties){
@@ -179,7 +177,7 @@ import { throttleAfterHits } from '_handsontable@7.0.0@handsontable/es/helpers/f
 
   //combox显示值
   function showComboxDisplayValue(td,cellValue,_cellProp){
-    let _cellValue = Handsontable.helper.stringify(cellValue); 
+    let _cellValue = Handsontable.helper.stringify(cellValue);
     let _enumModelItems= _cellProp['enumModel'].items;
     if(cellValue !== void 0 && _enumModelItems !== void 0 && Array.isArray(_enumModelItems) ){
       for(let item of _enumModelItems){
@@ -190,33 +188,33 @@ import { throttleAfterHits } from '_handsontable@7.0.0@handsontable/es/helpers/f
       }
     }
     // this is faster than innerHTML. See: https://github.com/handsontable/handsontable/wiki/JavaScript-&-DOM-performance-tips
-    Handsontable.dom.fastInnerText(td,_cellValue);  
+    Handsontable.dom.fastInnerText(td,_cellValue);
   }
   function showEditorDisplayValue(_this){
     let editor = _this.getActiveEditor();
 
     let _cellValue='';
-    let _cellProp = editor.cellProperties;    
+    let _cellProp = editor.cellProperties;
     let _objValue = _this.getDataAtCell(editor.row,editor.col);
     let _enumModelItems= _cellProp['enumModel'].items;
-    
+
     for(let item of _enumModelItems){
       if(item['value'] === _objValue){
         _cellValue=item['label'] ;
         break;
       }
     }
-    editor.TEXTAREA.value=_cellValue; 
+    editor.TEXTAREA.value=_cellValue;
   }
 
-  function onBeforeKeyDown(event) {    
+  function onBeforeKeyDown(event) {
     skipOne = false;
     _isStrict = false;
     var editor = this.getActiveEditor();
     // console.log('afterDocumentKeyDown---:'+_selectObject);
-    //如果按tab,enter键 
+    //如果按tab,enter键
     if(event.keyCode === Handsontable.helper.KEY_CODES.TAB
-      || event.keyCode === Handsontable.helper.KEY_CODES.ENTER){  
+      || event.keyCode === Handsontable.helper.KEY_CODES.ENTER){
 
       if(!isValueObjecgtExists(editor.getValue())  && !_allowInvalid){
         event.preventDefault();
@@ -232,9 +230,9 @@ import { throttleAfterHits } from '_handsontable@7.0.0@handsontable/es/helpers/f
   }
   function onBlur(event){
     var editor = this.getActiveEditor();
-    if(!isValueObjecgtExists(editor.getValue())  && !_allowInvalid){ 
-      editor.TD.innerHTML ='';   
-    }      
+    if(!isValueObjecgtExists(editor.getValue())  && !_allowInvalid){
+      editor.TD.innerHTML ='';
+    }
   }
   //TODO valueList组件，输入时显示字段可以此事件中完成？【afterBeginEditing】
   function onAfterBeginEditing(row,column) {

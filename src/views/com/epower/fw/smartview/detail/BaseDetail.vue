@@ -19,8 +19,8 @@
         <div class="base-detail-container">
           <base-detail-grid
             v-if="pageModel.componentSetModel.style === 'grid'"
-            :pageModel="pageModel"
             :activeTab="form.activeDetailPage"
+            :pageModel="pageModel"
             :page ="form.getComponent(pageModel.name)"
             :height="height"
              @onButtonClick = "handleButtonClick"
@@ -34,8 +34,8 @@
           />
           <base-detail-column
             v-else-if="pageModel.componentSetModel.style === 'column'"
-            :pageModel="pageModel"
             :activeTab="form.activeDetailPage"
+            :pageModel="pageModel"
             :page ="form.getComponent(pageModel.name)"
             @buttonOnClick = "handleButtonClick"
           />
@@ -72,13 +72,13 @@ export default {
   methods: {
     calcTableHeight() {
       setTimeout(() => {
-        this.height =
-          window.innerHeight -
-          parseInt(
-            window.getComputedStyle(document.getElementById("qconHeader"), null)
-              .height
-          ) -
-          190;
+        // this.height =
+        //   window.innerHeight -
+        //   parseInt(
+        //     window.getComputedStyle(document.getElementById("qconHeader"), null)
+        //       .height
+        //   ) -
+        //   190;
         // this.height = (window.innerHeight - parseInt(window.getComputedStyle(document.getElementById('qconHeader'), null).height) - 100) + 'px'
       });
     },
