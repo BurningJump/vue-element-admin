@@ -111,9 +111,8 @@ export default {
     return {
       dialogVisible:false,
       root: 'test-hot',
-      settings: null,
-      componentSet:this.page.findChild(this.pageModel.componentSetModel.name),
-      toolbar:this.page.findChild(this.pageModel.toolbarModel.name)
+      settings: null
+
 //       ,
 //       manufacturerData : [
 //   {name: 'BMW', country: 'Germany', owner: 'Bayerische Motoren Werke AG'},
@@ -130,13 +129,16 @@ export default {
     HotTable,
     BaseSelect
   },
-  mounted() {
-    this.getSettings()
-
-    console.log("dataList:"+JSON.stringify(this.componentSet.datasource.dataList))
-    // this.$bus.on('getSetting', () => {
-    //   this.getSettings()
-    // })
+  created(){
+      this.getSettings()
+  },
+  computed:{
+      componentSet:function(){
+        return this.page.findChild(this.pageModel.componentSetModel.name)
+      },
+      toolbar:function(){
+        return  this.page.findChild(this.pageModel.toolbarModel.name)
+      }
   },
   methods: {
 
