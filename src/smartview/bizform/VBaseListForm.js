@@ -4,10 +4,11 @@ import VToolbar from '../component/VToolbar.js'
 import VPanel from '../component/VPanel.js'
 
 import VDBComponent from '../component/VDBComponent.js'
-import VDBComponentSet from '../component/VDBComponent.js'
+import VDBComponentSet from '../component/VDBComponentSet.js'
 
 import VButton from '../component/VButton.js'
 import VTree from '../component/VTree.js'
+import VTabSet from '../component/VTabSet.js'
 
 import * as cf from '../util/commonFun'
 import {
@@ -22,18 +23,22 @@ import VDataSource from '../db/VDataSource.js'
 
 export default class VBaseListForm extends VBaseForm {
   // 当前活动的Tab
-  _activeView = '';
+  _activeViewName = '';
 
   // 查询对象值
-  queryCondition ={}
+  queryCondition
 
   // 条件存储对象
   conditionDataSource;
+
+  // 装载数据
+   loadingData =false;
 
   constructor(parent, formMeta) {
     super(parent, formMeta)
     this.ctype = basicConstant.FORMTYPE_LIST
     this.conditionDataSource = new VDataSource(formMeta.qCondition.name)
+    this.queryCondition = this.conditionDataSource.getRecord()
     this.init()
   }
 
@@ -45,13 +50,13 @@ export default class VBaseListForm extends VBaseForm {
     return new VBaseListForm(parent, formMeta)
   }
 
-  get activeView() {
-    return this._activeView
+  get activeViewName() {
+    return this._activeViewName
   }
 
-  set activeView(value) {
-    if (this._activeView !== value) {
-      this._activeView = value
+  set activeViewName(value) {
+    if (this._activeViewName !== value) {
+      this._activeViewName = value
       this.activePage(value)
     }
   }
@@ -218,15 +223,15 @@ export default class VBaseListForm extends VBaseForm {
       this.enableDependenceControl(component)
       // 执行隐藏依赖
       this.hiddenDependenceControl(component)
+      // 执行必填依赖
+      this.requiredDependenceControl(component)
 
-      if (typeof component.setReadOnly === 'function') {
-        component.setReadOnly(true) // 查看模式下只可以查看
-      }
-      if (typeof component.setDefaultAllowBlank === 'function') {
-        component.setDefaultAllowBlank()
-        // 执行必填依赖
-        this.requiredDependenceControl(component)
-      }
+      // if (typeof component.setReadOnly === 'function') {
+      //   component.setReadOnly(false) // 看模式下只可以查看
+      // }
+      // if (typeof component.setDefaultAllowBlank === 'function') {
+      //   component.setDefaultAllowBlank()
+      // }
     }
   }
 
@@ -241,32 +246,28 @@ export default class VBaseListForm extends VBaseForm {
   }
 
   _createEnableDependence() {
-    // 处理masterpage上的按钮
-    var masterToolbar =
-      this.getComponent(this.formMeta.masterPage.toolbarModel.name)
-    for (var button of masterToolbar.children) {
-      this._addButtonDependence(button)
-    }
-
     // Detail的处理是否可用状态依赖设置
-    var detailPages = this.formMeta.detailPages
+    var detailPages = this.formMeta.dataView.views
     for (var j = 0; j < detailPages.length; j++) {
-      // 页面的按钮处理
-      var detailToolbar = this.getComponent(detailPages[j].toolbarModel.name)
-      for (const button of detailToolbar.children) {
-        this._addButtonDependence(button)
+      if (detailPages[j].topToolbar !== undefined && detailPages[j].topToolbar !== null) {
+        var topToolbar = this.getComponent(detailPages[j].topToolbar.name)
+        for (const button of topToolbar.children) {
+          this._addButtonDependence(button)
+        }
       }
 
-      //  聚合页面的处理
-      if (detailPages[j].componentSetModel != null && detailPages[j].componentSetModel.style === basicConstant.AGRID) {
-        var conditionFun = function() {
-          if (this.state === basicConstant.VIEWSTATE_NEW || this.state === basicConstant.VIEWSTATE_MODIFY) {
-            return false
-          } else {
-            return true
-          }
+      if (detailPages[j].rowToolbar !== undefined && detailPages[j].rowToolbar !== null) {
+        var rowToolbar = this.getComponent(detailPages[j].rowToolbar.name)
+        for (const button of rowToolbar.children) {
+          this._addButtonDependence(button)
         }
-        this.setEnableDependence(detailPages[j].name, conditionFun)
+      }
+
+      if (detailPages[j].footerToolbar !== undefined && detailPages[j].footerToolbar !== null) {
+        var footerToolbar = this.getComponent(detailPages[j].footerToolbar.name)
+        for (const button of footerToolbar.children) {
+          this._addButtonDependence(button)
+        }
       }
     }
   }
@@ -499,12 +500,18 @@ export default class VBaseListForm extends VBaseForm {
     this._initConditionComponentSet(this, conditionCS, formMeta.qCondition)
 
     // 建立Tree视图
-    var conditionTree = new VTree(this)
-    this._initConditionVTree(this, conditionTree, formMeta.tree)
+    if (formMeta.tree !== undefined && formMeta.tree !== null) {
+      var conditionTree = new VTree(this)
+      this._initConditionTree(this, conditionTree, formMeta.tree)
+    }
+    // 建立DataType视图
+    if (formMeta.dataType !== undefined && formMeta.dataType !== null) {
+      var dataType = new VTabSet(this)
+      this._initDataType(this, dataType, formMeta.dataType)
+    }
 
     // 3.建立dataView视图
     var dataViewMeta = formMeta.dataView
-
     for (var page of dataViewMeta.views) {
       // 建立Detail视图
       var pagePanel = new VPanel(this)
@@ -512,27 +519,46 @@ export default class VBaseListForm extends VBaseForm {
 
       // 1.视图中建立componentSet
       var dComponentSet = new VDBComponentSet(pagePanel)
-      this._initDBComponentSet(this, dComponentSet, page.componentSetModel)
+      this._initDBComponentSet(this, dComponentSet, page.componentSet)
 
       // 2.视图中建立toolbar
-      var topToolbar = new VToolbar(pagePanel)
-      this._initToolbar(this, topToolbar, page.topToolbar, dComponentSet.datasource)
-
+      if (page.topToolbar !== undefined && page.topToolbar !== null) {
+        var topToolbar = new VToolbar(pagePanel)
+        this._initToolbar(this, topToolbar, page.topToolbar, dComponentSet.datasource)
+      }
       //  3.视图中建立toolbar
-      var footerToolbar = new VToolbar(pagePanel)
-      this._initToolbar(this, footerToolbar, page.footerToolbar, dComponentSet.datasource)
+      if (page.footerToolbar !== undefined && page.footerToolbar !== null) {
+        var footerToolbar = new VToolbar(pagePanel)
+        this._initToolbar(this, footerToolbar, page.footerToolbar, dComponentSet.datasource)
+      }
     }
 
-    // TODO 重新设置 activeView
-    if (dataViewMeta.defaultView !== undefined && dataViewMeta.defaultView !== null) {
-      this.activeView = dataViewMeta.defaultView
-    } else if (dataViewMeta.views !== undefined && dataViewMeta.views.length > 0) {
-      this.activeView = dataViewMeta.views[0].name
-    }
+    // TODO 重新设置 activeViewName
 
+    if (this.formMeta.dataType !== undefined && this.formMeta.dataType !== null) {
+      this.activeViewName = this.formMeta.dataType.default
+    } else {
+      if (this.formMeta.dataView.defaultView !== undefined && this.formMeta.dataView.defaultView !== null) {
+        this.activeViewName = this.formMeta.dataView.defaultView
+      } else {
+        this.activeViewName = this.formMeta.dataView.views[0].name
+      }
+    }
     return true
   }
 
+  _initDataType(form, dataType, dataTypeMeta) {
+    this._initComponent(form, dataType, dataTypeMeta)
+
+    for (var item of dataTypeMeta.types) {
+      dataType.addTab(item.name, item.label, item.viewName, item.iconcls)
+    }
+
+    if (dataTypeMeta.default !== undefined) {
+      dataType.defaultTabName = dataTypeMeta.default
+      dataType.activeTabName = dataTypeMeta.default
+    }
+  }
   _initConditionTree(form, tree, treeMeta) {
     this._initComponent(form, tree, treeMeta)
 
@@ -659,7 +685,7 @@ export default class VBaseListForm extends VBaseForm {
     component.readOnly = (aComponentMeta.readOnly === undefined) ? false : (aComponentMeta.readOnly === 'true')
     component.originalReadOnly = component.readOnly
 
-    component.allowBlank = (aComponentMeta.allowBlank === undefined) ? false : (aComponentMeta.allowBlank === 'true')
+    component.allowBlank = (aComponentMeta.allowBlank === undefined) ? true : (aComponentMeta.allowBlank === 'true')
     component.originalAllowBlank = component.allowBlank
   }
 
@@ -676,6 +702,8 @@ export default class VBaseListForm extends VBaseForm {
     if (aComponentMeta.width !== undefined) {
       component.width = aComponentMeta.width
     }
+
+    component.labelWidth = (aComponentMeta.labelwidth !== undefined) ? 80:component.labelwidth
 
     if (aComponentMeta.ctype !== undefined) {
       component.ctype = aComponentMeta.ctype
@@ -707,9 +735,9 @@ export default class VBaseListForm extends VBaseForm {
   _initToolbar(form, toolbar, toolbarMeta, datasource) {
     this._initComponent(form, toolbar, toolbarMeta)
     toolbar.showMoreButton = toolbarMeta.showMoreButton
-    for (var buttonMeta of toolbarMeta.buttons) {
+    for (var componentMeta of toolbarMeta.components) {
       var cmp = new VButton(toolbar)
-      this._initToolbarButton(form, cmp, buttonMeta, datasource)
+      this._initToolbarButton(form, cmp, componentMeta, datasource)
     }
   }
   /**
@@ -836,12 +864,27 @@ export default class VBaseListForm extends VBaseForm {
     me.fireEvent('afterRefresh')
   }
 
+  queryData() {
+    this.loadingData = true;
+    const view = this.getComponent(this.activeViewName)
+    var componentSet = this.getComponent(view.componentMeta.componentSet.name)
+    var datasource = componentSet.datasource
+    var aDataset = datasource.dataset
+    if (aDataset.dataFrom === 'ajaxRequest') {
+      this.requestAjaxTableData(aDataset).then(dataList => {
+        aDataset.loadList(dataList)
+        datasource.open()
+        this.loadingData = false
+      }).catch(err => {
+        console.log(err.message)
+        this.loadingData = false
+      })
+    }
+  }
   requestAjaxTableData(dataset) {
     var me = this
-    var dataId = me.getIdValue()
     // ID 赋值
     var params = {
-      dataId: dataId,
       language: '', // TODO设置语言
       sVars: JSON.stringify(me.svars)
     }

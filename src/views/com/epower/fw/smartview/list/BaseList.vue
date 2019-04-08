@@ -7,29 +7,51 @@
         <el-form :model="form.conditionDataSource.record"
                   ref="conditionForm"
                   class="demo-ruleForm"
-                  label-width="100px"
+
                   size="mini">
           <el-form-item
-                v-for="input in form.getComponent(form.UIMeta.qCondition.name).children"
-                v-if="!input.isMore  ||  (condition.isMore && showMoreCondition) "
-                :key="input.name"
-                :style="{width: (input.width <= 1 ? condition.width*100 + '%' : condition.width + 'px')}"
-                :label="input.label"
-                :prop="input.findField"
-                :required="!input.allowBlank">
-            <!--
-            <el-input v-model="conditionForm[condition.findField]"/>
-             -->
-             <el-input  v-if="input.ctype === 'textfield' "
-                        v-model="input.inputValue" :disabled="!input.enable"  :readonly="input.readOnly"  clearable
-                       @blur = "input.saveInputValue()"  />
-              <el-checkbox v-else-if="input.ctype === 'checkboxField'" v-model="input.inputValue" :disabled="!input.enable "   @blur = "input.saveInputValue()" />
-              <el-date-picker v-else-if="input.ctype === 'dateField'" v-model="input.inputValue" type="date" :disabled="!input.enable"  @blur = "input.saveInputValue()" />
-              <el-date-picker v-else-if="input.ctype === 'dateTimeField'" v-model="input.inputValue" type="datetime" :disabled="!input.enable"    @blur = "input.saveInputValue()"/>
-              <el-input v-else-if="input.ctype === 'numberfield'" v-model="input.inputValue" type="number" :disabled="!input.enable"    @blur = "input.saveInputValue()" />
-              <el-select v-else-if="input.ctype === 'comboBox'" v-model="input.inputValue" filterable :disabled="!input.enable"  @blur = "input.saveInputValue()"  >
-              <el-option v-for="item in input.enumModel.items" :key="item.name" :label="item.label" :value="item.value"/>
-          </el-select>
+                v-for="component in form.getComponent(form.formMeta.qCondition.name).children"
+                v-if="!component.isMore || (showMoreCondition &&  component.isMore ) "
+                :key="component.name"
+                :style="{width: (component.width <= 1 ? component.width*100 + '%' : component.width + 'px')}"
+                :label="component.label"
+                :label-width="component.labelWidth+'px'"
+                :prop="component.findField"
+                :required="!component.allowBlank">
+
+
+              <el-switch   v-if="component.ctype === 'checkboxfield'" :readonly="component.readOnly"
+                           v-model="component.inputValue" :disabled="!component.enable "
+                            :placeholder="component.label" />
+
+              <el-date-picker v-else-if="component.ctype === 'dateField'" :readonly="component.readOnly"
+                              v-model="component.inputValue" type="date"
+                              :disabled="!component.enable"  @blur = "component.saveInputValue()"
+                              :placeholder="component.label"/>
+
+              <el-date-picker v-else-if="component.ctype === 'dateTimeField'" :readonly="component.readOnly"
+                              v-model="component.inputValue" type="datetime" :disabled="!component.enable"
+                               @blur = "component.saveInputValue()"
+                               :placeholder="component.label"
+                               :width = "'auto'" />
+
+              <el-input v-else-if="component.ctype === 'numberfield'" :readonly="component.readOnly"
+                        v-model="component.inputValue" type="number" :disabled="!component.enable"
+                        @blur = "component.saveInputValue()" />
+
+              <el-select v-else-if="component.ctype === 'comboBox'" :readonly="component.readOnly"
+                          v-model="component.inputValue" filterable
+                          :disabled="!component.enable"  @blur = "component.saveInputValue()"  >
+                    <el-option v-for="item in component.enumModel.items"
+                               :key="item.name" :label="item.label" :value="item.value"/>
+              </el-select>
+
+              <el-input v-else
+                        v-model="component.inputValue" :disabled="!component.enable"
+                        :readonly="component.readOnly"  clearable
+                        :placeholder="component.label"
+                        @blur = "component.saveInputValue()"  />
+
           </el-form-item>
           <!--
           <el-form-item v-for="condition in UIMeta.listViewModel.qCondition.components"
@@ -40,9 +62,9 @@
             <el-input v-model="conditionForm[condition.findField]"/>
           </el-form-item>
          -->
-          <el-form-item :style="{width: 'auto'}">
+          <el-form-item :style="{width: 'auto'}" label-width="100px" >
             <el-button-group>
-              <el-button size="mini" icon="el-icon-search">查询</el-button>
+              <el-button size="mini" @click="queryData()" icon="el-icon-search">查询</el-button>
               <el-button size="mini" @click="resetForm()" icon="el-icon-close">重置</el-button>
               <el-button size="mini" @click="showMoreCondition=!showMoreCondition;calcTableHeight()">
                 <span v-show="!showMoreCondition">更多</span>
@@ -56,11 +78,14 @@
       </el-header>
       <!--树区 -->
       <el-container>
-        <el-aside v-if="form.UIMeta.tree" width="200px" :style="{'height': treeHeight, 'padding': '0 5px'}">
-          <div class="tree-toolbar" v-if="form.UIMeta.tree.toolbar">
+        <el-aside
+              v-if="form.formMeta.tree"
+              width="200px"
+              :style="{'height': treeHeight, 'padding': '0 5px'}">
+          <div class="tree-toolbar" v-if="form.formMeta.tree.toolbar">
             <el-button-group>
               <el-tooltip class="item" effect="dark"
-                 v-for="btn in  form.getComponent(form.UIMeta.tree.toolbar.name).children"
+                 v-for="btn in  form.getComponent(form.formMeta.tree.toolbar.name).children"
                  v-if="!btn.isMore"
                  :content="btn.label"
                  placement="top">
@@ -70,13 +95,13 @@
               </el-tooltip>
 
               <el-tooltip class="item" effect="dark" content="更多" placement="top">
-                <el-dropdown v-if="form.UIMeta.tree.toolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
+                <el-dropdown v-if="form.formMeta.tree.toolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
                   <el-button size="mini">
                     <i class="el-icon-arrow-down el-icon--right" style="margin-left:0;"></i>
                   </el-button>
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item
-                          v-for="btn in  form.getComponent(form.UIMeta.tree.toolbar.name).children"
+                          v-for="btn in  form.getComponent(form.formMeta.tree.toolbar.name).children"
                           v-if="btn.isMore">
                       <svg-icon :icon-class="`${btn.iconcls}`"/>
                       {{btn.label}}
@@ -88,7 +113,7 @@
             </el-button-group>
           </div>
           <div class="tree-container">
-            <el-tree  :data="tree"
+            <el-tree
                       :props="treeProps" highlight-current
                       :load="form.loadTreeNode"
                        lazy
@@ -107,46 +132,45 @@
           </div>
         </el-aside>
 
-
-
         <el-main>
           <!--如果定义了DataType-->
-          <el-tabs v-if=" form.UIMeta.dataType"
-                   v-model="form.activeView"
+          <el-tabs v-if=" form.formMeta.dataType"
+                   v-model="form.activeViewName"
                    @tab-click="handleTabClick">
-            <el-tab-pane v-for="tab in form.UIMeta.dataType.types" :name="tab.name">
+            <el-tab-pane v-for="tab in form.formMeta.dataType.types" :name="tab.name">
               <span slot="label">
                 <svg-icon :icon-class="`${tab.iconcls}`"/>
                 {{tab.label}}
               </span>
-              <base-list-grid v-for="viewMeta in form.UIMeta.dataView.views"
+              <base-list-grid v-for="viewMeta in form.formMeta.dataView.views"
                      v-if="viewMeta.componentSet.style === 'grid' && tab.viewName === viewMeta.name"
                      :form="form"
                      :viewMeta="viewMeta"
-                     :view ="from.getComponent(viewMeta.name)"
+                     :view ="form.getComponent(viewMeta.name)"
                      :height="tableHeight" />
             </el-tab-pane>
           </el-tabs>
           <!--如果没有定义DataType-->
           <el-tabs v-else
-                  v-model="form.activeView"
+                  v-model="form.activeViewName"
                   @tab-click="handleTabClick">
-            <el-tab-pane v-for="tab in form.UIMeta.dataView.views" :name="tab.name">
+            <el-tab-pane v-for="tab in form.formMeta.dataView.views" :name="tab.name">
               <span slot="label">
                 <svg-icon :icon-class="`${tab.iconcls}`"/>
-                {{tab.name}}
+                {{tab.label}}
               </span>
-              <base-list-grid v-for="viewMeta in form.UIMeta.dataView.views"
+              <base-list-grid v-for="viewMeta in form.formMeta.dataView.views"
                       v-if="viewMeta.componentSet.style === 'grid'"
                       :form="form"
                       :viewMeta="viewMeta"
-                      :view ="from.getComponent(viewMeta.name)"
+                      :view ="form.getComponent(viewMeta.name)"
                       :height="tableHeight" />
             </el-tab-pane>
           </el-tabs>
         </el-main>
       </el-container>
     </el-container>
+    <!--
     <el-dialog :visible.sync="dialogVisible" width="30%">
       <span>这是一段信息</span>
       <span slot="footer" class="dialog-footer">
@@ -154,6 +178,7 @@
         <el-button type="primary" @click="dialogVisible = false" size="mini">更多</el-button>
       </span>
     </el-dialog>
+    -->
   </div>
 </template>
 
@@ -162,7 +187,7 @@ import BaseListGrid from '@/views/com/epower/fw/smartview/list/BaseListGrid'
 import BaseListCard from '@/views/com/epower/fw/smartview/list/BaseListCard'
 
 export default{
-  name: 'com.epower.fw.smartview.list.BaseList',
+  name: 'com-epower-fw-smartview-list-BaseList',
   components: {
     BaseListGrid,
     BaseListCard,
@@ -172,41 +197,14 @@ export default{
     return {
       id: null,
       tempRoute: {},
-   //   UiLoaded: false,  // UI获取完成
-   //   dataLoaded: false,  // 数据获取完成
       showMoreCondition: false,
       treeHeight: '600px',
       tableHeight: 600, // 表头高度
       dialogVisible: false,
-     // activeView: '',activeView
-    //  UIMeta: this.form.UIMeta,
-      // options: [
-      //   {
-      //     value: 'more',
-      //     label: '更多'
-      //   }, {
-      //     value: 'less',
-      //     label: '收起'
-      //   }
-      // ],
-      // treeRoot: {},
-      // treeChild: {},
-      // treeGrandchild: {},
-      // tree: [],
-
-
-      // grid: {},
-      // list: {},
-      // listQuery: {
-      //   page: 1,
-      //   limit: 20
-      // },
-      // multipleSelection: [],
-      treeProps: {
+       treeProps: {
         children: 'children',
         label: 'label'
       }
-      //conditionForm: {},
     }
   },
   computed: {
@@ -290,10 +288,10 @@ export default{
     //   return new Promise((resolve,reject) => {
     //     this.$http.get(`/api/getListUIMeta/${this.$options.name}`).then((res) => {
     //    //   this.UIMeta = res.data
-    //  //     this.activeTab = this.form.UIMeta.dataType
-    //       ? this.form.UIMeta.dataType.default
-    //       : this.form.UIMeta.dataView.defaultView
-    //       this.form.UIMeta.dataView.views.forEach((item, index) => {
+    //  //     this.activeTab = this.form.formMeta.dataType
+    //       ? this.form.formMeta.dataType.default
+    //       : this.form.formMeta.dataView.defaultView
+    //       this.form.formMeta.dataView.views.forEach((item, index) => {
     //         this.$set(this.grid, item.name, [])
     //         item.components.forEach((thead) => {
     //           this.grid[item.name].push({
@@ -308,14 +306,14 @@ export default{
     // },
     // getTree() {
     //   return new Promise((resolve,reject) => {
-    //     if (!this.form.UIMeta.tree) {
+    //     if (!this.form.formMeta.tree) {
     //       resolve('notree')
     //     }
-    //     this.$http.get(`/api/${this.form.UIMeta.tree.initUrl}/${this.form.UIMeta.tree.initMethod}`).then((res) => {
+    //     this.$http.get(`/api/${this.form.formMeta.tree.initUrl}/${this.form.formMeta.tree.initMethod}`).then((res) => {
     //       this.treeRoot = JSON.parse(JSON.stringify(res.data))
-    //       this.$http.get(`/api/${this.form.UIMeta.tree.actionUrl}/${this.form.UIMeta.tree.method}`).then((res) => {
+    //       this.$http.get(`/api/${this.form.formMeta.tree.actionUrl}/${this.form.formMeta.tree.method}`).then((res) => {
     //         this.treeChild = JSON.parse(JSON.stringify(res.data))
-    //         this.$http.get(`/api/${this.form.UIMeta.tree.actionUrl}/${this.form.UIMeta.tree.method}`).then((res) => {
+    //         this.$http.get(`/api/${this.form.formMeta.tree.actionUrl}/${this.form.formMeta.tree.method}`).then((res) => {
     //           this.treeGrandchild = JSON.parse(JSON.stringify(res.data))
     //           resolve(true)
     //         }).catch((err) => {
@@ -327,7 +325,7 @@ export default{
     // },
     // 生成目录树
     // renderTree() {
-    //   if (!this.form.UIMeta.tree) return
+    //   if (!this.form.formMeta.tree) return
     //   if (!this.treeRoot.treeRoot.leaf) {
     //     this.tree.push({
     //       iconcls: this.treeRoot.treeRoot.iconcls,
@@ -379,8 +377,8 @@ export default{
     // },
     // getListData() {
     //   return new Promise((resolve,reject) => {
-    //     this.form.UIMeta.dataView.views.forEach((view, vIndex) => {
-    //       this.form.UIMeta.querys.forEach((query, qIndex) => {
+    //     this.form.formMeta.dataView.views.forEach((view, vIndex) => {
+    //       this.form.formMeta.querys.forEach((query, qIndex) => {
     //         if (view.queryName === query.name) {
     //           this.$http.get(`/api/${query.actionUrl}/${query.queryMethod}`).then((res) => {
     //             this.$set(this.list, view.name, [])
@@ -390,8 +388,8 @@ export default{
     //                 this.$set(this.list[view.name][index], thead.prop, item[thead.prop])
     //               })
     //             })
-    //             if (vIndex === this.form.UIMeta.dataView.views.length-1
-    //                   && qIndex === this.form.UIMeta.querys.length-1) {
+    //             if (vIndex === this.form.formMeta.dataView.views.length-1
+    //                   && qIndex === this.form.formMeta.querys.length-1) {
     //               resolve('ok')
     //             }
     //           })
@@ -416,7 +414,10 @@ export default{
       console.log(data, node, ref)
     },
     resetForm() {
-      form.resetCondition
+      this.form.resetCondition()
+    },
+    queryData(){
+       this.form.queryData()
     }
   }
 }

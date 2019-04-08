@@ -24,13 +24,16 @@ export default class VDataSource {
     // this.dataStore = dataStore
     // this.datasetName = datasetName
     this.name = name
+
     if (dataset === null) {
+      // 如果数据集为空，表示从对象中取
+      this._type = 'object'
+      this._record = {}
+    } else {
+      // 如果数据集，表示从数据集中取
       this._type = 'dataset'
       this.dataset = dataset
       this.rowIndex = -1 // 当前数据展现行号,零代表第一行，因为js的数组是从零开始
-    } else {
-      this._type = 'object'
-      this._record = {}
     }
   }
 
@@ -130,10 +133,12 @@ export default class VDataSource {
   // 装载元件数据
   _loadComponentTableData(index) {
     for (const component of this.components) {
-      if (index === -1) {
-        component.loadData(null)
-      } else {
-        component.loadData(this.dataList[index])
+      if (component.loadData !== undefined) {
+        if (index === -1) {
+          component.loadData(null)
+        } else {
+          component.loadData(this.record)
+        }
       }
     }
   }
@@ -141,7 +146,9 @@ export default class VDataSource {
   // 装载元件数据
   _loadComponentData() {
     for (const component of this.components) {
-      component.loadData(this.record)
+      if (component.loadData !== undefined) {
+        component.loadData(this.record)
+      }
     }
   }
 
@@ -175,6 +182,16 @@ export default class VDataSource {
   }
 
   /**
+   * 装载可视数据 光标设置为零
+   * @param {*} objectValue
+   */
+  openByObject(objectValue) {
+    this._record = objectValue
+    this._loadComponentData()
+    this.isOpen = true
+  }
+
+  /**
    * 根据过滤条件打开数据
    *    * @param {*} filter
    */
@@ -195,11 +212,11 @@ export default class VDataSource {
     if (this._type === 'object') {
       return this._loadComponentData()
     } else {
-      return this.listRefresh()
+      return this._refreshByList()
     }
   }
 
-  listRefresh() {
+  _refreshByList() {
     var curIndex = this.rowIndex
     var data = this.dataset.getDatasetData(this.datasetName, this.filter)
     this.dataList = data

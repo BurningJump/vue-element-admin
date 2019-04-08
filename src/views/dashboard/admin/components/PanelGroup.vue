@@ -49,6 +49,7 @@
 
 <script>
 import CountTo from 'vue-count-to'
+import {vsmartview} from '@/smartview/VSmartView.js'
 
 export default {
   components: {
@@ -57,6 +58,7 @@ export default {
   methods: {
     handleSetLineChartData(type) {
       this.$emit('handleSetLineChartData', type)
+
     }
   }
 }

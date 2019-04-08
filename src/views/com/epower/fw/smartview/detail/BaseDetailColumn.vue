@@ -37,30 +37,30 @@
     </el-header>
     <el-main>
       <el-form
-        v-for="input in componentSet.children"
-        :key="input.componentName"
-        :style="{width: input.width*100 + '%'}"
+        v-for="component in componentSet.children"
+        :key="component.componentName"
+        :style="{width: component.width*100 + '%'}"
         class="demo-ruleForm"
         label-width="100px"
         size="mini"
       >
-        <el-form-item :label="input.label" :required="!input.allowBlank">
-          <el-input
-            v-if="input.ctype === 'textfield' "
-            v-model="input.inputValue" :disabled="!input.enable"  :readonly="input.readOnly"  clearable
-            @blur = "input.saveInputValue()"  />
-          <el-checkbox v-else-if="input.ctype === 'checkboxField'" v-model="input.inputValue" :disabled="!input.enable "   @blur = "input.saveInputValue()" />
-          <el-date-picker v-else-if="input.ctype === 'dateField'" v-model="input.inputValue" type="date" :disabled="!input.enable"  @blur = "input.saveInputValue()" />
-          <el-date-picker v-else-if="input.ctype === 'dateTimeField'" v-model="input.inputValue" type="datetime" :disabled="!input.enable"    @blur = "input.saveInputValue()"/>
-          <el-input v-else-if="input.ctype === 'numberfield'" v-model="input.inputValue" type="number" :disabled="!input.enable"    @blur = "input.saveInputValue()" />
-          <el-select v-else-if="input.ctype === 'comboBox'" v-model="input.inputValue" filterable :disabled="!input.enable"  @blur = "input.saveInputValue()"  >
-            <el-option v-for="item in input.enumModel.items" :key="item.name" :label="item.label" :value="item.value"/>
+        <el-form-item :label="component.label"
+                      :required="!component.allowBlank"
+                       :label-width="component.labelWidth+'px'"
+                      >
+          <el-checkbox v-if="component.ctype === 'checkboxField'" v-model="component.inputValue" :disabled="!component.enable "   @blur = "component.saveInputValue()" />
+          <el-date-picker v-else-if="component.ctype === 'dateField'" v-model="component.inputValue" type="date" :disabled="!component.enable"  @blur = "component.saveInputValue()" />
+          <el-date-picker v-else-if="component.ctype === 'dateTimeField'" v-model="component.inputValue" type="datetime" :disabled="!component.enable"    @blur = "component.saveInputValue()"/>
+          <el-component v-else-if="component.ctype === 'numberfield'" v-model="component.inputValue" type="number" :disabled="!component.enable"    @blur = "component.saveInputValue()" />
+          <el-select v-else-if="component.ctype === 'comboBox'" v-model="component.inputValue" filterable :disabled="!component.enable"  @blur = "component.saveInputValue()"  >
+            <el-option v-for="item in component.enumModel.items" :key="item.name" :label="item.label" :value="item.value"/>
           </el-select>
-
-          <remote-combox v-else-if="input.ctype === 'remoteComboBox'" :input="input" :bandValue="input.inputValue"
-            :allowcreate="input.allowcreate" :multiple="input.multiple" :disabled="!input.enable" :clearable="input.clearable">
+          <remote-combox v-else-if="component.ctype === 'remoteComboBox'" :component="component" :bandValue="component.inputValue"
+            :allowcreate="component.allowcreate" :multiple="component.multiple" :disabled="!component.enable" :clearable="component.clearable">
           </remote-combox>
-
+          <el-input v-else
+              v-model="component.inputValue" :disabled="!component.enable"  :readonly="component.readOnly"  clearable
+            @blur = "component.saveInputValue()"  />
         </el-form-item>
       </el-form>
     </el-main>

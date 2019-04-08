@@ -81,7 +81,7 @@ export default {
     RaddarChart,
     PieChart,
     BarChart,
-    // TransactionTable,
+    //TransactionTable,
     TodoList,
     BoxCard
   },

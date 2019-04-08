@@ -8,6 +8,7 @@ export default class VComponent {
   componentMeta;// 存储组件的xml定义
 
   label; // 组件展示
+  labelWidth;// label 展示宽度
   width; // 展示宽度
   ctype; // 组件类型
   children = []; // 组件类型

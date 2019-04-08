@@ -96,10 +96,21 @@ export const asyncRouterMap = [
     },
     children: [
       {
-        path: 'DpShopOrderDetail/:id',
+        path: 'DpShopOrderDetail/:dataId',
         component: () => import('@/views/com/epower/dp/dpshoporder/DpShopOrderDetail'),
         control: () => import('@/views/com/epower/dp/dpshoporder/DpShopOrderDetailForm.js'),
         name: 'com.epower.dp.dpshoporder.DpShopOrderDetail',
+        hidden: true,
+        meta: {
+          title: 'DpShopOrderDetail',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'DpShopOrderList/:formId',
+        component: () => import('@/views/com/epower/dp/dpshoporder/DpShopOrderList'),
+        control: () => import('@/views/com/epower/dp/dpshoporder/DpShopOrderListForm.js'),
+        name: 'com.epower.dp.dpshoporder.shopOrderList',
         hidden: true,
         meta: {
           title: 'DpShopOrderDetail',

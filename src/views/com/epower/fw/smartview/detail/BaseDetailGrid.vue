@@ -184,11 +184,10 @@ export default {
         );
         this.settings.columns.push(this.createColumn(component));
         // console.log('theader.ctype:'+theader.ctype);
-
-
       });
     },
-     createColumn(component){
+
+    createColumn(component){
       var column
       if (component.ctype==='image'){
          column ={
@@ -225,45 +224,44 @@ export default {
         }
       } else if(component.ctype === 'valuelistField'){
           column ={
-              // type:"yu.gridValueList",
-              editor:"YU_Grid_ValueList",
-              fromAction:'http://root.yiuser.com:3001/'+component.fromAction,
-              inputField:component.inputField,
-              valueField:component.valueField,//theader.valueListModel.saveField,
-              displayField:component.displayField,//theader.valueListModel.displayField,
-              maps: component.maps,
-              component:component,
-              form:this.page.parent,//TODO 要传form 进来 xie处理
-              data: component.fieldName,
-              //renderer 渲染显示字段
-              //TODO 后续要写到类型内，以便前端框架移植
-              renderer: function(hotInstance, td, row, column, prop, value, cellProperties){
-                Handsontable.renderers.TextRenderer.apply(this, arguments);
-                var cellValue = Handsontable.helper.stringify(value);
-                if(Object.prototype.toString.call(value) === '[object Object]'){
-                  cellValue = value[component.displayField];
+                      // type:"yu.gridValueList",
+                      editor:"YU_Grid_ValueList",
+                      fromAction:'http://root.yiuser.com:3001/'+component.fromAction,
+                      inputField:component.inputField,
+                      valueField:component.valueField,//theader.valueListModel.saveField,
+                      displayField:component.displayField,//theader.valueListModel.displayField,
+                      maps: component.maps,
+                      component:component,
+                      form:this.page.parent,//TODO 要传form 进来 xie处理
+                      data: component.fieldName,
+                      //renderer 渲染显示字段
+                      //TODO 后续要写到类型内，以便前端框架移植
+                      renderer: function(hotInstance, td, row, column, prop, value, cellProperties){
+                        Handsontable.renderers.TextRenderer.apply(this, arguments);
+                        var cellValue = Handsontable.helper.stringify(value);
+                        if(Object.prototype.toString.call(value) === '[object Object]'){
+                          cellValue = value[component.displayField];
+                        }
+                        td.innerHTML = cellValue;
+                      },
+
+                      handsontable: {
+                        colHeaders: ['列1', '列2', '列3'],
+                        autoColumnSize: true,
+                        data: [],
+                        columns: [{data: "id"},{data: "materialNo"},{data: "materialName"}]
+                      }
+                    }
+        }  else  {
+              column ={
+                  type: "text",
+                  allowHtml: true,
+                  data: component.fieldName
                 }
-                td.innerHTML = cellValue;
-              },
-
-              handsontable: {
-                colHeaders: ['列1', '列2', '列3'],
-                autoColumnSize: true,
-                data: [],
-                columns: [{data: "id"},{data: "materialNo"},{data: "materialName"}]
-              }
-
-          }
-        }
-        else  {
-       column ={
-          type: "text",
-          allowHtml: true,
-          data: component.fieldName
-        }
       }
      return column
     },
+
     safeHtmlRenderer(instance, td, row, col, prop, value, cellProperties) {
         var escaped = Handsontable.helper.stringify(value);
         escaped = strip_tags(escaped, '<em><b><strong><a><big>'); //be sure you only allow certain HTML tags to avoid XSS threats (you should also remove unwanted HTML attributes)

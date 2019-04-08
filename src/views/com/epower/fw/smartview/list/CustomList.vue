@@ -1,16 +1,16 @@
 <template>
-    <BaseBillDetail :form = "form"  >
-    </BaseBillDetail>
+    <BaseList :form = "form"  >
+    </BaseList>
 </template>
 
 <script>
-import BaseBillDetail from "@/views/com/epower/fw/smartview/detail/BaseBillDetail";
-import VBaseDetailForm from "@/smartview/bizform/VBaseDetailForm.js";
+import BaseList from "./BaseList";
+import VBaseListForm from "@/smartview/bizform/VBaseListForm.js";
 import {vsmartview} from '@/smartview/VSmartView.js'
 
 export default {
-  name: 'com-epower-fw-smartview-detail-CustomBillDetail',
-  components:{BaseBillDetail},
+  name: 'com-epower-fw-smartview-list-CustomList',
+  components:{BaseList},
   data() {
     return {
       form: null //add by max

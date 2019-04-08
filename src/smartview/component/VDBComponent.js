@@ -30,12 +30,16 @@ export default class VDBComponent extends VValueComponent {
   }
 
   set value(v) {
-    super.value(v)
+    // if (v === undefined) {
+    //   v = null
+    // }
+    super.value = v
     this.datasource.record[this.fieldName] = v
   }
 
   loadData(record) {
-    return super.loadData(record[this.fieldName])
+    var value = record[this.fieldName]
+    return super.loadData(value)
   }
 }
 

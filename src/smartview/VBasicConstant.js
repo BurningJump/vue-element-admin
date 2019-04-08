@@ -15,6 +15,8 @@ export var basicConstant = {
   CMP_COMPONENTSET_DB: 'DBComponentSet',
   CMP_COMPONENTSET_DO: 'DOComponentSet',
 
+  CMP_TABSET: 'TabSet',
+
   CMP_TOOLBAR: 'Toolbar',
   CMP_REMOTECOMBOX: 'RemoteComboBox',
   CMP_BUTTON: 'Button',

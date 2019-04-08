@@ -3,24 +3,24 @@
     <el-main style="padding:0;" class="base-list-grid-container">
 
      <!--顶部按钮 -->
-      <div class="topToolbar">
+      <div class="topToolbar" v-if="viewMeta.topToolbar"  >
         <div>
           <el-button-group>
             <el-button
-                v-for="btn in form.getComponent(viewMeta.topToolbar.name).children"
+                v-for="btn in topToolbar.children "
                 v-if="!btn.isMore" size="mini">
               <svg-icon :icon-class="`${btn.iconcls}`"/>
               {{btn.label}}
             </el-button>
             <el-dropdown
-                v-if="viewMeta.topToolbar.showMoreButton"
+                v-if="topToolbar.showMoreButton"
                 trigger="click" placement="bottom" szie="mini">
               <el-button size="mini">
                 更多<i class="el-icon-arrow-down el-icon--right"></i>
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item
-                      v-for="btn in form.getComponent(viewMeta.topToolbar.name).children"
+                      v-for="btn in topToolbar.children"
                       v-if="btn.isMore">
                   <svg-icon :icon-class="`${btn.iconcls}`"/>
                   {{btn.label}}
@@ -39,7 +39,8 @@
                 :height="height"
                 :cell-style="cellStyle"
                 :row-style="rowStyle"
-                @selection-change="handleSelectionChange">
+                @selection-change="handleSelectionChange"
+                @row-dblclick ="handleGridRowDBClick">
 
         <el-table-column type="selection" align="center"/>
 
@@ -54,10 +55,11 @@
 
           <template slot-scope="scope">
             <img  v-if="componentMeta.ctype === 'image'"
-                  :src="scope.row[componentMeta.fieldName]"
+                  :src="scope.row[componentMeta.field]"
                   :width="componentMeta.width">
-            <div v-else-if="componentMeta.ctype === 'valuelistField'" v-html="scope.row[componentMeta.fieldName][componentMeta.valueListModel.displayField]"></div>
-            <div v-else v-html="scope.row[componentMeta.fieldName]"></div>
+            <div v-else-if="componentMeta.ctype === 'valuelistField'"
+                  v-html="scope.row[componentMeta.field][componentMeta.valueListModel.displayField]"></div>
+            <div v-else v-html="scope.row[componentMeta.field]"></div>
           </template>
         </el-table-column>
 
@@ -71,7 +73,7 @@
                     v-for="btn in componentMeta.components"
                     v-if="!btn.isMore" class="item" effect="dark"
                     :content="btn.label" placement="top">
-                <el-button @click="handleClick(scope.$index, scope.row, btn.fun)" size="mini">
+                <el-button @click="handleRowButtonClick(scope.$index, scope.row, btn)" size="mini">
                   <svg-icon :icon-class="`${btn.iconcls}`"/>
                 </el-button>
               </el-tooltip>
@@ -101,7 +103,7 @@
         <div>
           <el-button-group>
             <el-button
-                v-for="btn in form.getComponent(viewMeta.footerToolbar.name).children"
+                v-for="btn in footerToolbar.children"
                 v-if="!btn.isMore" size="mini">
               <svg-icon :icon-class="`${btn.iconcls}`"/>
               {{btn.label}}
@@ -114,7 +116,7 @@
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item
-                    v-for="btn in form.getComponent(viewMeta.footerToolbar.name).children"
+                    v-for="btn in footerToolbar.children"
                     v-if="btn.isMore">
                   <svg-icon :icon-class="`${btn.iconcls}`"/>
                   {{btn.label}}
@@ -124,8 +126,8 @@
           </el-button-group>
         </div>
       </div>
-      <pagination v-show="this.componentSet.datasource.dataList.length>0"
-                  :total="this.componentSet.datasource.dataList.length"
+      <pagination v-show="rowTotal>0"
+                  :total="rowTotal"
                   :page.sync="listQuery.page"
                   :limit.sync="listQuery.limit"
                   @pagination="getList"/>
@@ -143,7 +145,7 @@ export default {
         page: 1,
         limit: 20
       },
-      componentSet:this.page.findChild(this.viewMeta.componentSet.name)
+      componentSet:this.view.findChild(this.viewMeta.componentSet.name),
     }
   },
   props: ['form','view','viewMeta', 'height'], //, 'list', 'grid'
@@ -151,6 +153,21 @@ export default {
     Pagination
   },
   computed: {
+    rowTotal(){
+       return  this.componentSet.datasource.getRecordCount()
+    },
+    topToolbar(){
+      if  (this.viewMeta.topToolbar!==undefined){
+         return  this.view.findChild(this.viewMeta.topToolbar.name)
+      }
+      return null
+    },
+    footerToolbar(){
+      if  (this.viewMeta.footerToolbar!==undefined){
+         return  this.view.findChild(this.viewMeta.footerToolbar.name)
+      }
+      return null
+    },
     cellStyle() {
       return {
         'padding-left': '6px',
@@ -172,26 +189,16 @@ export default {
     }
   },
   methods: {
-    handleClick(index,row, action) {
-      switch(action) {
-        case 'modify':
-          console.log('修改')
-          this.dialogVisible = true;
-        break
-        case 'new':
-          console.log('增加')
-          this.dialogVisible = true;
-        break
-        case 'delete':
-          console.log('删除')
-        break
-      }
+    handleRowButtonClick(index,row, button) {
+       form.handleGridRowButtonClick({sender:button,index:index, row:row})
     },
     getList() {
-
     },
     handleSelectionChange(val) {
       this.$bus.emit('listSelectionChange', val)
+    },
+    handleGridRowDBClick(row, column, event){
+      this.form.handleGridRowDBClick({sender:this.componentSet,row:row, column:column})
     }
   }
 }

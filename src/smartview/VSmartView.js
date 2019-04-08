@@ -58,9 +58,9 @@ export default class VSmartView {
     // 获取路游表
     var maper = asyncRouterMap
     var res = this.getRouter(maper, formKey, '')
-    var routerPath = res.fullpath.replace(/:id/g, formId)
+    var routerPath = res.fullpath.replace(/:formId/g, formId)
 
-    // 是否有名称+detailId的缓存
+    // 是否有fromId的缓存
     var vform = this.findFormById(formId)
     if (vform !== undefined && vform !== null) {
       var myRouter = router
@@ -102,7 +102,7 @@ export default class VSmartView {
     // 获取路游表
     var maper = asyncRouterMap
     var res = this.getRouter(maper, formKey, '')
-    var routerPath = res.fullpath.replace(/:id/g, dataId)
+    var routerPath = res.fullpath.replace(/:dataId/g, dataId)
 
     // 是否有名称+detailId的缓存
     var vform = this.findDetailForm(formKey, dataId)

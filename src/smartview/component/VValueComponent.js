@@ -26,8 +26,8 @@ export default class VValueComponent extends VComponent {
   // 原始值
   originalValue;
 
-    // 多选选择模型
-    enumModel;
+  // 多选选择模型
+  enumModel;
 
   loading = false;// 是否是数据装载状态
 
@@ -82,8 +82,8 @@ export default class VValueComponent extends VComponent {
    */
   loadData(aValue) {
     this.loading = true
-    this.inputValue = aValue
-    this.value = aValue
+    this._inputValue = aValue
+    this._value = aValue
     this.oldValue = aValue
     this.originalValue = aValue
     this.loading = false

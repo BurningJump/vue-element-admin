@@ -627,7 +627,7 @@ export default class VBaseDetailForm extends VBaseForm {
        component.displayFieldType = aComponentMeta.valueListModel.displayFieldType // ：前端显示字段的类型
 
        component.inputField = aComponentMeta.valueListModel.inputField
-       component.maps = aComponentMeta.valueListModel.maps  
+       component.maps = aComponentMeta.valueListModel.maps
      }
    }
 
@@ -662,7 +662,7 @@ export default class VBaseDetailForm extends VBaseForm {
      component.readOnly = (aComponentMeta.readOnly === undefined) ? false : (aComponentMeta.readOnly === 'true')
      component.originalReadOnly = component.readOnly
 
-     component.allowBlank = (aComponentMeta.allowBlank === undefined) ? false : (aComponentMeta.allowBlank === 'true')
+     component.allowBlank = (aComponentMeta.allowBlank === undefined) ? true : (aComponentMeta.allowBlank === 'true')
      component.originalAllowBlank = component.allowBlank
 
      component.enumModel = aComponentMeta.enumModel
@@ -681,6 +681,8 @@ export default class VBaseDetailForm extends VBaseForm {
      if (aComponentMeta.width !== undefined) {
        component.width = aComponentMeta.width
      }
+
+     component.labelWidth = (aComponentMeta.labelwidth !== undefined) ? 80:component.labelwidth
 
      if (aComponentMeta.ctype !== undefined) {
        component.ctype = aComponentMeta.ctype
