@@ -45,19 +45,9 @@ export default class VValueComponent extends VComponent {
 
   set value(v) {
     if (this._value !== v) {
-      let canUpdate = true
-      if (this.loading === false) {
-        canUpdate = this.beforeSetValue(this._value, v)
-      }
-      if (canUpdate) {
-        this.oldValue = this._value
-        this._value = v
-      }
+      this.oldValue = this._value
+      this._value = v
     }
-  }
-
-  beforeSetValue(oldValue, newValue) {
-    return true
   }
 
   // 设置是否可以编辑

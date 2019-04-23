@@ -1,37 +1,43 @@
 import request from '@/utils/request'
 import router from '@/router'
+import store from '../store'
 import { basicConstant } from '@/smartview/VBasicConstant.js'
 import { asyncRouterMap } from '@/router'
 import * as UID from './util/uuid.js'
 
 export default class VSmartView {
+  // 窗体对象
+  // forms = [];
 
   // 窗体元数据定义
   formMetas = new Map();
 
-  // 窗体调用上下文
-  callContents= new Map();
+  findDetailForm(formName, dataId) {
+    var myStore = store
+    // return myStore.getters.getDetailForm(formName, dataId)
+    for (var form of myStore.getters.cachedForms) {
+      if (form.componentName === formName &&
+            form.ctype === basicConstant.FORMTYPE_DETAIL &&
+           form.dataId === dataId) {
+        return form
+      }
+    }
+  }
 
-  // findDetailForm(formName, dataId) {
-  //   for (var form of this.forms) {
-  //     if (form.componentName === formName &&
-  //           form.ctype === basicConstant.FORMTYPE_DETAIL &&
-  //          form.dataId === dataId) {
-  //       return form
-  //     }
-  //   }
-  // }
-
-  // findFormById(formId) {
-  //   for (var form of this.forms) {
-  //     if (form.formId === formId) {
-  //       return form
-  //     }
-  //   }
-  // }
-  // addForm(form) {
-  //   this.forms.push(form)
-  // }
+  findFormById(formId) {
+    var myStore = store
+    // return myStore.getters.getFormById(formId)
+    for (var form of myStore.getters.cachedForms) {
+      if (form.formId === formId) {
+        return form
+      }
+    }
+  }
+  addForm(form) {
+    var myStore = store
+    myStore.dispatch('addForm', form)
+    // this.forms.push(form)
+  }
 
   getRouter(routes, formKey, parentPath) {
     var res = null
@@ -60,30 +66,42 @@ export default class VSmartView {
     var maper = asyncRouterMap
     var res = this.getRouter(maper, formKey, '')
     var routerPath = res.fullpath.replace(/:formId/g, formId)
-    this.getListUIMeta(formKey).then(formMeta => {
-      // vform = module.default.NewInstant(this, formMeta)
-      // vform.addCVar(ACvar)
-      // vform.formId = formId
-      // this.addForm(vform)
-      // vform.show()
 
-      var callContent = new Map()
-      callContent['formKey'] = formKey
-      callContent['formMeta'] = formMeta
-      callContent['formId'] = formId
-      this.callContents[formKey + formId] = callContent
-
+    // 是否有fromId的缓存
+    var vform = this.findFormById(formId)
+    if (vform !== undefined && vform !== null) {
       var myRouter = router
       myRouter.push({
         path: routerPath,
         query: {
-          formId: formId,
-          formKey: formKey
+          formId: vform.formId
         }
       })
-    }).catch(err => {
-      console.log(err.stack)
-    })
+    } else {
+      // 没有缓存
+      res.route.control()
+        .then(module => {
+          this.getListUIMeta(formKey).then(formMeta => {
+            vform = module.default.NewInstant(this, formMeta)
+            vform.addCVar(ACvar)
+            vform.formId = formId
+            this.addForm(vform)
+            vform.show()
+            var myRouter = router
+            myRouter.push({
+              path: routerPath,
+              query: {
+                formId: formId
+              }
+            })
+          }).catch(err => {
+            console.log(err.stack)
+          })
+        })
+        .catch(err => {
+          console.log(err.stack)
+        })
+    }
   }
 
   // 通过router call from
@@ -92,24 +110,52 @@ export default class VSmartView {
     var maper = asyncRouterMap
     var res = this.getRouter(maper, formKey, '')
     var routerPath = res.fullpath.replace(/:dataId/g, dataId)
-    this.getDetailUIMeta(formKey).then(formMeta => {
-      var callContent = new Map()
-      callContent['formKey'] = formKey
-      callContent['formMeta'] = formMeta
-      callContent['formDataId'] = dataId
-      callContent['formStates'] = states
-      this.callContents[formKey + dataId] = callContent
+
+    // 是否有名称+detailId的缓存
+    var vform = this.findDetailForm(formKey, dataId)
+    if (vform !== undefined && vform !== null) {
       var myRouter = router
       myRouter.push({
         path: routerPath,
         query: {
-          formKey: formKey,
-          dataId: dataId
+          formId: vform.formId
         }
       })
-    }).catch(err => {
-      console.log(err.stack)
-    })
+    } else {
+      // 没有缓存
+      res.route.control()
+        .then(module => {
+          this.getDetailUIMeta(formKey).then(formMeta => {
+            vform = module.default.NewInstant(this, formMeta)
+            vform.addCVar(ACvar)
+            var formId = new UID.UUID().toString()
+            vform.formId = formId
+            vform.dataId = dataId
+            this.addForm(vform)
+            vform.requestDetailData(dataId).then(dataPackage => {
+              vform.loadDataByPackage(dataPackage) // add by max
+              vform.show(states)
+              // TODO 需要替代一下ID
+              // 调用vue-router call出form
+              // TODO var myRouter 的赋值是否会导致分险，需要再次评估。
+              var myRouter = router
+              myRouter.push({
+                path: routerPath,
+                query: {
+                  formId: formId
+                }
+              })
+            }).catch(err => {
+              console.log(err.stack)
+            })
+          }).catch(err => {
+            console.log(err.stack)
+          })
+        })
+        .catch(err => {
+          console.log(err.stack)
+        })
+    }
   }
   // TODO 通过动态加载js call from 目前没有搞定，原因import时提示模块不存在
   // callForm(formKey, id, states) {

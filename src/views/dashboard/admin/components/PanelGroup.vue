@@ -58,7 +58,7 @@ export default {
   methods: {
     handleSetLineChartData(type) {
       this.$emit('handleSetLineChartData', type)
-
+      vsmartview.callDetailForm('com.epower.dp.dpshoporder.DpShopOrderDetail', 1, 'VIEW')
     }
   }
 }

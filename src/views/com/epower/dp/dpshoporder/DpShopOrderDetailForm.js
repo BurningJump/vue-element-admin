@@ -4,10 +4,6 @@ import { basicConstant } from '@/smartview/VBasicConstant.js'
 export default class DpShopOrderDetailForm extends VBaseDetailForm {
   operationCode = 'DP02' ;
 
-  static NewInstant(parent, formMeta) {
-    return new DpShopOrderDetailForm(parent, formMeta)
-  }
-
   setFormEnableDependence(form) {
     var canGenStockBillFun = function(e) {
       var ds = form.getDataset('dpShopOrder')
@@ -36,8 +32,8 @@ export default class DpShopOrderDetailForm extends VBaseDetailForm {
     var newStockOrder = form.getCmpByName('newStockOrder')
     newStockOrder.on('click',
       function(params = null) {
-        form.showFailMesg({ msg: '生成要货单失败!' })
-        // form.setCmpValue('BuyerMemo', '深圳直营仓-1  已换36 东莞自营渠道 郑/24eeeeK')
+        // form.showFailMesg({ msg: '生成要货单失败!' })
+        form.setCmpValue('BuyerMemo', 'aaaaaaawwww')
       }
     )
   }
@@ -63,10 +59,11 @@ export default class DpShopOrderDetailForm extends VBaseDetailForm {
     var doFun = function(e) {
       return e.record['sellerMemo']
     }
-    form.setValueDependence('Remarks', 'SellerMemo', true, doFun)
-    form.addCmpValueChangedListener('SellerMemo', function(e) {
-      // form.showFailMesg({ msg: e.record['sellerMemo'] })
-    })
+   form.setValueDependence('Remarks', 'SellerMemo', true, doFun)
+    // form.addCmpValueChangedListener('SellerMemo', function(e) {
+    //   // form.showFailMesg({ msg: e.record['sellerMemo'] })
+    //  // e.record['remarks'] = e.record['sellerMemo']
+    // })
   }
 }
 

@@ -17,7 +17,17 @@ export default {
     };
   },
   created(){
-    this.form =vsmartview.findFormById(this.$route.query.formId)
+     var callContent =vsmartview.callContents[this.$route.query.formKey+this.$route.query.formId]
+     var aform =this.NewInstant(callContent['formMeta'])
+     aform.show()
+     this.form = aform
+     vsmartview.callContents[this.$route.query.formKey+this.$route.query.formId] = null
   },
+
+  methods: {
+    NewInstant: (meta)=> {
+       return null
+    }
+  }
 };
 </script>

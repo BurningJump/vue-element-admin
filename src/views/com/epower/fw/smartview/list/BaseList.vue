@@ -4,44 +4,46 @@
       <!--条件区 -->
       <el-header height="auto" id="qconHeader">
            <!--条件区ref="conditionForm" -->
-        <el-form :model="form.conditionDataSource.record"
-                  ref="conditionForm"
+        <el-form  ref="conditionForm"
                   class="demo-ruleForm"
-
                   size="mini">
           <el-form-item
                 v-for="component in form.getComponent(form.formMeta.qCondition.name).children"
                 v-if="!component.isMore || (showMoreCondition &&  component.isMore ) "
-                :key="component.name"
+                :key="component.componentName"
                 :style="{width: (component.width <= 1 ? component.width*100 + '%' : component.width + 'px')}"
                 :label="component.label"
                 :label-width="component.labelWidth+'px'"
-                :prop="component.findField"
                 :required="!component.allowBlank">
+              <el-switch   v-if="component.ctype === 'checkboxfield'"
+                              :readonly="component.readOnly"
+                              v-model="component.inputValue"
+                              :disabled="!component.enable "
+                              :placeholder="component.label"
+                              @change = "component.saveInputValue()" />
 
-
-              <el-switch   v-if="component.ctype === 'checkboxfield'" :readonly="component.readOnly"
-                           v-model="component.inputValue" :disabled="!component.enable "
-                            :placeholder="component.label" />
-
-              <el-date-picker v-else-if="component.ctype === 'dateField'" :readonly="component.readOnly"
+              <el-date-picker v-else-if="component.ctype === 'dateField'"
+                                :readonly="component.readOnly"
                               v-model="component.inputValue" type="date"
-                              :disabled="!component.enable"  @blur = "component.saveInputValue()"
+                              :disabled="!component.enable"
+                              @change = "component.saveInputValue()"
                               :placeholder="component.label"/>
 
-              <el-date-picker v-else-if="component.ctype === 'dateTimeField'" :readonly="component.readOnly"
-                              v-model="component.inputValue" type="datetime" :disabled="!component.enable"
-                               @blur = "component.saveInputValue()"
+              <el-date-picker v-else-if="component.ctype === 'dateTimeField'"
+                              :readonly="component.readOnly"
+                              v-model="component.inputValue" type="datetime"
+                              :disabled="!component.enable"
+                               @change = "component.saveInputValue()"
                                :placeholder="component.label"
                                :width = "'auto'" />
 
               <el-input v-else-if="component.ctype === 'numberfield'" :readonly="component.readOnly"
                         v-model="component.inputValue" type="number" :disabled="!component.enable"
-                        @blur = "component.saveInputValue()" />
+                          @change = "component.saveInputValue()" />
 
               <el-select v-else-if="component.ctype === 'comboBox'" :readonly="component.readOnly"
                           v-model="component.inputValue" filterable
-                          :disabled="!component.enable"  @blur = "component.saveInputValue()"  >
+                          :disabled="!component.enable"    @change = "component.saveInputValue()"  >
                     <el-option v-for="item in component.enumModel.items"
                                :key="item.name" :label="item.label" :value="item.value"/>
               </el-select>
@@ -50,18 +52,10 @@
                         v-model="component.inputValue" :disabled="!component.enable"
                         :readonly="component.readOnly"  clearable
                         :placeholder="component.label"
-                        @blur = "component.saveInputValue()"  />
+                          @change = "component.saveInputValue()" />
 
           </el-form-item>
-          <!--
-          <el-form-item v-for="condition in UIMeta.listViewModel.qCondition.components"
-              v-if="condition.isMore && showMoreCondition"
-              :key="condition.name"
-              :style="{width: (condition.width <= 1 ? condition.width*100 + '%' : condition.width + 'px')}"
-              :label="condition.label" :prop="conditionForm[condition.findField]">
-            <el-input v-model="conditionForm[condition.findField]"/>
-          </el-form-item>
-         -->
+
           <el-form-item :style="{width: 'auto'}" label-width="100px" >
             <el-button-group>
               <el-button size="mini" @click="queryData()" icon="el-icon-search">查询</el-button>
