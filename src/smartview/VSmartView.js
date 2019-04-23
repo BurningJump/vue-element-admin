@@ -5,7 +5,6 @@ import { asyncRouterMap } from '@/router'
 import * as UID from './util/uuid.js'
 
 export default class VSmartView {
-
   // 窗体元数据定义
   formMetas = new Map();
 
@@ -61,12 +60,6 @@ export default class VSmartView {
     var res = this.getRouter(maper, formKey, '')
     var routerPath = res.fullpath.replace(/:formId/g, formId)
     this.getListUIMeta(formKey).then(formMeta => {
-      // vform = module.default.NewInstant(this, formMeta)
-      // vform.addCVar(ACvar)
-      // vform.formId = formId
-      // this.addForm(vform)
-      // vform.show()
-
       var callContent = new Map()
       callContent['formKey'] = formKey
       callContent['formMeta'] = formMeta

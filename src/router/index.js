@@ -98,7 +98,6 @@ export const asyncRouterMap = [
       {
         path: 'DpShopOrderDetail/:dataId',
         component: () => import('@/views/com/epower/dp/dpshoporder/DpShopOrderDetail'),
-        control: () => import('@/views/com/epower/dp/dpshoporder/DpShopOrderDetailForm.js'),
         name: 'com.epower.dp.dpshoporder.DpShopOrderDetail',
         hidden: true,
         meta: {
@@ -109,7 +108,6 @@ export const asyncRouterMap = [
       {
         path: 'DpShopOrderList/:formId',
         component: () => import('@/views/com/epower/dp/dpshoporder/DpShopOrderList'),
-        control: () => import('@/views/com/epower/dp/dpshoporder/DpShopOrderListForm.js'),
         name: 'com.epower.dp.dpshoporder.shopOrderList',
         hidden: true,
         meta: {
@@ -143,7 +141,6 @@ export const asyncRouterMap = [
         {
         path: 'InvRequestDetail/:id',
         component: () => import('@/views/com/epower/inv/invrequest/InvRequestDetail'),
-        control: () => import('@/views/com/epower/inv/invrequest/InvRequestDetailForm.js'),
         name: 'com.epower.inv.invrequest.InvRequestDetail',
         hidden: true,
         meta: {
