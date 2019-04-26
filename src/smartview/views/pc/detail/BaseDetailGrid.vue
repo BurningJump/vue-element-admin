@@ -404,6 +404,12 @@ export default {
   }
 }
 
+.valueListBtn {
+  position: relative;
+  top: -31px;
+  left: 31px;
+}
+
 .htSelectEditor {
   padding: 5px 7px;
   position: absolute;
