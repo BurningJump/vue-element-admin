@@ -1,6 +1,6 @@
 <script>
 import { HotTable } from '@handsontable/vue'
-import BaseDetail from '@/views/com/epower/fw/smartview/detail/BaseDetail'
+import BaseDetail from './BaseDetail'
 import Handsontable from 'handsontable';
 export default {
   name: 'com-epower-fw-smartview-detail-BaseBillDetail',

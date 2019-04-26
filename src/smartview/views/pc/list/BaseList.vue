@@ -177,8 +177,8 @@
 </template>
 
 <script>
-import BaseListGrid from '@/views/com/epower/fw/smartview/list/BaseListGrid'
-import BaseListCard from '@/views/com/epower/fw/smartview/list/BaseListCard'
+import BaseListGrid from './BaseListGrid'
+import BaseListCard from './BaseListCard'
 
 export default{
   name: 'com-epower-fw-smartview-list-BaseList',

@@ -44,7 +44,7 @@
 </template> */
 
 <script>
-import BaseDetailGrid from '@/views/com/epower/fw/smartview/detail/BaseDetailGrid'
+import BaseDetailGrid from '@/smartview/views/pc/detail/BaseDetailGrid'
 export default {
   name: 'EditSingle',
   extends: BaseDetailGrid,

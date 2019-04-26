@@ -1,5 +1,5 @@
 <script>
-import CustomList from '@/views/com/epower/fw/smartview/list/CustomList';
+import CustomList from '@/smartview/views/pc/list/CustomList';
 import DpShopOrderListForm from './DpShopOrderListForm'
 
 export default {

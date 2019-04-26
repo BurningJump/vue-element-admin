@@ -5,7 +5,7 @@
 
 <script>
 import BaseList from "./BaseList";
-import VBaseListForm from "@/smartview/bizform/VBaseListForm.js";
+import VBaseListForm from "../../../bizform/VBaseListForm.js";
 import {vsmartview} from '@/smartview/VSmartView.js'
 
 export default {
@@ -17,11 +17,13 @@ export default {
     };
   },
   created(){
-     var callContent =vsmartview.callContents[this.$route.query.formKey+this.$route.query.formId]
-     var aform =this.NewInstant(callContent['formMeta'])
+    var contentKey = this.$route.query.formKey+this.$route.query.formId
+     var callContent =vsmartview.callContents[contentKey]
+     var aform =this.NewInstant(callContent.formMeta)
      aform.show()
+       //必须先搞一个变量，页面永远不会渲染，想什么时候渲染就什么时候赋值
      this.form = aform
-     vsmartview.callContents[this.$route.query.formKey+this.$route.query.formId] = null
+     vsmartview.callContents[contentKey] = null
   },
 
   methods: {

@@ -47,10 +47,10 @@
 
 <script>
 
-import BaseDetailAGrid from "@/views/com/epower/fw/smartview/detail/BaseDetailAGrid";
-import BaseDetailColumn from "@/views/com/epower/fw/smartview/detail/BaseDetailColumn";
-import BaseDetailGrid from "@/views/com/epower/fw/smartview/detail/BaseDetailGrid";
-import VBaseDetailForm from "@/smartview/bizform/VBaseDetailForm.js";
+import BaseDetailAGrid from "./BaseDetailAGrid";
+import BaseDetailColumn from "./BaseDetailColumn";
+import BaseDetailGrid from "./BaseDetailGrid";
+import VBaseDetailForm from "../../../bizform/VBaseDetailForm.js";
 
 export default {
   name: 'com-epower-fw-smartview-detail-BaseDetail',

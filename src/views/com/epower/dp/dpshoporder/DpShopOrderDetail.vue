@@ -1,14 +1,11 @@
 <template>
    <BaseBillDetail :form = "form"  >
-      <div slot="header">
-        <span>slot header </span>
-      </div>
     </BaseBillDetail>
 </template>
 
 <script>
-import CustomBillDetail from '@/views/com/epower/fw/smartview/detail/CustomBillDetail';
-import BaseBillDetail from "@/views/com/epower/fw/smartview/detail/BaseBillDetail";
+import CustomBillDetail from '@/smartview/views/pc/detail/CustomBillDetail';
+import BaseBillDetail from "@/smartview/views/pc/detail/BaseBillDetail";
 import DpShopOrderDetailForm from './DpShopOrderDetailForm'
 export default {
   name: "com.epower.dp.dpshoporder.DpShopOrderDetail",

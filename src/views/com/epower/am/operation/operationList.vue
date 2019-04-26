@@ -1,5 +1,5 @@
 <script>
-import BaseList from '@/views/com/epower/fw/smartview/list/BaseList'
+import BaseList from '@/smartview/views/pc/list/BaseList'
 export default{
   name: 'com.epower.am.operation.OperationList',
   extends: BaseList,

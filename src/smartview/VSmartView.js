@@ -64,8 +64,12 @@ export default class VSmartView {
       callContent['formKey'] = formKey
       callContent['formMeta'] = formMeta
       callContent['formId'] = formId
-      this.callContents[formKey + formId] = callContent
-
+      this.callContents[formKey + formId] =  {
+        formKey:formKey
+       ,formMeta:formMeta
+       ,formId:formId
+       ,cvar:ACvar
+     }
       var myRouter = router
       myRouter.push({
         path: routerPath,
@@ -86,12 +90,13 @@ export default class VSmartView {
     var res = this.getRouter(maper, formKey, '')
     var routerPath = res.fullpath.replace(/:dataId/g, dataId)
     this.getDetailUIMeta(formKey).then(formMeta => {
-      var callContent = new Map()
-      callContent['formKey'] = formKey
-      callContent['formMeta'] = formMeta
-      callContent['formDataId'] = dataId
-      callContent['formStates'] = states
-      this.callContents[formKey + dataId] = callContent
+      this.callContents[formKey + dataId] = {
+         formKey:formKey
+        ,formMeta:formMeta
+        ,formDataId:dataId
+        ,formStates:states
+        ,cvar:ACvar
+      }
       var myRouter = router
       myRouter.push({
         path: routerPath,
@@ -183,20 +188,7 @@ export default class VSmartView {
       })
   }
 
-  // getDetailData(formMeta, id) {
-  //   return new Promise(
-  //     (resolve, reject) => {
-  //       request({
-  //         url: '/api/' + formMeta.actionUrl,
-  //         method: 'get'
-  //       }).then(resData => {
-  //         this.respData = resData.data
-  //         resolve(resData.data.dataPackage)
-  //       }).catch(err => {
-  //         console.log(err.message)
-  //       })
-  //     })
-  // }
+
 }
 
 export var vsmartview = new VSmartView()

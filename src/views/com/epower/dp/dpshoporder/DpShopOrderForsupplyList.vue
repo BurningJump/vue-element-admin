@@ -1,5 +1,5 @@
 <script>
-import BaseList from '@/views/com/epower/fw/smartview/list/BaseList'
+import BaseList from '@/smartview/views/pc/list/BaseList'
 import {vsmartview} from '@/smartview/VSmartView.js'
 
 export default{

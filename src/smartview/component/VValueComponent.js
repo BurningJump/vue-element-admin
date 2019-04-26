@@ -70,7 +70,7 @@ export default class VValueComponent extends VComponent {
    * 装载数据
    * @param {*} aValue
    */
-  loadData(aValue) {
+  loadValue(aValue) {
     this.loading = true
     this._inputValue = aValue
     this._value = aValue
