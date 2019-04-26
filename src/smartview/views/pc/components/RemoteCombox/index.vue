@@ -262,6 +262,9 @@
     white-space:nowrap;
   }
   .remotecombox-search{
+    position: relative;
+    right: 22px;
+    background: transparent;
     padding-left: 0px;
     width:5px;
     border:0px;

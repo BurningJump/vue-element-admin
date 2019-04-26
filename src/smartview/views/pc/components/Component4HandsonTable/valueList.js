@@ -64,8 +64,13 @@ import request from '@/utils/request'
 
     this.VALUEL_BTN = document.createElement('button');
     this.VALUEL_BTN.innerText = '选择';
-    this.VALUEL_BTN.className = 'valueListBtn';
+    this.VALUEL_BTN.className = 'valueListBtn el-button el-button--default el-button--mini';
     this.VALUEL_BTN.onclick = onValueListBtnClick;//(this.row,this.col,this.TEXTAREA.value);
+
+    this.SEARCH_ICON = document.createElement('i');
+    this.SEARCH_ICON.className = 'el-icon-search';
+    this.VALUEL_BTN.appendChild(this.SEARCH_ICON);
+
     this.TEXTAREA_PARENT.appendChild(this.VALUEL_BTN);
 
     var DIV = document.createElement('DIV');
