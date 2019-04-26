@@ -1,6 +1,5 @@
 import request from '@/utils/request'
 import router from '@/router'
-import { basicConstant } from '@/smartview/VBasicConstant.js'
 import { asyncRouterMap } from '@/router'
 import * as UID from './util/uuid.js'
 
@@ -10,27 +9,6 @@ export default class VSmartView {
 
   // 窗体调用上下文
   callContents= new Map();
-
-  // findDetailForm(formName, dataId) {
-  //   for (var form of this.forms) {
-  //     if (form.componentName === formName &&
-  //           form.ctype === basicConstant.FORMTYPE_DETAIL &&
-  //          form.dataId === dataId) {
-  //       return form
-  //     }
-  //   }
-  // }
-
-  // findFormById(formId) {
-  //   for (var form of this.forms) {
-  //     if (form.formId === formId) {
-  //       return form
-  //     }
-  //   }
-  // }
-  // addForm(form) {
-  //   this.forms.push(form)
-  // }
 
   getRouter(routes, formKey, parentPath) {
     var res = null
@@ -64,12 +42,12 @@ export default class VSmartView {
       callContent['formKey'] = formKey
       callContent['formMeta'] = formMeta
       callContent['formId'] = formId
-      this.callContents[formKey + formId] =  {
-        formKey:formKey
-       ,formMeta:formMeta
-       ,formId:formId
-       ,cvar:ACvar
-     }
+      this.callContents[formKey + formId] = {
+        formKey: formKey,
+        formMeta: formMeta,
+        formId: formId,
+        cvar: ACvar
+      }
       var myRouter = router
       myRouter.push({
         path: routerPath,
@@ -91,11 +69,11 @@ export default class VSmartView {
     var routerPath = res.fullpath.replace(/:dataId/g, dataId)
     this.getDetailUIMeta(formKey).then(formMeta => {
       this.callContents[formKey + dataId] = {
-         formKey:formKey
-        ,formMeta:formMeta
-        ,formDataId:dataId
-        ,formStates:states
-        ,cvar:ACvar
+        formKey: formKey,
+        formMeta: formMeta,
+        formDataId: dataId,
+        formStates: states,
+        cvar: ACvar
       }
       var myRouter = router
       myRouter.push({
@@ -187,8 +165,6 @@ export default class VSmartView {
         }
       })
   }
-
-
 }
 
 export var vsmartview = new VSmartView()
