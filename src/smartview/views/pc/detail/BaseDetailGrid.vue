@@ -77,8 +77,8 @@ import Handsontable from 'handsontable'
 
 import request from '@/utils/request'
 
-import YUGridValueList from '@/components/Component4HandsonTable/valueList.js'
-import YUGridCombox from '@/components/Component4HandsonTable/combox.js'
+import YUGridValueList from '../components/Component4HandsonTable/valueList.js'
+import YUGridCombox from '../components/Component4HandsonTable/combox.js'
 
 import BaseSelect from '../select/BaseSelect'
 

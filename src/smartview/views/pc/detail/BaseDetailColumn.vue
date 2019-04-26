@@ -100,8 +100,8 @@
 </template>
 
 <script>
-import RemoteCombox from "@/components/RemoteCombox";
-import ValueList from "@/components/ValueList";
+import RemoteCombox from "../components/RemoteCombox";
+import ValueList from "../components/ValueList";
 export default {
   name: "com-epower-fw-smartview-detail-BaseDetailColumn",
   data() {
