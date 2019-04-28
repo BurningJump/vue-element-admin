@@ -28,6 +28,7 @@
     @remove-tag="fireRemoveTagEvent"
     @focus="fireFocusEvent"
     @blur="fireBlurEvent"
+    @change="fireChangeEvent"
     >
     <el-option
       v-for="item in filterList"
@@ -53,16 +54,18 @@
         fullList: [],    //远程获取的结果
         filterList: [],  //过滤后的结果
         // comValue: [],    //保存用户选择的结果
+        tempValue:'',
         loading: false
       }
     },
     props: {input:{},
-            bandValue:'',
+            bandValue:'',            
             extraFilter:'', //业务人员在前端自定义的过滤条件
             multiple:true,
             disabled:false,
+            readonly:false,
             clearable:true,
-            allowcreate:false,
+            allowcreate:false,            
             loadingtext:'拼命加载中...'},
     computed: {
       newValue:{
@@ -89,7 +92,7 @@
       // }
 
       //实时远程抓取数据
-      if(!this.input.fetchInTime)
+      if(!this.input.fetchInTime && !this.readonly)
         this.loadRemoteData('',2);
     },
     methods: {
@@ -129,19 +132,25 @@
         //console.log('fireRemoveTagEvent:');
         // 多选模式下移除tag时触发;
       },
-      fireFocusEvent(){
-        // this.label=this.getObjectValueByKey(item,input.valueFieldType)
-       /// console.log('fireFocusEvent:');
-        // 当 input 获得焦点时触发;
+      fireFocusEvent(e){
+        this.editing = true;
+        this.tempValue=this.newValue;
+        // console.log('tempValue:'+this.tempValue);
       },
-      fireBlurEvent(){
-        // console.log('--fireBlurEvent:');
-        // 当 input 失去焦点时触发
+      fireBlurEvent(e){
+        this.editing = false;
+        // this.newValue=this.tempValue;
+        // console.log('newValue:'+this.newValue);
       },
-      // fireChangeEvent(){
-      //   console.log('--fireChangeEvent:'+this.bandValue+';--filterList:'+this.filterList);
-      //   this.input.saveInputValue(this.comValue);
-      // },
+      
+      fireChangeEvent(){
+        // console.log('--fireChangeEvent:'+this.bandValue+';--filterList:'+this.filterList);
+        if(this.readonly){
+          this.newValue=this.tempValue;
+        }
+        
+        console.log('newValue:'+this.newValue);
+      },
       //获取远程数据
       getRomteData(param){
         return new Promise((resolve, reject) => {
@@ -177,6 +186,10 @@
       },
 
       remoteMethod(query,initFlag) {
+        //如果只读的话
+        if(this.readonly){
+          return;
+        }
         //无值及空值时全列表可选
         if ( (query||'').trim() !== '') {
           
