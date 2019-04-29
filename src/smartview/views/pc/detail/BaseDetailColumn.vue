@@ -80,17 +80,21 @@
             <el-option v-for="item in component.enumModel.items"
             :key="item.name" :label="item.label" :value="item.value"/>
           </el-select>
-<!----->
+
           <remote-combox v-else-if="component.ctype === 'remoteComboBox'"
               :input="component" :bandValue="component.inputValue"
             :allowcreate="component.allowcreate" :multiple="component.multiple"
-            :disabled="!component.enable" :clearable="component.clearable">
+            :disabled="!component.enable"
+            :readonly="component.readOnly" 
+            :clearable="component.clearable">
           </remote-combox>
 
           <value-list v-else-if="component.ctype === 'valuelistField'"
                 :input="component" :bandValue="component.inputValue"
                 :allowcreate="component.allowcreate" :multiple="component.multiple"
-                :disabled="!component.enable" :clearable="component.clearable">
+                :disabled="!component.enable" 
+                :readonly="component.readOnly"
+                :clearable="component.clearable">
           </value-list>
 
           <el-input v-else
