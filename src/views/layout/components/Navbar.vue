@@ -6,6 +6,7 @@
 
     <div class="right-menu">
       <template v-if="device!=='mobile'">
+        <el-button @click="showAppDialog">显示app-dialog</el-button>
         <error-log class="errLog-container right-menu-item"/>
 
         <el-tooltip :content="$t('navbar.screenfull')" effect="dark" placement="bottom">
@@ -77,6 +78,12 @@ export default {
     ])
   },
   methods: {
+    showAppDialog() {
+      this.$bus.emit('showAppDialog', {
+        title: 'app-dialog 标题',
+        content: '我是app-dialog内容'
+      })
+    },
     toggleSideBar() {
       this.$store.dispatch('toggleSideBar')
     },
