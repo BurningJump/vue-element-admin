@@ -22,6 +22,11 @@ import request from '@/utils/request'
     this.textareaParentStyle = this.TEXTAREA_PARENT.style;
     this.textareaParentStyle.zIndex = '-1';
     this.TEXTAREA_PARENT.appendChild(this.TEXTAREA);
+
+    let rowHeight = this.instance.getRowHeight(this.instance.getSelected()[0][0])
+    let colWidth = this.instance.getColWidth(this.instance.getSelected()[0][1])
+    this.TEXTAREA_PARENT.style.height = rowHeight + 'px'
+    this.TEXTAREA_PARENT.style.width = colWidth + 'px'
     this.instance.rootElement.appendChild(this.TEXTAREA_PARENT);
 
     var editor = this;
@@ -66,13 +71,14 @@ import request from '@/utils/request'
     this.VALUEL_BTN.innerText = '选择';
     this.VALUEL_BTN.className = 'valueListBtn el-button el-button--default el-button--mini';
     this.VALUEL_BTN.onclick = onValueListBtnClick;//(this.row,this.col,this.TEXTAREA.value);
-
+    
     this.SEARCH_ICON = document.createElement('i');
     this.SEARCH_ICON.className = 'el-icon-search';
     this.VALUEL_BTN.appendChild(this.SEARCH_ICON);
-
+    
     this.TEXTAREA_PARENT.appendChild(this.VALUEL_BTN);
-
+  
+    this.VALUEL_BTN.style.height = rowHeight + 'px'
     var DIV = document.createElement('DIV');
     DIV.className = 'handsontableEditor';
     this.TEXTAREA_PARENT.appendChild(DIV);

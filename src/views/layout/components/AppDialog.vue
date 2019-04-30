@@ -1,24 +1,37 @@
 <template>
   <section class="app-dialog">
     <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" >
-        <transition name="dialog-fade-transform" mode="out-in">
-              <router-view name="dialog" />
-        </transition>
+      <!-- <transition name="dialog-fade-transform" mode="out-in">
+        <router-view :key="key"/>
+      </transition> -->
+      <div class="app-dialog-container">
+        {{dialogContent}}
+      </div>
     </el-dialog>
   </section>
 </template>
 
 <script>
-
-export default {
+export default{
   name: 'AppDialog',
   data() {
     return {
       dialogVisible: false,
-      dialogTitle:''
+      dialogTitle: '',
+      dialogContent: ''
     };
   },
-  computed: {
+  // computed: {
+  //   key() {
+  //     return this.$route.fullPath
+  //   }
+  // },
+  mounted() {
+    this.$bus.on('showAppDialog', data => {
+      this.dialogVisible = true
+      this.dialogTitle = data.title
+      this.dialogContent = data.content
+    })
   }
 }
 </script>

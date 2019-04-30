@@ -8,7 +8,8 @@
       :modal-append-to-body="false" center>
       <el-container v-if="UiLoaded">
         <el-header height="auto" id="select-qCon">
-          <el-form :inline="true" :model="conditionForm" ref="conditionForm" class="demo-ruleForm" label-width="100px" size="mini">
+          <el-form :inline="true"
+                :model="conditionForm" ref="conditionForm" class="demo-ruleForm" label-width="100px" size="mini">
             <el-form-item v-for="condition in UIMeta.selectViewModel.qCondition.components" v-if="!condition.isMore" :key="condition.label" :style="{width: (condition.width <= 1 ? condition.width*100 + '%' : condition.width + 'px')}" :label="condition.label" :prop="conditionForm[condition.findField]">
               <el-input v-model="conditionForm[condition.findField]"/>
             </el-form-item>
@@ -33,13 +34,16 @@
           <el-aside width="200px" :style="{'height': treeHeight, 'padding': '0 5px'}">
             <div class="tree-toolbar" v-if="UIMeta.selectViewModel.tree.toolbar">
               <el-button-group>
-                <el-tooltip class="item" effect="dark" v-for="btn in UIMeta.selectViewModel.tree.toolbar.components" :content="btn.label" placement="top">
+                <el-tooltip class="item" effect="dark"
+                      v-for="btn in UIMeta.selectViewModel.tree.toolbar.components"
+                      :content="btn.label" placement="top">
                   <el-button size="mini">
                     <svg-icon :icon-class="`${btn.iconcls}`"/>
                   </el-button>
                 </el-tooltip>
                 <el-tooltip class="item" effect="dark" content="更多" placement="top">
-                  <el-dropdown v-if="UIMeta.selectViewModel.tree.toolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
+                  <el-dropdown v-if="UIMeta.selectViewModel.tree.toolbar.showMoreButton"
+                  trigger="click" placement="bottom" szie="mini">
                     <el-button size="mini">
                       <i class="el-icon-arrow-down el-icon--right" style="margin-left:0;"></i>
                     </el-button>
@@ -54,7 +58,8 @@
               </el-button-group>
             </div>
             <div class="tree-container">
-              <el-tree :data="tree" :props="defaultProps" highlight-current @node-expand="handleNodeExpand" @node-click="handleNodeClick">
+              <el-tree :data="tree" :props="defaultProps" highlight-current
+                      @node-expand="handleNodeExpand" @node-click="handleNodeClick">
                 <!-- <span class="custom-tree-node" slot-scope="{ node, data }">
                   <span v-if="node.isLeaf">
                     <svg-icon :icon-class="`${data.iconcls}`"/>
@@ -205,7 +210,7 @@ export default {
   },
   props: {dialogVisiblePop:''},
   computed: {
-    
+
     cellStyle() {
       return {
         'padding-left': '6px',
@@ -342,8 +347,8 @@ export default {
           }
           break;
       }
-      
-      
+
+
     },
     deleteRow(index, rows) {
       // 上移

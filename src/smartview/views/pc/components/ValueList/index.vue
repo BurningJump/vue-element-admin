@@ -153,9 +153,11 @@
       },
       fireFocusEvent(){
         this.editing = true;
+        this.defaultIndex=this.selectedIndex;
       },
       fireBlurEvent(){
         this.editing = false;
+        this.selectedIndex=this.defaultIndex;
       },
       // fireChangeEvent(){
       //   console.log('--fireChangeEvent:'+this.bandValue+';--filterList:'+this.filterList);

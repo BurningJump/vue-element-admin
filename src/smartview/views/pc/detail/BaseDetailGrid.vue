@@ -404,10 +404,19 @@ export default {
   }
 }
 
+.handsontableInputHolder {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.handsontableInput {
+  width: calc(100% - 48px) !important;
+  min-width: calc(100% - 48px) !important;
+  max-width: calc(100% - 48px) !important;
+}
 .valueListBtn {
-  position: relative;
-  top: -31px;
-  left: 31px;
+  padding: 0;
 }
 
 .htSelectEditor {
