@@ -2,7 +2,7 @@
   <section class="app-dialog">
     <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" >
         <transition name="dialog-fade-transform" mode="out-in">
-              <router-view :key="key"/>
+              <router-view name="dialog" />
         </transition>
     </el-dialog>
   </section>
@@ -15,12 +15,10 @@ export default {
   data() {
     return {
       dialogVisible: false,
+      dialogTitle:''
     };
   },
   computed: {
-    key() {
-      return this.$route.fullPath
-    }
   }
 }
 </script>
