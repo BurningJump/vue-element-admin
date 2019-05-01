@@ -1,11 +1,6 @@
 <template>
-  <!-- <div class="app-container"> -->
+  <div class="app-container">
      <!-- v-if="UiLoaded"> -->
-    <el-dialog
-      title="施工队"
-      :visible.sync="dialogVisible"
-      :width="UIMeta.selectViewModel.width > 1 ? UIMeta.selectViewModel.width + 'px' : UIMeta.selectViewModel.width*100 + '%'"
-      :modal-append-to-body="false" center>
       <el-container v-if="UiLoaded">
         <el-header height="auto" id="select-qCon">
           <el-form :inline="true"
@@ -164,8 +159,8 @@
         <el-button type="primary" @click="submitFun">确 定</el-button>
         <!-- <el-button type="primary" @click="dialogVisible = false">确 定</el-button> -->
       </span>
-    </el-dialog>
-  <!-- </div> -->
+
+  </div>
 </template>
 <script>
 import router from '@/router'  //临时代码

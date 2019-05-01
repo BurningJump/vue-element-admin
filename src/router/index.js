@@ -81,6 +81,18 @@ export const asyncRouterMap = [
           title: 'SelectList',
           roles: ['admin'] // or you can only set roles in sub nav
         }
+      },
+      {
+        path: 'SelectTest',
+        components: {
+          //    default: () => import('@/views/dashboard/index'),
+          appDialog: () => import('@/views/com/epower/am/operation/SelectList')
+        },
+        name: 'com.epower.SelectTest',
+        meta: {
+          title: 'SelectList',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
       }
     ]
   },
@@ -138,44 +150,13 @@ export const asyncRouterMap = [
       roles: ['admin', 'editor'] // you can set roles in root nav
     },
     children: [
-        {
+      {
         path: 'InvRequestDetail/:id',
         component: () => import('@/views/com/epower/inv/invrequest/InvRequestDetail'),
         name: 'com.epower.inv.invrequest.InvRequestDetail',
         hidden: true,
         meta: {
           title: 'InvRequestDetail',
-          roles: ['admin'] // or you can only set roles in sub nav
-        }
-      }
-    ]
-  },
-  {
-    path: '/edit',
-    component: Layout,
-    redirect: '/edit/index',
-    alwaysShow: true, // will always show the root menu
-    meta: {
-      title: 'edit',
-      icon: 'lock',
-      roles: ['admin', 'editor'] // you can set roles in root nav
-    },
-    children: [
-      {
-        path: 'control',
-        component: () => import('@/views/edit/control'),
-        name: 'Control',
-        meta: {
-          title: 'control',
-          roles: ['admin'] // or you can only set roles in sub nav
-        }
-      },
-      {
-        path: 'editSingle',
-        component: () => import('@/views/edit/editSingle'),
-        name: 'EditSingle',
-        meta: {
-          title: 'editSingle',
           roles: ['admin'] // or you can only set roles in sub nav
         }
       }

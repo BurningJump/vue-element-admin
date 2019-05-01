@@ -7,6 +7,8 @@
     <div class="right-menu">
       <template v-if="device!=='mobile'">
         <el-button @click="showAppDialog">显示app-dialog</el-button>
+        <el-button @click="showAppDetail">显示app-detail</el-button>
+
         <error-log class="errLog-container right-menu-item"/>
 
         <el-tooltip :content="$t('navbar.screenfull')" effect="dark" placement="bottom">
@@ -58,6 +60,7 @@ import Screenfull from '@/components/Screenfull'
 import SizeSelect from '@/components/SizeSelect'
 import LangSelect from '@/components/LangSelect'
 import ThemePicker from '@/components/ThemePicker'
+import {vsmartview} from '@/smartview/VSmartView.js'
 
 export default {
   components: {
@@ -83,6 +86,13 @@ export default {
         title: 'app-dialog 标题',
         content: '我是app-dialog内容'
       })
+    //
+     vsmartview.callSelectForm('com.epower.SelectTest')
+       //  vsmartview.callSelectForm('com.epower.am.operation.SelectList')
+
+    },
+    showAppDetail(){
+      vsmartview.callDetailForm('com.epower.dp.dpshoporder.DpShopOrderDetail', 1, 'VIEW')
     },
     toggleSideBar() {
       this.$store.dispatch('toggleSideBar')
