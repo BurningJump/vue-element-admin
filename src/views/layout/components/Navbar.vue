@@ -83,11 +83,11 @@ export default {
   methods: {
     showAppDialog() {
       this.$bus.emit('showAppDialog', {
-        title: 'app-dialog 标题',
-        content: '我是app-dialog内容'
+        title: '团队选择',
+        component: 'com.epower.am.operation.SelectList'
       })
-    //
-     vsmartview.callSelectForm('com.epower.SelectTest')
+    //vsmartview.callSelectForm('com.epower.SelectTest')
+
        //  vsmartview.callSelectForm('com.epower.am.operation.SelectList')
 
     },

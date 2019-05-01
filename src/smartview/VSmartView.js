@@ -88,21 +88,21 @@ export default class VSmartView {
     })
   }
 
-  // 通过router call from
-  callSelectForm(formKey, ACvar = null) {
-    // 获取路游表
-    var maper = asyncRouterMap
-    var res = this.getRouter(maper, formKey, '')
-    var routerPath = res.fullpath
-    var myRouter = router
-    myRouter.push({
-      path: routerPath,
-      query: {
-        formKey: formKey,
-        formType: 'dialog'
-      }
-    })
-  }
+  // // 通过router call from
+  // callSelectForm(formKey, ACvar = null) {
+  //   // 获取路游表
+  //   var maper = asyncRouterMap
+  //   var res = this.getRouter(maper, formKey, '')
+  //   var routerPath = res.fullpath
+  //   var myRouter = router
+  //   myRouter.push({
+  //     path: routerPath,
+  //     query: {
+  //       formKey: formKey,
+  //       formType: 'dialog'
+  //     }
+  //   })
+  // }
 
   // TODO 通过动态加载js call from 目前没有搞定，原因import时提示模块不存在
   // callForm(formKey, id, states) {

@@ -47,11 +47,8 @@ export default {
   },
   watch: {
     $route() {
-      if (this.$route.query.formType ==undefined
-                || this.$route.query.formType !=='dialog' ){
        this.addViewTags()
        this.moveToCurrentTag()
-      }
     },
     visible(value) {
       if (value) {

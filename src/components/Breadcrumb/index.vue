@@ -21,7 +21,7 @@ export default {
   },
   watch: {
     $route() {
-      //this.getBreadcrumb()
+      this.getBreadcrumb()
     }
   },
   created() {

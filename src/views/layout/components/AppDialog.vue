@@ -4,13 +4,17 @@
                 :visible.sync="dialogVisible"
                 :width = "dialogWidth"
                 :higth = "dialogHigth"
+                :close-on-click-modal = false
                 >
-      <transition name="dialog-fade-transform" mode="out-in">
+      <!-- <transition name="dialog-fade-transform" mode="out-in">
         <router-view name='appDialog'  :key="key" />
-      </transition>
+      </transition> -->
       <!-- <div class="app-dialog-container">
         {{dialogContent}}
       </div> -->
+
+      <component :is="dialogComponentName"></component>
+
     </el-dialog>
   </section>
 </template>
@@ -18,13 +22,17 @@
 <script>
 export default{
   name: 'AppDialog',
+  components: {
+    com_epower_am_operation_SelectList: () => import('@/views/com/epower/am/operation/SelectList'),
+  },
   data() {
     return {
       dialogVisible: false,
       dialogTitle: '',
       dialogContent: '',
       dialogWidth:'300px',
-      dialogHigth:'600px'
+      dialogHigth:'600px',
+      dialogComponentName: 'teamDialog',
     };
   },
   computed: {
@@ -36,7 +44,7 @@ export default{
     this.$bus.on('showAppDialog', data => {
       this.dialogVisible = true
       this.dialogTitle = data.title
-      this.dialogContent = data.content
+      this.dialogComponentName =   data.component.replace(/\./g, '_')
     })
   }
 }
