@@ -5,6 +5,9 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/views/layout/Layout'
+import amoperationRouter from './modules/am/amoperation'
+import dpshoporderRouter from './modules/dp/dpshoporder'
+import invrequestRouter from './modules/inv/invrequest'
 
 /** note: Submenu only appear when children.length>=1
  *  detail see  https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
@@ -52,94 +55,13 @@ export default new Router({
 })
 
 export const asyncRouterMap = [
-  {
-    path: '/com/epower/am/operation',
-    component: Layout,
-    redirect: '/com/epower/am/operation/operationList',
-    alwaysShow: true, // will always show the root menu
-    meta: {
-      title: 'operation',
-      icon: 'lock',
-      roles: ['admin', 'editor'] // you can set roles in root nav
-    },
-    children: [
-      {
-        // path: 'operationList/:id',
-        path: 'operationList',
-        component: () => import('@/views/com/epower/am/operation/operationList'),
-        name: 'com.epower.am.operation.OperationList',
-        meta: {
-          title: 'operationList',
-          roles: ['admin'] // or you can only set roles in sub nav
-        }
-      },
-      {
-        path: 'SelectList',
-        component: () => import('@/views/com/epower/am/operation/SelectList'),
-        name: 'com.epower.am.operation.SelectList',
-        meta: {
-          title: 'SelectList',
-          roles: ['admin'] // or you can only set roles in sub nav
-        }
-      }
-    ]
-  },
-  {
-    path: '/com/epower/dp/dpshoporder',
-    component: Layout,
-    redirect: '/com/epower/dp/dpshoporder/DpShopOrderForsupplyList',
-    alwaysShow: true, // will always show the root menu
-    meta: {
-      title: 'dpshoporder',
-      icon: 'lock',
-      roles: ['admin', 'editor'] // you can set roles in root nav
-    },
-    children: [
-      {
-        path: 'DpShopOrderDetail/:dataId',
-        component: () => import('@/views/com/epower/dp/dpshoporder/DpShopOrderDetail'),
-        name: 'com.epower.dp.dpshoporder.DpShopOrderDetail',
-        hidden: true,
-        meta: {
-          title: 'DpShopOrderDetail',
-          roles: ['admin'] // or you can only set roles in sub nav
-        }
-      },
-      {
-        path: 'DpShopOrderList/:formId',
-        component: () => import('@/views/com/epower/dp/dpshoporder/DpShopOrderList'),
-        name: 'com.epower.dp.dpshoporder.shopOrderList',
-        hidden: true,
-        meta: {
-          title: 'DpShopOrderDetail',
-          roles: ['admin'] // or you can only set roles in sub nav
-        }
-      }
-    ]
-  },
+  /* am模块  */
+  amoperationRouter,
 
-  {
-    path: '/com/epower/inv/invrequest',
-    component: Layout,
-    redirect: '/com/epower/inv/invrequest/InvRequestDetail',
-    alwaysShow: true, // will always show the root menu
-    meta: {
-      title: 'invrequest',
-      icon: 'lock',
-      roles: ['admin', 'editor'] // you can set roles in root nav
-    },
-    children: [
-      {
-        path: 'InvRequestDetail/:id',
-        component: () => import('@/views/com/epower/inv/invrequest/InvRequestDetail'),
-        name: 'com.epower.inv.invrequest.InvRequestDetail',
-        hidden: true,
-        meta: {
-          title: 'InvRequestDetail',
-          roles: ['admin'] // or you can only set roles in sub nav
-        }
-      }
-    ]
-  },
+  /* dp模块  */
+  dpshoporderRouter,
+
+  /* inv模块  */
+  invrequestRouter,
   { path: '*', redirect: '/404', hidden: true }
 ]
