@@ -6,14 +6,14 @@
                 :higth = "dialogHigth"
                 :close-on-click-modal = false
                 >
-      <!-- <transition name="dialog-fade-transform" mode="out-in">
-        <router-view name='appDialog'  :key="key" />
-      </transition> -->
-      <!-- <div class="app-dialog-container">
+      <!--
+      <div class="app-dialog-container">
         {{dialogContent}}
       </div> -->
 
-      <component :is="dialogComponentName"></component>
+      <component :is="dialogComponentName"
+                 :content="content" >
+        </component>
 
     </el-dialog>
   </section>
@@ -23,28 +23,28 @@
 export default{
   name: 'AppDialog',
   components: {
-    com_epower_am_operation_SelectList: () => import('@/views/com/epower/am/operation/SelectList'),
+    com_epower_abd_abdworkteam_AbdWorkTeamList:() => import('@/views/com/epower/abd/abdworkteam/AbdWorkTeamList'),
+    com_epower_abd_material_MaterialList:() => import('@/views/com/epower/abd/material/MaterialList'),
   },
   data() {
     return {
       dialogVisible: false,
       dialogTitle: '',
-      dialogContent: '',
-      dialogWidth:'300px',
-      dialogHigth:'600px',
-      dialogComponentName: 'teamDialog',
+      dialogWidth:'850px',
+      dialogHigth:'400px',
+      dialogComponentName: '',
+      content:null
     };
-  },
-  computed: {
-    key() {
-      return this.$route.fullPath
-    }
   },
   mounted() {
     this.$bus.on('showAppDialog', data => {
       this.dialogVisible = true
-      this.dialogTitle = data.title
-      this.dialogComponentName =   data.component.replace(/\./g, '_')
+      this.dialogComponentName = data.componentName
+      this.content = data.content
+      var  formMeta = data.content.formMeta
+      this.dialogTitle=formMeta.label
+      // this.dialogWidth = formMeta.width
+      // this.dialogHigth = formMeta.higth
     })
   }
 }

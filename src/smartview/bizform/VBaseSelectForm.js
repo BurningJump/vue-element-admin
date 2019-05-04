@@ -22,8 +22,6 @@ import VDataSet from '../db/VDataSet.js'
 import VDataSource from '../db/VDataSource.js'
 
 export default class VBaseSelectForm extends VBaseForm {
-
-
   // 查询对象值
   queryCondition
 
@@ -452,12 +450,12 @@ export default class VBaseSelectForm extends VBaseForm {
      }
 
      // 3.建立dataView视图
-\
-        // 3.1.视图中建立componentSet
-     var dComponentSet = new VDBComponentSet(this)
-     this._initDBComponentSet(this, dComponentSet,formMeta.view)
 
-        // 3.2 视图中建立toolbar
+     // 3.1.视图中建立componentSet
+     var dComponentSet = new VDBComponentSet(this)
+     this._initDBComponentSet(this, dComponentSet, formMeta.view)
+
+     // 3.2 视图中建立toolbar
      if (formMeta.toolbar !== undefined && formMeta.toolbar !== null) {
        var toolbar = new VToolbar(this)
        this._initToolbar(this, toolbar, formMeta.toolbar, dComponentSet.datasource)
@@ -762,20 +760,19 @@ export default class VBaseSelectForm extends VBaseForm {
      if (me.fireEvent('beforeRefresh') === false) { return }
 
      // 需要刷新数据
-    //  this.requestDetailData().then(dataPackage => {
-    //    this.loadDataByPackage(dataPackage)
-    //    this.show(this.state)
-    //  }).catch(err => {
-    //    console.log(err.message)
-    //  })
+     //  this.requestDetailData().then(dataPackage => {
+     //    this.loadDataByPackage(dataPackage)
+     //    this.show(this.state)
+     //  }).catch(err => {
+     //    console.log(err.message)
+     //  })
 
      me.fireEvent('afterRefresh')
    }
 
    queryData() {
      this.loadingData = true
-     const view = this.getComponent(this.activeViewName)
-     var componentSet = this.getComponent(view.componentMeta.componentSet.name)
+     var componentSet = this.getComponent(this.formMeta.view.name)
      var datasource = componentSet.datasource
      var aDataset = datasource.dataset
      if (aDataset.dataFrom === 'ajaxRequest') {

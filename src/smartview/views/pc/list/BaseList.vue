@@ -72,6 +72,7 @@
       </el-header>
       <!--树区 -->
       <el-container>
+
         <el-aside
               v-if="form.formMeta.tree"
               width="200px"
@@ -126,6 +127,8 @@
           </div>
         </el-aside>
 
+
+        <!--数据展示区-->
         <el-main>
           <!--如果定义了DataType-->
           <el-tabs v-if=" form.formMeta.dataType"

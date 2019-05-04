@@ -1,12 +1,14 @@
 <template>
   <div class="navbar">
-    <hamburger :toggle-click="toggleSideBar" :is-active="sidebar.opened" class="hamburger-container"/>
+    <hamburger :toggle-click="toggleSideBar"
+                :is-active="sidebar.opened" class="hamburger-container"/>
 
     <breadcrumb class="breadcrumb-container"/>
 
     <div class="right-menu">
       <template v-if="device!=='mobile'">
-        <el-button @click="showAppDialog">显示app-dialog</el-button>
+        <el-button @click="showAppDialogTeam">显示Team(单选)</el-button>
+        <el-button @click="showAppDialogMaterial">显示Material(多选)</el-button>
         <el-button @click="showAppDetail">显示app-detail</el-button>
 
         <error-log class="errLog-container right-menu-item"/>
@@ -81,15 +83,11 @@ export default {
     ])
   },
   methods: {
-    showAppDialog() {
-      this.$bus.emit('showAppDialog', {
-        title: '团队选择',
-        component: 'com.epower.am.operation.SelectList'
-      })
-    //vsmartview.callSelectForm('com.epower.SelectTest')
-
-       //  vsmartview.callSelectForm('com.epower.am.operation.SelectList')
-
+    showAppDialogTeam() {
+       vsmartview.callSelectForm('com.epower.abd.abdworkteam.AbdWorkTeamList','single')
+    },
+    showAppDialogMaterial() {
+       vsmartview.callSelectForm('com.epower.abd.material.MaterialList','multi')
     },
     showAppDetail(){
       vsmartview.callDetailForm('com.epower.dp.dpshoporder.DpShopOrderDetail', 1, 'VIEW')

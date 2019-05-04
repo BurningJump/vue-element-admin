@@ -3,6 +3,8 @@ import router from '@/router'
 import { asyncRouterMap } from '@/router'
 import * as UID from './util/uuid.js'
 
+import Vue from 'vue'
+
 export default class VSmartView {
   // 窗体元数据定义
   formMetas = new Map();
@@ -42,18 +44,21 @@ export default class VSmartView {
       callContent['formKey'] = formKey
       callContent['formMeta'] = formMeta
       callContent['formId'] = formId
-      this.callContents[formKey + formId] = {
+
+      var contentKey = formKey + formId
+      this.callContents[contentKey] = {
         formKey: formKey,
         formMeta: formMeta,
         formId: formId,
         cvar: ACvar
       }
-      var myRouter = router
-      myRouter.push({
+
+      router.push({
         path: routerPath,
         query: {
           formId: formId,
-          formKey: formKey
+          formKey: formKey,
+          contentKey: contentKey
         }
       })
     }).catch(err => {
@@ -68,19 +73,20 @@ export default class VSmartView {
     var res = this.getRouter(maper, formKey, '')
     var routerPath = res.fullpath.replace(/:dataId/g, dataId)
     this.getDetailUIMeta(formKey).then(formMeta => {
-      this.callContents[formKey + dataId] = {
+      var contentKey = formKey + dataId
+      this.callContents[contentKey] = {
         formKey: formKey,
         formMeta: formMeta,
         formDataId: dataId,
         formStates: states,
         cvar: ACvar
       }
-      var myRouter = router
-      myRouter.push({
+      router.push({
         path: routerPath,
         query: {
           formKey: formKey,
-          dataId: dataId
+          dataId: dataId,
+          contentKey: contentKey
         }
       })
     }).catch(err => {
@@ -88,21 +94,27 @@ export default class VSmartView {
     })
   }
 
-  // // 通过router call from
-  // callSelectForm(formKey, ACvar = null) {
-  //   // 获取路游表
-  //   var maper = asyncRouterMap
-  //   var res = this.getRouter(maper, formKey, '')
-  //   var routerPath = res.fullpath
-  //   var myRouter = router
-  //   myRouter.push({
-  //     path: routerPath,
-  //     query: {
-  //       formKey: formKey,
-  //       formType: 'dialog'
-  //     }
-  //   })
-  // }
+/**
+ *  通过bus call from
+ * @param {*} formKey 名称 例如  com.epower.dp.dpshoporder.DpShopOrderDetail
+ * @param {*} selectType  //默认单选模式 multi(多选) / single(单选模式)
+ * @param {*} ACvar   //应用上下文
+ */
+  callSelectForm(formKey, selectType, ACvar = null) {
+    this.getSelectUIMeta(formKey).then(formMeta => {
+      Vue.bus.emit('showAppDialog', {
+        componentName: formKey.replace(/\./g, '_'),
+        content: {
+          formKey: formKey,
+          formMeta: formMeta,
+          selectType: selectType,
+          cvar: ACvar
+        }
+      })
+    }).catch(err => {
+      console.log(err.stack)
+    })
+  }
 
   // TODO 通过动态加载js call from 目前没有搞定，原因import时提示模块不存在
   // callForm(formKey, id, states) {
@@ -176,6 +188,27 @@ export default class VSmartView {
               this.formMetas[resData.data.listViewModel.name] = resData.data.listViewModel
             }
             resolve(resData.data.listViewModel)
+          }).catch(err => {
+            console.log(err.message)
+          })
+        }
+      })
+  }
+
+  getSelectUIMeta(formKey) {
+    return new Promise(
+      (resolve, reject) => {
+        if (this.formMetas[formKey] !== undefined && this.formMetas[formKey] !== null) {
+          resolve(this.formMetas[formKey])
+        } else {
+          request({
+            url: '/api/getSelectUIMeta/' + formKey,
+            method: 'get'
+          }).then(resData => {
+            if (resData.data.selectViewModel !== null) {
+              this.formMetas[resData.data.selectViewModel.name] = resData.data.selectViewModel
+            }
+            resolve(resData.data.selectViewModel)
           }).catch(err => {
             console.log(err.message)
           })

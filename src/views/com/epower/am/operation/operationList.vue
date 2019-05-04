@@ -1,14 +1,15 @@
 <script>
-import BaseList from '@/smartview/views/pc/list/BaseList'
+import CustomList from '@/smartview/views/pc/list/CustomList'
+import operationListForm from './operationListForm'
 export default{
   name: 'com.epower.am.operation.OperationList',
-  extends: BaseList,
+  extends: CustomList,
   components: {},
-  data() {
-    return {
-    }
-  },
   mounted() {},
-  methods: {}
+  methods: {
+        NewInstant: (formMeta)=> {
+         return new operationListForm(this, formMeta)
+    }
+  }
 }
 </script>

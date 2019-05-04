@@ -17,7 +17,7 @@ export default {
     };
   },
   created(){
-    var contentKey = this.$route.query.formKey+this.$route.query.formId
+    var contentKey = this.$route.query.contentKey
      var callContent =vsmartview.callContents[contentKey]
      var aform =this.NewInstant(callContent.formMeta)
      aform.show()
@@ -28,7 +28,7 @@ export default {
 
   methods: {
     NewInstant: (meta)=> {
-       return null
+              return new VBaseListForm(this, formMeta)
     }
   }
 };
