@@ -188,7 +188,7 @@
                             element-loading-text="拼命加载中" border fit stripe
                             :highlight-current-row="selectType === 'single'"
                             :header-cell-style="{background:'#f6f6f6'}"
-
+                            :height="tableHeight1"
                             :cell-style="cellStyle"
                             :row-style="rowStyle"
                             @selection-change="handleOriginSelectionChange"
@@ -300,11 +300,10 @@
           </el-container>
         </el-container>
       </el-container>
-      <span slot="footer" class="dialog-footer">
+      <!-- <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="submitFun">确 定</el-button>
-        <!-- <el-button type="primary" @click="dialogVisible = false">确 定</el-button> -->
-      </span>
+      </span> -->
 
   </div>
 </template>
@@ -328,7 +327,7 @@ export default {
       //treeRoot: {},
       //treeChild: {},
       //treeGrandchild: {},
-      //tree: [],
+      // tree: [],
       //grid: [],
       listQuery: {
         page: 1,
@@ -410,7 +409,7 @@ export default {
 
     this.setDialogHeight()
     this.setBodyHeight()
-    this.calcHeight()
+    // this.calcHeight()
 
     // this.$bus.emit('showWorkTeamDialog', {formMeta:data,selectType:single})
     // this.$bus.on('showWorkTeamDialog', data => {
@@ -429,7 +428,7 @@ export default {
         this.renderTree()
         this.setDialogHeight()
         this.setBodyHeight()
-        this.calcHeight()
+        // this.calcHeight()
       })
       // this.getListData().then(() => {
       //   this.dataLoaded = true
@@ -447,6 +446,7 @@ export default {
     //     this.dataLoaded = true
     //   })
     // })
+    
   },
   methods: {
     getParams(){
@@ -534,20 +534,23 @@ export default {
       rows.splice(index, 1);
     },
     setDialogHeight() {
-      document.getElementsByClassName('el-dialog')[0].style.height = this.UIMeta.selectViewModel.height > 1 ? this.UIMeta.selectViewModel.height + 'px' : this.UIMeta.selectViewModel.height*100 + '%'
+      document.getElementsByClassName('el-dialog')[0].style.height = this.UIMeta.height > 1 ? this.UIMeta.height + 'px' : this.UIMeta.height*100 + '%'
+      // document.getElementsByClassName('el-dialog')[0].style.height = this.UIMeta.selectViewModel.height > 1 ? this.UIMeta.selectViewModel.height + 'px' : this.UIMeta.selectViewModel.height*100 + '%'
     },
     setBodyHeight() {
       document.getElementsByClassName('el-dialog__body')[0].style.height = parseInt(window.getComputedStyle(document.getElementsByClassName('el-dialog')[0], null).height)
                                                                            - parseInt(window.getComputedStyle(document.getElementsByClassName('el-dialog__header')[0], null).height) - 3
                                                                            - parseInt(window.getComputedStyle(document.getElementsByClassName('el-dialog__footer')[0], null).height) - 3
                                                                            + 'px'
+      document.getElementsByClassName('table-container')[0].style.height = parseInt(document.getElementsByClassName('el-dialog__body')[0].style.height)
+                                                                          - parseInt(window.getComputedStyle(document.getElementById('select-qCon'), null).height) - 35 + 'px'
     },
     calcHeight() { // 计算弹窗各部分高度
       let footer = document.getElementsByClassName('el-dialog__footer')[0],
           header = document.getElementsByClassName('el-dialog__header')[0],
           qCon = document.getElementById('select-qCon'),
-          //elDialog = document.getElementsByClassName('el-dialog')[0],
-          elDialog = document.getElementsByClassName('app-container')[0],
+          elDialog = document.getElementsByClassName('el-dialog')[0],
+          // elDialog = document.getElementsByClassName('app-container')[0],
 
           body = document.getElementsByClassName('el-dialog__body')[0]
 
@@ -616,11 +619,11 @@ export default {
     },
     getTree() {
       return new Promise((resolve,reject) => {
-        this.$http.get(`/api/${this.UIMeta.selectViewModel.tree.initUrl}/${this.UIMeta.selectViewModel.tree.initMethod}`).then((res) => {
+        this.$http.get(`/api/${this.UIMeta.tree.initUrl}/${this.UIMeta.tree.initMethod}`).then((res) => {
           this.treeRoot = JSON.parse(JSON.stringify(res.data))
-          this.$http.get(`/api/${this.UIMeta.selectViewModel.tree.actionUrl}/${this.UIMeta.selectViewModel.tree.method}`).then((res) => {
+          this.$http.get(`/api/${this.UIMeta.tree.actionUrl}/${this.UIMeta.tree.method}`).then((res) => {
             this.treeChild = JSON.parse(JSON.stringify(res.data))
-            this.$http.get(`/api/${this.UIMeta.selectViewModel.tree.actionUrl}/${this.UIMeta.selectViewModel.tree.method}`).then((res) => {
+            this.$http.get(`/api/${this.UIMeta.tree.actionUrl}/${this.UIMeta.tree.method}`).then((res) => {
               this.treeGrandchild = JSON.parse(JSON.stringify(res.data))
               resolve(true)
             }).catch((err) => {
@@ -632,6 +635,7 @@ export default {
     },
     // 生成目录树
     renderTree() {
+      console.log(this.tree, 'tree')
       if (!this.treeRoot.treeRoot.leaf) {
         this.tree.push({
           iconcls: this.treeRoot.treeRoot.iconcls,
@@ -694,6 +698,9 @@ export default {
     },
     queryData(){
        this.form.queryData()
+      // setTimeout(() => {
+        this.calcHeight()
+      // }, 1000)
     }
   }
 }
@@ -719,8 +726,15 @@ export default {
   background-color: #fafafa;
 }
 .el-dialog__footer {
-  padding: 0 0 10px 0;
+  padding: 0 10px 10px 10px;
   margin-top: 3px;
+  display: flex;
+  justify-content: center;
+}
+.dialog-footer {
+  .el-button+.el-button {
+    margin-left: 70px;
+  }
 }
 .el-dialog--center .el-dialog__body {
   padding: 0;
