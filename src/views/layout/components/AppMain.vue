@@ -30,6 +30,7 @@ export default {
   width: 100%;
   position: relative;
   overflow: auto;
+  overflow-x: hidden;
 }
 </style>
 

@@ -35,7 +35,7 @@
         </el-dropdown>
       </el-button-group>
     </el-header>
-    <el-main>
+    <el-main style="overflow-x: hidden;">
     <el-form
         :key="componentSet.componentName"
         class="demo-ruleForm"
@@ -47,6 +47,7 @@
                 :key="component.componentName"
                 :style="{width:component.width*100 + '%'}"
                 :label="component.label"
+                :title="component.label"
                 :required="!component.allowBlank"
                 :label-width="component.labelWidth+'px'"
                       >

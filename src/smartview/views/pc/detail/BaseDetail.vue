@@ -101,6 +101,7 @@ export default {
     border-bottom: 1px solid #e4e7ed;
     .el-button-group {
       margin-bottom: 2px;
+      margin-top: 2px;
     }
   }
   .el-main {

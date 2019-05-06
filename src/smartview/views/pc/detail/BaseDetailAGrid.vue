@@ -59,18 +59,30 @@
                       style="position: absolute; right: 50px; top: 0; margin-top: 0;"/>
       </el-header>
       <el-main>
+        <!-- <el-table
+              :data="this.componentSet.datasource.dataList"
+              ref="multipleTable"
+              element-loading-text="拼命加载中" border fit highlight-current-row
+              :header-cell-style="{background:'#f6f6f6'}"
+              :height="height" :cell-style="cellStyle" :row-style="rowStyle"> -->
         <el-table
               :data="this.componentSet.datasource.dataList"
               ref="multipleTable"
-              element-loading-text="拼命加载中" border fit stripe highlight-current-row
-              :header-cell-style="{background:'#f6f6f6'}"
+              element-loading-text="拼命加载中" border fit highlight-current-row
+              :header-cell-style="{
+                color: '#909399',
+                fontSize: '14px',
+                fontWeight: 'bold',
+                background: 'rgb(246, 246, 246)',
+                padding: '2px 4px'
+              }"
               :height="height" :cell-style="cellStyle" :row-style="rowStyle">
           <el-table-column type="selection" align="center"/>
           <el-table-column v-for="header in pageModel.componentSetModel.components"
               :key="header.name"
               :prop="header.field"
               :label="header.label"
-               align="left"
+               align="center"
               :width="header.width > 1 ? header.width + 'px' : header.width > 0 && header.width <= 1 ? header.width*100 + '%' : ''">
             <template slot-scope="scope">
               <img v-if="header.ctype === 'image'" :src="scope.row[header.field]" :width="header.width">
@@ -120,7 +132,7 @@ export default {
       if (rowIndex%2 === 0) {
         return {
           'fontSize': '12px',
-          'backgroundColor': '#fafafa'
+          'backgroundColor': '#dcdcdc'
         }
       } else {
         return {

@@ -43,7 +43,7 @@
             {{ btn.label }}
           </el-button>
           <el-dropdown v-if="pageModel.toolbarModel.showMoreButton" trigger="click" placement="bottom" szie="mini">
-            <el-button size="mini">
+            <el-button size="mini" style="width:83.55px;">
               更多<i class="el-icon-arrow-down el-icon--right" style="margin-left:0;"></i>
             </el-button>
             <el-dropdown-menu slot="dropdown">

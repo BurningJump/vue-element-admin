@@ -100,7 +100,14 @@
 .el-form-item__label {
   font-size: 12px;
   font-weight: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .el-form-item--mini.el-form-item, .el-form-item--small.el-form-item {
   margin-bottom: 2px;
+}
+
+.el-table .cell {
+  line-height: 21px;;
 }
