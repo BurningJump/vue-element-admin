@@ -1,7 +1,7 @@
 <template>
-  <div class="app-container">
+  <div class="dialog-body-container">
 
-      <el-container>
+      <!-- <el-container> -->
 
       <!--条件区 -->
       <el-header height="auto" id="select-qCon">
@@ -295,11 +295,11 @@
             </el-main>
           </el-container>
         </el-container>
-      </el-container>
-      <span slot="footer" class="dialog-footer">
+      <!-- </el-container> -->
+      <div class="dialog-footer">
         <el-button @click="closeDialog">取 消</el-button>
         <el-button type="primary" @click="submitFun">确 定</el-button>
-      </span>
+      </div>
 
   </div>
 </template>
@@ -405,7 +405,9 @@ export default {
 
     this.setDialogHeight()
     this.setBodyHeight()
-    this.calcHeight()
+    this.$nextTick(() => {
+      this.calcHeight()
+    })
 
     // this.$bus.emit('showWorkTeamDialog', {formMeta:data,selectType:single})
     // this.$bus.on('showWorkTeamDialog', data => {
@@ -540,15 +542,23 @@ export default {
       // document.getElementsByClassName('el-dialog')[0].style.height = this.UIMeta.selectViewModel.height > 1 ? this.UIMeta.selectViewModel.height + 'px' : this.UIMeta.selectViewModel.height*100 + '%'
     },
     setBodyHeight() {
-      document.getElementsByClassName('el-dialog__body')[0].style.height = parseInt(window.getComputedStyle(document.getElementsByClassName('el-dialog')[0], null).height)
-                                                                           - parseInt(window.getComputedStyle(document.getElementsByClassName('el-dialog__header')[0], null).height) - 3
-                                                                           - parseInt(window.getComputedStyle(document.getElementsByClassName('el-dialog__footer')[0], null).height) - 3
-                                                                           + 'px'
-      document.getElementsByClassName('table-container')[0].style.height = parseInt(document.getElementsByClassName('el-dialog__body')[0].style.height)
-                                                                          - parseInt(window.getComputedStyle(document.getElementById('select-qCon'), null).height) - 35 + 'px'
+      let dialog = document.getElementsByClassName('el-dialog')[0],
+          dialogHeader = document.getElementsByClassName('el-dialog__header')[0],
+          dialogFooter = document.getElementsByClassName('dialog-footer')[0],
+          dialogBody = document.getElementsByClassName('el-dialog__body')[0],
+          conditionForm = document.getElementById('select-qCon'),
+          tableContainer = document.getElementsByClassName('table-container')[0]
+
+      dialogBody.style.height = parseInt(window.getComputedStyle(dialog, null).height)
+                              - parseInt(window.getComputedStyle(dialogHeader, null).height) - 3
+                              + 'px'
+      tableContainer.style.height = parseInt(dialogBody.style.height)
+                                  - parseInt(window.getComputedStyle(dialogFooter, null).height) - 2
+                                  - parseInt(window.getComputedStyle(conditionForm, null).height) - 35
+                                  + 'px'
     },
     calcHeight() { // 计算弹窗各部分高度
-      let footer = document.getElementsByClassName('el-dialog__footer')[0],
+      let footer = document.getElementsByClassName('dialog-footer')[0],
           header = document.getElementsByClassName('el-dialog__header')[0],
           qCon = document.getElementById('select-qCon'),
           elDialog = document.getElementsByClassName('el-dialog')[0],
@@ -565,19 +575,20 @@ export default {
       }
 
       this.tableHeight1 = this.index1 * (parseInt(window.getComputedStyle(elDialog, null).height)
-                          - parseInt(window.getComputedStyle(header, null).height) - 3
-                          - parseInt(window.getComputedStyle(qCon, null).height)
-                          - parseInt(window.getComputedStyle(footer, null).height) - 3)
-                          - 35
-      this.tableHeight2 = this.index2 * (parseInt(window.getComputedStyle(elDialog, null).height)
-                          - parseInt(window.getComputedStyle(header, null).height) - 3
-                          - parseInt(window.getComputedStyle(qCon, null).height)
-                          - parseInt(window.getComputedStyle(footer, null).height) - 3)
-                          - 41
-      this.treeHeight = parseInt(window.getComputedStyle(body, null).height)
-                        // - 25 - 30
+                        - parseInt(window.getComputedStyle(header, null).height) - 3
                         - parseInt(window.getComputedStyle(qCon, null).height)
-                        + 'px'
+                        - parseInt(window.getComputedStyle(footer, null).height) - 3)
+                        - 35
+      this.tableHeight2 = this.index2 * (parseInt(window.getComputedStyle(elDialog, null).height)
+                        - parseInt(window.getComputedStyle(header, null).height) - 3
+                        - parseInt(window.getComputedStyle(qCon, null).height)
+                        - parseInt(window.getComputedStyle(footer, null).height) - 3)
+                        - 41
+      this.treeHeight = parseInt(window.getComputedStyle(body, null).height)
+                      // - 25 - 30
+                      - parseInt(window.getComputedStyle(footer, null).height) - 3
+                      - parseInt(window.getComputedStyle(qCon, null).height)
+                      + 'px'
     },
     handleOriginSelectionChange(val) {
       this.originSelecttion = val;
@@ -726,13 +737,11 @@ export default {
   border-bottom: 1px solid #e4e7ed;
   background-color: #fafafa;
 }
-.el-dialog__footer {
+.dialog-footer {
   padding: 0 10px 10px 10px;
   margin-top: 3px;
   display: flex;
   justify-content: center;
-}
-.dialog-footer {
   .el-button+.el-button {
     margin-left: 70px;
   }
