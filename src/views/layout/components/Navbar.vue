@@ -84,7 +84,9 @@ export default {
   },
   methods: {
     showAppDialogTeam() {
-       vsmartview.callSelectForm('com.epower.abd.abdworkteam.AbdWorkTeamList','single')
+       vsmartview.callSelectForm('com.epower.abd.abdworkteam.AbdWorkTeamList','single',(data)=>{
+                   console.log('runCallback')
+       })
     },
     showAppDialogMaterial() {
        vsmartview.callSelectForm('com.epower.abd.material.MaterialList','multi')

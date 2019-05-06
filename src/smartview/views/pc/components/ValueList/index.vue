@@ -44,7 +44,8 @@
 </template>
 
 <script>
-  import router from '@/router'  //临时代码
+  // import router from '@/router'  //临时代码
+  import {vsmartview} from '@/smartview/VSmartView.js'
 
   export default {
     name: 'ValueList',
@@ -64,7 +65,7 @@
     props: {input:{},
             multiple:true,
             bandValue:'',
-            extraFilter:'', //业务人员在前端自定义的过滤条件            
+            extraFilter:'', //业务人员在前端自定义的过滤条件
             disabled:false,
             clearable:true,
             allowcreate:false,
@@ -81,11 +82,11 @@
               return this.bandValue[this.input.displayField];
             }
 
-            
+
           }else{
             return '';
           }
-          
+
         },
         set: function(value){
           this.input.saveInputValue(value);
@@ -95,8 +96,8 @@
 
           let maps=this.input.maps;
           let form = this.input.form;
-          for(let m of maps){     
-            form.setCmpValue(m['toComponent'],value[m['fromField']]);      
+          for(let m of maps){
+            form.setCmpValue(m['toComponent'],value[m['fromField']]);
           }
         }
       }
@@ -117,13 +118,14 @@
     methods: {
       //调用valueList窗口
       callValueListFrom(){
-          let formJsPath = (this.input.fromJsclass||'').replace(/\./g, '/')
-          this.$router.push({
-                path:formJsPath,
-                query:{
-                  selectType:this.multiple?'multi':'single',
-                  callValueListFromRefeed: this.callValueListFromRefeed} 
-          })
+       //  let formJsPath = (this.input.fromJsclass||'').replace(/\./g, '/')
+           vsmartview.callSelectForm(this.input.fromJsclass,'single',this.callValueListFromRefeed)
+          // this.$router.push({
+          //       path:formJsPath,
+          //       query:{
+          //         selectType:this.multiple?'multi':'single',
+          //         callValueListFromRefeed: this.callValueListFromRefeed}
+          // })
       },
       //调用valueList窗口回调函数，1.填充bandValue，2.filterList，3.保存结果到datapackage
       callValueListFromRefeed(resData){
@@ -204,7 +206,7 @@
           // if(query.trim() !== this.inputOldValue.trim()){
 
           // }
-          
+
           //实时远程抓取数据
           // if(this.input.fetchInTime)
             this.loadRemoteData(query,1);;
@@ -232,7 +234,7 @@
           v=item[k];
         if((v||'')!='')
           v=v.replace(/<[^>]+>/g,""); //去除字符串中所有html标签及&nbsp符号
-        return v; 
+        return v;
       },
       //拼接过滤条件
       getFilterStr(datatype,filteroperation,filterfield,datavalue){

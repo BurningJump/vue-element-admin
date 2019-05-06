@@ -1,5 +1,7 @@
 <template>
-    <BaseSelect :form = "form" :selectType = "selectType" >
+    <BaseSelect :form = "form"
+                :selectType = "selectType"
+                :callback = "callback"  >
     </BaseSelect>
 </template>
 
@@ -15,7 +17,8 @@ export default {
   data() {
     return {
       form: null, //add by max
-      selectType:'single' //默认单选模式 multi(多选) / single(单选模式)
+      selectType:'single', //默认单选模式 multi(多选) / single(单选模式)
+      callback:null
     };
   },
 
@@ -27,6 +30,7 @@ export default {
        //必须先搞一个变量，页面永远不会渲染，想什么时候渲染就什么时候赋值
      this.form = aform
      this.selectType = this.content.selectType
+     this.callback =this.content.callback
   },
 
   methods: {

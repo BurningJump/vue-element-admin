@@ -9,7 +9,7 @@ export default class VRemoteCombox extends VDBComponent {
     fetchInTime = false; // 是否实时远程获取数据
 
     selectform=true; // 是否弹窗供用户选择
-    fromJsclass='/com/epower/am/operation/SelectList'; // 弹出窗口ID
+    fromJsclass=''; // 弹出窗口ID
     // disabled;是否不可用
 
     fromAction;// 远程数据请求地址

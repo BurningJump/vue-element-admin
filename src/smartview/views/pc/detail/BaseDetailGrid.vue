@@ -80,7 +80,8 @@ import request from '@/utils/request'
 import YUGridValueList from '../components/Component4HandsonTable/valueList.js'
 import YUGridCombox from '../components/Component4HandsonTable/combox.js'
 
-import BaseSelect from '../select/BaseSelect'
+// import BaseSelect from '../select/BaseSelect'
+import {vsmartview} from '@/smartview/VSmartView.js'
 
 class CustomEditor extends Handsontable.editors.AutocompleteEditor {
   constructor(props) {
@@ -126,8 +127,7 @@ export default {
   },
   props: ['pageModel','page', 'activeTab', 'height'],
   components: {
-    HotTable,
-    BaseSelect
+    HotTable
   },
   created(){
       this.getSettings()
@@ -169,17 +169,20 @@ export default {
           // instance.loadData(_this.componentSet.datasource.dataList);
           instance.view.render();
           // console.log('materialName'+instance.getDataAtCell(row,col+1));
+        }else{
+          console.log('select form feedback no data');
         }
       }
-
-      let formJsPath = '/com/epower/am/operation/SelectList'
-      this.$router.push({
-        path:formJsPath,
-        query:{
-          selectType:this.multiple?'multi':'single' ,
-          callValueListFromRefeed: callValueListFromRefeed
-        }
-      });
+      console.log('handsontable select fromjsclass:'+cellProp.fromJsclass)
+      vsmartview.callSelectForm(cellProp.fromJsclass,(this.multiple?'multi':'single'),callValueListFromRefeed)
+      // let formJsPath = '/com/epower/am/operation/SelectList'
+      // this.$router.push({
+      //   path:formJsPath,
+      //   query:{
+      //     selectType:this.multiple?'multi':'single' ,
+      //     callValueListFromRefeed: callValueListFromRefeed
+      //   }
+      // });
     },
      beforeKeyDown(instance,e){
        var hottable = this.$refs.hotInstance.hotInstance;
@@ -309,6 +312,7 @@ export default {
               displayField:component.displayField,//theader.valueListModel.displayField,
               maps: component.maps,
               form: component.form,
+              fromJsclass: component.fromJsclass,
               cellFunction:this.CallValueListFormInCell,
               data: component.fieldName,
               handsontable: {

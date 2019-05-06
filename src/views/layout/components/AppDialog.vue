@@ -52,6 +52,13 @@ export default{
       this.dialogWidth = formMeta.width > 1 ? formMeta.width + 'px' : formMeta.width*100 + '%'
       this.dialogHeight = formMeta.height > 1 ? formMeta.height + 'px' : formMeta.height*100 + '%'
     })
+
+    this.$bus.on('closeAppDialog', data => {
+      console.log(data, 'dialog data')
+      this.dialogVisible = false
+       this.dialogComponentName= ''
+    })
+
   }
 }
 </script>

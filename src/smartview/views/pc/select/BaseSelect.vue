@@ -21,11 +21,10 @@
                               :readonly="component.readOnly"
                               v-model="component.inputValue"
                               :disabled="!component.enable "
-
                               @change = "component.saveInputValue()" />
 
               <el-date-picker v-else-if="component.ctype === 'dateField'"
-                                :readonly="component.readOnly"
+                              :readonly="component.readOnly"
                               v-model="component.inputValue" type="date"
                               :disabled="!component.enable"
                               @change = "component.saveInputValue()"
@@ -36,7 +35,6 @@
                               v-model="component.inputValue" type="datetime"
                               :disabled="!component.enable"
                                @change = "component.saveInputValue()"
-
                                :width = "'auto'" />
 
               <el-input v-else-if="component.ctype === 'numberfield'" :readonly="component.readOnly"
@@ -53,9 +51,7 @@
               <el-input v-else
                         v-model="component.inputValue" :disabled="!component.enable"
                         :readonly="component.readOnly"  clearable
-
                           @change = "component.saveInputValue()" />
-
           </el-form-item>
 
           <el-form-item :style="{width: 'auto'}" label-width="100px" >
@@ -173,7 +169,7 @@
               <pagination :total="list.length"
                           :page.sync="listQuery.page"
                           :limit.sync="listQuery.limit"
-                          @pagination="getList" style="margin-top: 0;"/>
+                          @pagination="queryData" style="margin-top: 0;"/>
             </el-header>
 
              <!--数据区域 -->
@@ -301,7 +297,7 @@
         </el-container>
       </el-container>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button @click="closeDialog">取 消</el-button>
         <el-button type="primary" @click="submitFun">确 定</el-button>
       </span>
 
@@ -352,7 +348,7 @@ export default {
   components: {
     Pagination
   },
-  props: ['form','selectType'],
+  props: ['form','selectType','callback'],
 
   computed:{
 
@@ -449,8 +445,12 @@ export default {
 
   },
   methods: {
-    getParams(){
-      return this.$route.query;
+    // getParams(){
+    //   return this.$route.query;
+    // },
+    closeDialog(){
+      this.$bus.emit('closeAppDialog', {
+            })
     },
     submitFun(){
       console.log('here call submitFun');
@@ -458,8 +458,9 @@ export default {
         // 单选模式下，在选中记录后，点击确认时也要把选中记录插入到 selectedList 列表中
         this.toggleSelection(this.originSelecttion, 'originTable')
       }
-      this.getParams().callValueListFromRefeed(this.selectedList);
-      this.dialogVisible = false;
+     // this.getParams().callValueListFromRefeed(this.selectedList);
+      this.callback(this.selectedList)
+      this.closeDialog()
     },
     handleSelect(selection, row) {
       if (this.selectType === 'single') {
@@ -578,7 +579,6 @@ export default {
                         - parseInt(window.getComputedStyle(qCon, null).height)
                         + 'px'
     },
-    getList() {},
     handleOriginSelectionChange(val) {
       this.originSelecttion = val;
     },

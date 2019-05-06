@@ -40,12 +40,12 @@
       <span style="float: right; color: #8492a6; font-size: 13px">{{getObjectValueByKey(item,input.valueField)}}</span>
     </el-option>
   </el-select>
-  <el-button v-if="input.selectform" icon="el-icon-search" class="remotecombox-search" @click="callValueListFrom"></el-button>
+  <!-- <el-button v-if="input.selectform" icon="el-icon-search" class="remotecombox-search" @click="callValueListFrom"></el-button> -->
   </div>
 </template>
 
 <script>
-  import router from '@/router'  //临时代码
+  import {vsmartview} from '@/smartview/VSmartView.js'
 
   export default {
     name: 'RemoteCombox',
@@ -59,13 +59,13 @@
       }
     },
     props: {input:{},
-            bandValue:'',            
+            bandValue:'',
             extraFilter:'', //业务人员在前端自定义的过滤条件
             multiple:true,
             disabled:false,
             readonly:false,
             clearable:true,
-            allowcreate:false,            
+            allowcreate:false,
             loadingtext:'拼命加载中...'},
     computed: {
       newValue:{
@@ -98,13 +98,7 @@
     methods: {
       //调用valueList窗口
       callValueListFrom(){
-          let formJsPath = (this.input.fromJsclass||'').replace(/\./g, '/')
-          this.$router.push({
-                path:formJsPath,
-                query:{
-                  selectType:this.multiple?'multi':'single',
-                  callValueListFromRefeed: this.callValueListFromRefeed} 
-          })
+          vsmartview.callSelectForm(this.input.fromJsclass,'single',this.callValueListFromRefeed)
       },
       //调用valueList窗口回调函数，1.填充bandValue，2.filterList，3.保存结果到datapackage
       callValueListFromRefeed(resData){
@@ -142,13 +136,13 @@
         // this.newValue=this.tempValue;
         // console.log('newValue:'+this.newValue);
       },
-      
+
       fireChangeEvent(){
         // console.log('--fireChangeEvent:'+this.bandValue+';--filterList:'+this.filterList);
         if(this.readonly){
           this.newValue=this.tempValue;
         }
-        
+
         console.log('newValue:'+this.newValue);
       },
       //获取远程数据
@@ -192,7 +186,7 @@
         }
         //无值及空值时全列表可选
         if ( (query||'').trim() !== '') {
-          
+
           //实时远程抓取数据
           if(this.input.fetchInTime)
             this.loadRemoteData(query,1);;
@@ -217,7 +211,7 @@
           v=item[k];
         if((v||'')!='')
           v=v.replace(/<[^>]+>/g,""); //去除字符串中所有html标签及&nbsp符号
-        return v; 
+        return v;
       },
       //拼接过滤条件
       getFilterStr(datatype,filteroperation,filterfield,datavalue){

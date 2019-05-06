@@ -94,13 +94,13 @@ export default class VSmartView {
     })
   }
 
-/**
+  /**
  *  通过bus call from
  * @param {*} formKey 名称 例如  com.epower.dp.dpshoporder.DpShopOrderDetail
  * @param {*} selectType  //默认单选模式 multi(多选) / single(单选模式)
  * @param {*} ACvar   //应用上下文
  */
-  callSelectForm(formKey, selectType, ACvar = null) {
+  callSelectForm(formKey, selectType, callback = null, ACvar = null) {
     this.getSelectUIMeta(formKey).then(formMeta => {
       Vue.bus.emit('showAppDialog', {
         componentName: formKey.replace(/\./g, '_'),
@@ -108,6 +108,7 @@ export default class VSmartView {
           formKey: formKey,
           formMeta: formMeta,
           selectType: selectType,
+          callback: callback,
           cvar: ACvar
         }
       })
