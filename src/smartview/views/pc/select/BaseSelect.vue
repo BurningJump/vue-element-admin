@@ -300,10 +300,10 @@
           </el-container>
         </el-container>
       </el-container>
-      <!-- <span slot="footer" class="dialog-footer">
+      <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="submitFun">确 定</el-button>
-      </span> -->
+      </span>
 
   </div>
 </template>
@@ -409,7 +409,7 @@ export default {
 
     this.setDialogHeight()
     this.setBodyHeight()
-    // this.calcHeight()
+    this.calcHeight()
 
     // this.$bus.emit('showWorkTeamDialog', {formMeta:data,selectType:single})
     // this.$bus.on('showWorkTeamDialog', data => {
@@ -446,7 +446,7 @@ export default {
     //     this.dataLoaded = true
     //   })
     // })
-    
+
   },
   methods: {
     getParams(){
@@ -534,7 +534,8 @@ export default {
       rows.splice(index, 1);
     },
     setDialogHeight() {
-      document.getElementsByClassName('el-dialog')[0].style.height = this.UIMeta.height > 1 ? this.UIMeta.height + 'px' : this.UIMeta.height*100 + '%'
+      document.getElementsByClassName('el-dialog')[0].style.height =
+          this.UIMeta.height > 1 ? this.UIMeta.height + 'px' : this.UIMeta.height*100 + '%'
       // document.getElementsByClassName('el-dialog')[0].style.height = this.UIMeta.selectViewModel.height > 1 ? this.UIMeta.selectViewModel.height + 'px' : this.UIMeta.selectViewModel.height*100 + '%'
     },
     setBodyHeight() {
@@ -601,22 +602,22 @@ export default {
     //     })
     //   })
     // },
-    getListData() {
-      return new Promise((resolve,reject) => {
-        this.$http.get('/api/openapi/materialListData').then((res) => {
-          this.list = [...res.data.resultList]
-          // this.$set(this.list, res.data.resultList)
-          // res.data.resultList.forEach((item, index) => {
-            // this.list[index] = {}
-            // this.$set(this.list, index, {})
-            // this.grid.forEach((thead, tIndex) => {
-            //   this.list[index][thead.prop] = item[thead.prop]
-            //   this.$set(this.list[index], thead.prop, item[thead.prop])
-            // })
-          // })
-        })
-      })
-    },
+    // getListData() {
+    //   return new Promise((resolve,reject) => {
+    //     this.$http.get('/api/openapi/materialListData').then((res) => {
+    //       this.list = [...res.data.resultList]
+    //       // this.$set(this.list, res.data.resultList)
+    //       // res.data.resultList.forEach((item, index) => {
+    //         // this.list[index] = {}
+    //         // this.$set(this.list, index, {})
+    //         // this.grid.forEach((thead, tIndex) => {
+    //         //   this.list[index][thead.prop] = item[thead.prop]
+    //         //   this.$set(this.list[index], thead.prop, item[thead.prop])
+    //         // })
+    //       // })
+    //     })
+    //   })
+    // },
     getTree() {
       return new Promise((resolve,reject) => {
         this.$http.get(`/api/${this.UIMeta.tree.initUrl}/${this.UIMeta.tree.initMethod}`).then((res) => {
