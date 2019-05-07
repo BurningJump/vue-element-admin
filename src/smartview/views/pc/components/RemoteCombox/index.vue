@@ -40,7 +40,7 @@
       <span style="float: right; color: #8492a6; font-size: 13px">{{getObjectValueByKey(item,input.valueField)}}</span>
     </el-option>
   </el-select>
-  <!-- <el-button v-if="input.selectform" icon="el-icon-search" class="remotecombox-search" @click="callValueListFrom"></el-button> -->
+  <el-button v-if="input.selectform" icon="el-icon-search" class="remotecombox-search" @click="callValueListFrom"></el-button>
   </div>
 </template>
 
@@ -98,7 +98,8 @@
     methods: {
       //调用valueList窗口
       callValueListFrom(){
-          vsmartview.callSelectForm(this.input.fromJsclass,'single',this.callValueListFromRefeed)
+        vsmartview.callSelectForm('com.epower.abd.abdworkteam.AbdWorkTeamList','single',this.callValueListFromRefeed)
+          // vsmartview.callSelectForm(this.input.fromJsclass,'single',this.callValueListFromRefeed)
       },
       //调用valueList窗口回调函数，1.填充bandValue，2.filterList，3.保存结果到datapackage
       callValueListFromRefeed(resData){
