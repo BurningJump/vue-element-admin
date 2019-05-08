@@ -536,7 +536,7 @@ export default class VBaseListForm extends VBaseForm {
     // TODO 重新设置 activeViewName
 
     if (this.formMeta.dataType !== undefined && this.formMeta.dataType !== null) {
-      this.activeViewName = this.formMeta.dataType.default
+      this.activeViewName = this.formMeta.dataType.defaultType
     } else {
       if (this.formMeta.dataView.defaultView !== undefined && this.formMeta.dataView.defaultView !== null) {
         this.activeViewName = this.formMeta.dataView.defaultView
@@ -554,9 +554,9 @@ export default class VBaseListForm extends VBaseForm {
       dataType.addTab(item.name, item.label, item.viewName, item.iconcls)
     }
 
-    if (dataTypeMeta.default !== undefined) {
-      dataType.defaultTabName = dataTypeMeta.default
-      dataType.activeTabName = dataTypeMeta.default
+    if (dataTypeMeta.defaultType !== undefined) {
+      dataType.defaultTabName = dataTypeMeta.defaultType
+      dataType.activeTabName = dataTypeMeta.defaultType
     }
   }
   _initConditionTree(form, tree, treeMeta) {
