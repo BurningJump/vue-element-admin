@@ -12,7 +12,8 @@ const user = {
     roles: [],
     setting: {
       articlePlatform: []
-    }
+    },
+    menuData:[] //用户菜单
   },
 
   mutations: {
@@ -39,6 +40,9 @@ const user = {
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles
+    },
+    SET_MENUData: (state, menuData) => {
+      state.menuData = menuData
     }
   },
 
@@ -47,8 +51,8 @@ const user = {
     LoginByUsername({ commit }, userInfo) {
       // console.log({commit}, 'commit+++++++++')
       const username = userInfo.username.trim()
-      commit('SET_TOKEN', 'admin')
-      setToken('admin')
+      commit('SET_TOKEN', username)
+      setToken(username)
     },
 
     // 获取用户信息
@@ -105,8 +109,18 @@ const user = {
           resolve()
         })
       })
+    },
+
+    //保存用户菜单
+    SaveUserMenu({ commit }, userMenuList) {
+      commit('SET_MENUData', userMenuList)      
     }
+
+
+
   }
+
+
 }
 
 export default user
