@@ -133,8 +133,8 @@ export default {
           loginParams['userNo'] = this.loginForm.username;
           loginParams['password'] = this.loginForm.password;
           loginParams['after'] = this.redirect || '/';
-          
-          this.$http.get(`http://localhost:8080/loginAction!signIn.action`,{
+
+          this.$http.get(`http://192.168.1.104:8080/loginAction!signIn.action`,{
               params:loginParams
             },{
               emulateJSON: true
@@ -142,7 +142,7 @@ export default {
           .then(res => {
             if(res.data.success){
               var userMenuList = res.data.userMenuList;
-              console.log(userMenuList);           
+              console.log(userMenuList);
               this.$store.dispatch('SaveUserMenu', userMenuList).then(() => {
                 this.$store.dispatch('LoginByUsername', this.loginForm).then(() => {
                 this.loading = false
@@ -150,18 +150,18 @@ export default {
                 }).catch(() => {
                   this.loading = false
                 })
-              })  
-              
+              })
+
             }else{
-              this.loading = false              
+              this.loading = false
               console.log('errorList:'+res.data.errorList);
             }
-            
+
           });
           //登陆代码  loginAction!signIn.action
-          
+
         } else {
-          this.loading = false 
+          this.loading = false
           console.log('error submit!!')
           return false
         }
