@@ -79,7 +79,7 @@ export default {
       }
     }
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
+      if (value.length < 1) {
         callback(new Error('The password can not be less than 6 digits'))
       } else {
         callback()
@@ -88,7 +88,7 @@ export default {
     return {
       loginForm: {
         username: 'admin',
-        password: '1111111'
+        password: '123456'
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -124,16 +124,44 @@ export default {
       }
     },
     handleLogin() {
+      var that = this;
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('LoginByUsername', this.loginForm).then(() => {
-            this.loading = false
-            this.$router.push({ path: this.redirect || '/' })
-          }).catch(() => {
-            this.loading = false
-          })
+          //登陆代码  loginAction!signIn.action
+          var loginParams = {};
+          loginParams['userNo'] = this.loginForm.username;
+          loginParams['password'] = this.loginForm.password;
+          loginParams['after'] = this.redirect || '/';
+          
+          this.$http.get(`http://localhost:8080/loginAction!signIn.action`,{
+              params:loginParams
+            },{
+              emulateJSON: true
+            })
+          .then(res => {
+            if(res.data.success){
+              var userMenuList = res.data.userMenuList;
+              console.log(userMenuList);           
+              this.$store.dispatch('SaveUserMenu', userMenuList).then(() => {
+                this.$store.dispatch('LoginByUsername', this.loginForm).then(() => {
+                this.loading = false
+                this.$router.push({ path: res.data.redirect })
+                }).catch(() => {
+                  this.loading = false
+                })
+              })  
+              
+            }else{
+              this.loading = false              
+              console.log('errorList:'+res.data.errorList);
+            }
+            
+          });
+          //登陆代码  loginAction!signIn.action
+          
         } else {
+          this.loading = false 
           console.log('error submit!!')
           return false
         }

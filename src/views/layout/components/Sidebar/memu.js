@@ -133,18 +133,8 @@ export const menuData = [{
       'useOrganizationId': null,
       'children': [
         {
-          'appType': 'ERP',
-          'createBy': 'B9B81BCAC78240ADA30D0EAD34EA9017',
-          'createOn': '2016-06-22T11:58:30',
-          'createOrganizationId': null,
-          'datacenterId': 1,
-          'deleted': false,
-          'entityStatus': 'L',
+          'appType': 'ERP',          
           'id': 'C71DEEFE-FA90-0001-60FE-36492BC017CB',
-          'inserted': false,
-          'lastUpdateBy': 'B9B81BCAC78240ADA30D0EAD34EA9017',
-          'lastUpdateOn': '2016-06-23T15:28:07',
-          'load': true,
           'menuIcon': null,
           'menuName': '区域',
           'menuOrder': '1',
@@ -153,10 +143,7 @@ export const menuData = [{
           'operationId': '262b7ca5-242c-11e3-bba9-a458cefd8dc6',
           'parentId': 'C71DEEF9-10C0-0001-26B0-166671B01ED0',
           'rstatus': 1,
-          'sourceId': null,
-          'sys': 0,
-          'updated': false,
-          'useOrganizationId': null
+          'sys': 0
         },
         {
           'appType': 'ERP',
