@@ -24,7 +24,7 @@ export default {
   components: { SidebarItem },
   data() {
     return {
-      menus:[]
+     // menus:[]
     }
   },
    created() {
@@ -47,6 +47,9 @@ export default {
     ]),
     isCollapse() {
       return !this.sidebar.opened
+    },
+    menus() {
+      return this.$store.getters.menuData
     }
   }
 }
