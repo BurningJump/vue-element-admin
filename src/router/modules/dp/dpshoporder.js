@@ -22,10 +22,10 @@ const dpshoporderRouter = {
     {
       path: 'DpShopOrderList/:formId',
       component: () => import('@/views/com/epower/dp/dpshoporder/DpShopOrderList'),
-      name: 'com.epower.dp.dpshoporder.shopOrderList',
+      name: 'com.epower.dp.dpshoporder.DpShopOrderList',
       hidden: true,
       meta: {
-        title: 'DpShopOrderDetail',
+        title: 'DpShopOrderList',
         roles: ['admin'] // or you can only set roles in sub nav
       }
     }

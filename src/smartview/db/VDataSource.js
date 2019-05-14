@@ -10,7 +10,7 @@ export default class VDataSource {
   _record;
 
   dataset;// 数据集
-  dataList; // 保存可视数据列表
+  dataList=[]; // 保存可视数据列表
   rowIndex;// 当前数据展现行号,零代表第一行，因为js的数组是从零开始
   filter;// 获取过滤
 
@@ -290,7 +290,10 @@ export default class VDataSource {
   emptyListData(filter = null) {
     this.filter = filter
     // this.dataList =[] handsontable无法清空数据
-    this.dataList.splice(0, this.dataList.length)
+    if (this.dataList != null) {
+      this.dataList.splice(0, this.dataList.length)
+    }
+
     this.rowIndex = -1
     this._clearComponentData()
   }

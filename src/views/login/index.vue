@@ -63,6 +63,7 @@
 </template>
 
 <script>
+import request from '@/utils/request'
 import { isvalidUsername } from '@/utils/validate'
 import LangSelect from '@/components/LangSelect'
 import SocialSign from './socialsignin'
@@ -134,12 +135,11 @@ export default {
           loginParams['password'] = this.loginForm.password;
           loginParams['after'] = this.redirect || '/';
 
-          this.$http.get(`http://192.168.1.104:8080/loginAction!signIn.action`,{
-              params:loginParams
-            },{
-              emulateJSON: true
-            })
-          .then(res => {
+          request({
+            url: '/loginAction!login.action',
+            method: 'get',
+            params: loginParams
+          }).then(res => {
             if(res.data.success){
               var userMenuList = res.data.userMenuList;
               console.log(userMenuList);
@@ -157,7 +157,34 @@ export default {
               console.log('errorList:'+res.data.errorList);
             }
 
-          });
+          }).catch(err => {
+            console.log(err.message)
+          })
+
+          // this.$http.get('http://127.0.0.1:8080'+`/loginAction!login.action`,{
+          //     params:loginParams
+          //   },{
+          //     emulateJSON: true
+          //   })
+          // .then(res => {
+          //   if(res.data.success){
+          //     var userMenuList = res.data.userMenuList;
+          //     console.log(userMenuList);
+          //     this.$store.dispatch('SaveUserMenu', userMenuList).then(() => {
+          //       this.$store.dispatch('LoginByUsername', this.loginForm).then(() => {
+          //       this.loading = false
+          //       this.$router.push({ path: res.data.redirect })
+          //       }).catch(() => {
+          //         this.loading = false
+          //       })
+          //     })
+
+          //   }else{
+          //     this.loading = false
+          //     console.log('errorList:'+res.data.errorList);
+          //   }
+
+          // });
           //登陆代码  loginAction!signIn.action
 
         } else {

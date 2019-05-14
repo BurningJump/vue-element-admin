@@ -157,7 +157,7 @@
                 {{tab.label}}
               </span>
               <base-list-grid v-for="viewMeta in form.formMeta.dataView.views"
-                      v-if="viewMeta.componentSet.style === 'grid'"
+                      v-if="viewMeta.componentSet.viewType === 'grid'"
                       :form="form"
                       :viewMeta="viewMeta"
                       :view ="form.getComponent(viewMeta.name)"

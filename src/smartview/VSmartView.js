@@ -161,11 +161,16 @@ export default class VSmartView {
           resolve(this.formMetas[formKey])
         } else {
           request({
-            url: '/api/getDetailUIMeta/' + formKey,
-            method: 'get'
+            url: 'smartView2Action!findDetailViewModelConfig.action',
+            method: 'get',
+            params: {
+              // 带参数查询
+              language: 'zh_CN',
+              detailViewId: formKey	// 'com.epower.abd.organization.OrganizationList'
+            }
           }).then(resData => {
             if (resData.data.detailViewModel !== null) {
-              this.formMetas[resData.data.detailViewModel.name] = resData.data.detailViewModel
+              this.formMetas[resData.data.detailViewModel.id] = resData.data.detailViewModel
             }
             resolve(resData.data.detailViewModel)
           }).catch(err => {
@@ -182,11 +187,16 @@ export default class VSmartView {
           resolve(this.formMetas[formKey])
         } else {
           request({
-            url: '/api/getListUIMeta/' + formKey,
-            method: 'get'
+            url: 'smartView2Action!findListViewModelConfig.action',
+            method: 'get',
+            params: {
+              // 带参数查询
+              language: 'zh_CN',
+              listViewId: formKey	// 'com.epower.abd.organization.OrganizationList'
+            }
           }).then(resData => {
             if (resData.data.listViewModel !== null) {
-              this.formMetas[resData.data.listViewModel.name] = resData.data.listViewModel
+              this.formMetas[resData.data.listViewModel.id] = resData.data.listViewModel
             }
             resolve(resData.data.listViewModel)
           }).catch(err => {
@@ -203,11 +213,17 @@ export default class VSmartView {
           resolve(this.formMetas[formKey])
         } else {
           request({
-            url: '/api/getSelectUIMeta/' + formKey,
-            method: 'get'
+            url: 'smartView2Action!findSelectViewModelConfig.action',
+            method: 'get',
+            params: {
+              // 带参数查询
+              language: 'zh_CN',
+              listViewId: formKey	// 'com.epower.abd.organization.OrganizationList'
+            }
           }).then(resData => {
             if (resData.data.selectViewModel !== null) {
-              this.formMetas[resData.data.selectViewModel.name] = resData.data.selectViewModel
+              this.formMetas[resData.data.selectViewModel.id]
+                                  = resData.data.selectViewModel
             }
             resolve(resData.data.selectViewModel)
           }).catch(err => {

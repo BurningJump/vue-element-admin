@@ -3,7 +3,7 @@ import CustomList from '@/smartview/views/pc/list/CustomList';
 import DpShopOrderListForm from './DpShopOrderListForm'
 
 export default {
-  name: "com.epower.dp.dpshoporder.shopOrderList",
+  name: "com.epower.dp.dpshoporder.DpShopOrderList",
   extends:CustomList,
   components:{},
   methods: {

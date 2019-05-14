@@ -10,6 +10,7 @@
         <el-button @click="showAppDialogTeam">显示Team(单选)</el-button>
         <el-button @click="showAppDialogMaterial">显示Material(多选)</el-button>
         <el-button @click="showAppDetail">显示app-detail</el-button>
+        <el-button @click="showAppList">显示app-list</el-button>
 
         <error-log class="errLog-container right-menu-item"/>
 
@@ -92,7 +93,10 @@ export default {
        vsmartview.callSelectForm('com.epower.abd.material.MaterialList','multi')
     },
     showAppDetail(){
-      vsmartview.callDetailForm('com.epower.dp.dpshoporder.DpShopOrderDetail', 1, 'VIEW')
+      vsmartview.callDetailForm('com.epower.dp.dpshoporder.DpShopOrderDetail', 1, 'NEW')
+    },
+    showAppList(){
+       vsmartview.callListForm('com.epower.dp.dpshoporder.DpShopOrderList', 1, 'VIEW')
     },
     toggleSideBar() {
       this.$store.dispatch('toggleSideBar')

@@ -22,15 +22,24 @@ export default {
      var  callContent =vsmartview.callContents[contentKey]
      var  aform =this.NewInstant(callContent.formMeta)
      aform.dataId =callContent.formDataId
+    if (callContent.formStates === 'VIEW'){
      aform.requestDetailData(aform.dataId).then(dataPackage => {
      aform.loadDataByPackage(dataPackage) // add by max
      aform.show(callContent.formStates)
             //页面永远不会渲染，想什么时候渲染就什么时候赋值
             this.form = aform
+              vsmartview.callContents[contentKey] =  null
             }).catch(err => {
               console.log(err.stack)
             })
-    vsmartview.callContents[contentKey] =  null
+    } else if (callContent.formStates === 'NEW'){
+        aform.show(callContent.formStates)
+        this.form = aform
+        vsmartview.callContents[contentKey] =  null
+    }
+
+
+
   },
 
   methods: {

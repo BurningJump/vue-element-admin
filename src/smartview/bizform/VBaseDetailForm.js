@@ -273,8 +273,11 @@ export default class VBaseDetailForm extends VBaseForm {
      }
    }
 
-   show(state) {
+   show(state = 'VIEW') {
      super.show()
+     if (state === 'NEW') {
+       this.addData()
+     }
      this.openDataSources()
      this.setUIState(state)
    }
@@ -628,8 +631,8 @@ export default class VBaseDetailForm extends VBaseForm {
        component.fromJsclass = aComponentMeta.valueListModel.fromJsclass // ：前端显示字段的类型
 
        component.inputField = aComponentMeta.valueListModel.inputField
-       component.saveField = aComponentMeta.valueListModel.saveField;
-       component.targetField = aComponentMeta.valueListModel.targetField;
+       component.saveField = aComponentMeta.valueListModel.saveField
+       component.targetField = aComponentMeta.valueListModel.targetField
        component.maps = aComponentMeta.valueListModel.maps
      }
    }
@@ -685,7 +688,7 @@ export default class VBaseDetailForm extends VBaseForm {
        component.width = aComponentMeta.width
      }
 
-     component.labelWidth = (aComponentMeta.labelwidth !== undefined) ? 80:component.labelwidth
+     component.labelWidth = (aComponentMeta.labelwidth !== undefined) ? 80 : component.labelwidth
 
      if (aComponentMeta.ctype !== undefined) {
        component.ctype = aComponentMeta.ctype
@@ -710,9 +713,9 @@ export default class VBaseDetailForm extends VBaseForm {
    _initToolbar(detailForm, toolbar, toolbarMeta, datasource) {
      this._initComponent(detailForm, toolbar, toolbarMeta)
      toolbar.showMoreButton = toolbarMeta.showMoreButton
-     for (var buttonMeta of toolbarMeta.buttons) {
+     for (var componentMeta of toolbarMeta.components) {
        var cmp = new VButton(toolbar)
-       this._initToolbarButton(detailForm, cmp, buttonMeta, datasource)
+       this._initToolbarButton(detailForm, cmp, componentMeta, datasource)
      }
    }
   /**
