@@ -136,8 +136,8 @@ export default {
           loginParams['after'] = this.redirect || '/';
 
           request({
-            url: '/loginAction!login.action',
-            method: 'get',
+            url: 'https://pg.yiuser.com'+'/loginAction!login.action',
+            method: 'post',
             params: loginParams
           }).then(res => {
             if(res.data.success){
