@@ -136,7 +136,7 @@ export default {
           loginParams['after'] = this.redirect || '/';
 
           request({
-            url: '/server/loginAction!login.action',
+            url: '/loginAction!login.action',
             method: 'post',
             params: loginParams
           }).then(res => {
