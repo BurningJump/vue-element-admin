@@ -1,4 +1,5 @@
 import VComponent from './VComponent.js'
+import Vue from 'vue'
 
 export default class VValueComponent extends VComponent {
   // 允许为空
@@ -99,9 +100,11 @@ export default class VValueComponent extends VComponent {
 
   saveInputValue(val = null) {
     if (val != null) {
-      this._inputValue = val
+      Vue.set(this, this._inputValue, this.value)
+      // this._inputValue = val
     }
-    this.value = this.inputValue
+    // this.value = this.inputValue
+    Vue.set(this, this.value, this.inputValue)
   }
 }
 
