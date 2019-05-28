@@ -19,7 +19,6 @@
                               :readonly="component.readOnly"
                               v-model="component.inputValue"
                               :disabled="!component.enable "
-                              :placeholder="component.label"
                               @change = "component.saveInputValue()" />
 
               <el-date-picker v-else-if="component.ctype === 'dateField'"
@@ -27,23 +26,24 @@
                               v-model="component.inputValue" type="date"
                               :disabled="!component.enable"
                               @change = "component.saveInputValue()"
-                              :placeholder="component.label"/>
+                              />
 
               <el-date-picker v-else-if="component.ctype === 'dateTimeField'"
                               :readonly="component.readOnly"
                               v-model="component.inputValue" type="datetime"
                               :disabled="!component.enable"
                                @change = "component.saveInputValue()"
-                               :placeholder="component.label"
-                               :width = "'auto'" />
+                              />
 
               <el-input v-else-if="component.ctype === 'numberfield'" :readonly="component.readOnly"
                         v-model="component.inputValue" type="number" :disabled="!component.enable"
                           @change = "component.saveInputValue()" />
 
-              <el-select v-else-if="component.ctype === 'comboBox'" :readonly="component.readOnly"
+              <el-select v-else-if="component.ctype === 'comboBox'"
+                          :readonly="component.readOnly"
                           v-model="component.inputValue" filterable
-                          :disabled="!component.enable"    @change = "component.saveInputValue()"  >
+                          :disabled="!component.enable"
+                          @change = "component.saveInputValue()"  >
                     <el-option v-for="item in component.enumModel.items"
                                :key="item.name" :label="item.label" :value="item.value"/>
               </el-select>
@@ -51,8 +51,7 @@
               <el-input v-else
                         v-model="component.inputValue" :disabled="!component.enable"
                         :readonly="component.readOnly"  clearable
-                        :placeholder="component.label"
-                          @change = "component.saveInputValue()" />
+                        @change = "component.saveInputValue()" />
 
           </el-form-item>
 
@@ -90,14 +89,15 @@
               </el-tooltip>
 
               <el-tooltip class="item" effect="dark" content="更多" placement="top">
-                <el-dropdown v-if="form.formMeta.tree.toolbar.showMoreButton" trigger="click" placement="bottom" szie="mini">
+                <el-dropdown v-if="form.formMeta.tree.toolbar.showMoreButton"
+                             trigger="click" placement="bottom" szie="mini">
                   <el-button size="mini">
                     <i class="el-icon-arrow-down el-icon--right" style="margin-left:0;"></i>
                   </el-button>
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item
-                          v-for="btn in  form.getComponent(form.formMeta.tree.toolbar.name).children"
-                          v-if="btn.isMore">
+                          v-for=" btn in  form.getComponent(form.formMeta.tree.toolbar.name).children"
+                          v-if=" btn.isMore ">
                       <svg-icon :icon-class="`${btn.iconcls}`"/>
                       {{btn.label}}
                     </el-dropdown-item>
@@ -197,7 +197,7 @@ export default{
       showMoreCondition: false,
       treeHeight: '600px',
       tableHeight: 600, // 表头高度
-      dialogVisible: false,
+     // dialogVisible: false,
        treeProps: {
         children: 'children',
         label: 'label'
@@ -398,23 +398,46 @@ export default{
     // getList() {
     //   // 获取分页数据
     // },
-    handleTabClick() {},
+    handleTabClick() {
+
+    },
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
+
+    // 生成目录树
+    loadTreeNode(node, resolve) {
+      var data =[]
+        if (node.level === 0) {
+          this.form.getTreeRootNode(resolve);
+        }
+        if (node.level > 0 ) {
+          this.form.getTreeLeafNode(node,resolve)
+        }
+    },
     handleNodeExpand(data, node, ref) {
       // 展开节点
-      console.log(data,node,ref)
+      // console.log(data,node,ref)
     },
     handleNodeClick(data, node, ref) {
       // 点击节点时获取子节点及表数据
-      console.log(data, node, ref)
+       var cnode = {}
+       cnode['NODE_GROUP_ID'] = data.rawData.NODE_GROUP_ID
+       cnode['NODE_ROOT_ID'] = data.rawData.NODE_ROOT_ID
+       cnode['root'] = (node.level === 1?"true":"false")
+       cnode['id'] =data.id
+       this.queryData(cnode)
+       console.log(data, node, ref)
+
     },
     resetForm() {
       this.form.resetCondition()
     },
-    queryData(){
-       this.form.queryData()
+    queryData(node = null){
+       this.form.queryData(node)
+      // setTimeout(() => {
+        this.calcHeight()
+      // }, 1000)
     }
   }
 }

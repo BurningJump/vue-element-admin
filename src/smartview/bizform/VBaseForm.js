@@ -574,6 +574,41 @@ export default class VBaseForm extends VForm {
       return me.cvars[varName]
     }
   }
+
+  /**
+	 * 添加Cvar
+	 * @param varObject
+	 */
+  addSVar(varObject) {
+    var me = this
+    if (me.svars == null) {
+      me.svars = varObject
+    } else {
+      Object.assign(me.svars, varObject)
+    }
+  }
+
+  /**
+	 * 获取CVar的值，不存在就返回空
+	 * @param varName
+	 * @returns varValue
+	 */
+  getSVar(varName) {
+    var me = this
+    if (me.svars == null) {
+      return null
+    } else {
+      return me.svars[varName]
+    }
+  }
+
+  removeSVar(varName) {
+    var me = this
+    if (me.svars !== null) {
+      delete me.svars[varName]
+    }
+  }
+
   setCmpValue(cmpName, value, rowIndex = null) {
     var component = this.getComponent(cmpName)
     if (component !== null) {
@@ -582,5 +617,23 @@ export default class VBaseForm extends VForm {
         component.value = value
       }
     }
+  }
+
+  /** **时间格式化处理****/
+  dateFormat(date, fmt) { // author: meizz
+    var o = {
+      'M+': date.getMonth() + 1, // 月份
+      'd+': date.getDate(), // 日
+      'h+': date.getHours(), // 小时
+      'm+': date.getMinutes(), // 分
+      's+': date.getSeconds(), // 秒
+      'q+': Math.floor((date.getMonth() + 3) / 3), // 季度
+      'S': date.getMilliseconds() // 毫秒
+    }
+    if (/(y+)/.test(fmt)) { fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length)) }
+    for (var k in o) {
+      if (new RegExp('(' + k + ')').test(fmt)) { fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)))}
+    }
+    return fmt
   }
 }

@@ -1,18 +1,16 @@
 import VBaseForm from './VBaseForm'
 
 import VToolbar from '../component/VToolbar.js'
-import VPanel from '../component/VPanel.js'
 
 import VDBComponent from '../component/VDBComponent.js'
 import VDBComponentSet from '../component/VDBComponentSet.js'
 
 import VButton from '../component/VButton.js'
 import VTree from '../component/VTree.js'
-import VTabSet from '../component/VTabSet.js'
 
 import * as cf from '../util/commonFun'
 import {
-  basicConstant
+  basicConstant, DefaultActionMethod
 } from '../VBasicConstant.js'
 
 import request from '@/utils/request'
@@ -55,18 +53,6 @@ export default class VBaseSelectForm extends VBaseForm {
    }
 
   /**
-   *  懒装载数据节点
-   * @param {*} node
-   * @param {*} resolve
-   */
-   loadTreeNode(node, resolve) {
-     if (node.level === 0) {
-       return resolve([{ name: 'region' }])
-     }
-     if (node.level > 1) return resolve([])
-   }
-
-  /**
    * 初始化form
    */
    init() {
@@ -106,11 +92,15 @@ export default class VBaseSelectForm extends VBaseForm {
        dataset.dataFrom = 'ajaxRequest'
        // 取form属性
        if (formMeta.actionUrl !== undefined) {
-         dataset.actionMethod = formMeta.actionUrl
-         if (formMeta.method !== undefined) {
-           dataset.actionMethod = dataset.actionMethod + '/' + formMeta.method
-         }
+         dataset.actionUrl = formMeta.actionUrl
        }
+
+       if (formMeta.method !== undefined) {
+         dataset.actionMethod = formMeta.method
+       } else {
+         dataset.actionMethod = DefaultActionMethod.listQuery
+       }
+
        // 取view属性
        if (formMeta.view.bizClassName !== undefined) {
          dataset.bizClassName = formMeta.view.bizClassName
@@ -469,18 +459,28 @@ export default class VBaseSelectForm extends VBaseForm {
 
      if (treeMeta.initUrl !== undefined) {
        tree.initUrl = treeMeta.initUrl
+     } else {
+       tree.initUrl = this._formMeta.actionUrl
      }
 
      if (treeMeta.initMethod !== undefined) {
        tree.initMethod = treeMeta.initMethod
+     } else {
+       tree.initMethod = DefaultActionMethod.ListQueryRootNodeMethod
      }
 
      if (treeMeta.actionUrl !== undefined) {
        tree.actionUrl = treeMeta.actionUrl
+     } else {
+       tree.actionUrl = this._formMeta.actionUrl
      }
-     if (treeMeta.method !== undefined) {
-       tree.method = treeMeta.method
+
+     if (treeMeta.actionMethod !== undefined) {
+       tree.actionMethod = treeMeta.method
+     } else {
+       tree.actionMethod = DefaultActionMethod.ListQueryLeafNodeMethod
      }
+
      // 初始化 tree
      if (treeMeta.toolbar !== undefined && treeMeta.toolbar !== null) {
        var TreeToolbar = new VToolbar(tree)
@@ -518,7 +518,6 @@ export default class VBaseSelectForm extends VBaseForm {
      component.fieldName = aComponentMeta.name
 
      if (aComponentMeta.findField !== undefined) {
-       component.fieldName = aComponentMeta.findField
        component.findField = aComponentMeta.findField
      }
 
@@ -770,13 +769,40 @@ export default class VBaseSelectForm extends VBaseForm {
      me.fireEvent('afterRefresh')
    }
 
-   queryData() {
-     this.loadingData = true
+   queryData(node = null) {
+     var me = this
+     var params
+     if (!me.checkFunPermission('query')) return
      var componentSet = this.getComponent(this.formMeta.view.name)
      var datasource = componentSet.datasource
      var aDataset = datasource.dataset
+     var queryUrl = aDataset.getStrutsUrl()
+
+     // 封装后台组装字段
+     me.pushFieldSVar()
+     // 封装前台组装字段
+     var filter = me.getFilter()
+
+     params = {
+       language: '', // TODO设置语言
+       sVars: JSON.stringify(me.svars),
+       filter: filter
+     }
+
+     // 如果有tree存在
+     if (node !== null) {
+       // 封装 url数据
+       queryUrl = aDataset.actionUrl + '!' + DefaultActionMethod.listQueryByTreeNode + '.action'
+       // 封装 treeNode 数据
+       params['NODE_GROUP_ID'] = node['NODE_GROUP_ID']
+       params['NODE_ROOT_ID'] = node['NODE_ROOT_ID']
+       params['root'] = node['root']
+       params['id'] = node['id']
+     }
+
+     this.loadingData = true
      if (aDataset.dataFrom === 'ajaxRequest') {
-       this.requestAjaxTableData(aDataset).then(dataList => {
+       this.requestAjaxTableData(queryUrl, params).then(dataList => {
          aDataset.loadList(dataList)
          datasource.open()
          this.loadingData = false
@@ -786,19 +812,14 @@ export default class VBaseSelectForm extends VBaseForm {
        })
      }
    }
-   requestAjaxTableData(dataset) {
-     var me = this
-     // ID 赋值
-     var params = {
-       language: '', // TODO设置语言
-       sVars: JSON.stringify(me.svars)
-     }
+
+   requestAjaxTableData(queryUrl, params) {
      return new Promise(
        (resolve, reject) => {
          request({
-           url: '/api/' + dataset.actionMethod,
-           params: params,
-           method: 'get'
+           url: queryUrl,
+           method: 'get',
+           params: params
          }).then(resData => {
            this.respData = resData.data
            resolve(resData.data.resultList)
@@ -806,5 +827,172 @@ export default class VBaseSelectForm extends VBaseForm {
            console.log(err.message)
          })
        })
+   }
+
+   pushFieldSVar() {
+     var me = this
+     var conditions = this._formMeta.qCondition.components
+     for (var key in conditions) {
+       var aValue = this.conditionDataSource.getFieldValue(conditions[key].name)
+       var isExtendField = conditions[key].isExtendField
+       if (isExtendField === 'true') {
+         var svarString = ''
+         if ((aValue || '') === '') {
+           me.removeSVar(conditions[key].name)
+         } else {
+           switch (conditions[key].ftype.toLocaleLowerCase()) {
+             case 'int':
+               svarString = 'me.addSVar({' + conditions[key].name + ':' + aValue + '});'
+               break
+             case 'string':
+               svarString = 'me.addSVar({' + conditions[key].name + ':' + "'" + aValue.replace(/(^\s*)|(\s*$)/g, '') + "'" + '});'
+               break
+             case 'date':
+               aValue = this.dateFormat(aValue, 'Y-m-d')
+               svarString = 'me.addSVar({' + conditions[key].name + ':' + "'" + aValue + "'" + '});'
+               break
+             case 'datetime':
+               aValue = this.dateFormat(aValue, 'Y-m-d H:i:s')
+               svarString = 'me.addSVar({' + conditions[key].name + ':' + "'" + aValue + "'" + '});'
+               break
+
+             default:
+               svarString = 'me.addSVar({' + conditions[key].name + ':' + "'" + aValue + "'" + '});'
+               break
+           }
+           eval(svarString)
+         }
+       }
+     }
+   }
+  /**
+  * 拼接过滤条件成过滤SQL
+  * @returns {String}
+  */
+   getFilter() {
+     var me = this
+     var filters = ''
+     var conditions = this._formMeta.qCondition.components
+     for (var key in conditions) {
+       var aValue = this.conditionDataSource.getFieldValue(conditions[key].name)
+       var operation = conditions[key].operation
+       var isExtendField = conditions[key].isExtendField
+       if (isExtendField !== 'true') {
+         if (((aValue || '') != '' || aValue === 0) && (conditions[key].findField || '') != '') {
+           var filter
+           switch (conditions[key].ftype.toLocaleLowerCase()) {
+             case 'int':
+               filter = conditions[key].findField + operation + aValue
+               break
+             case 'string':
+               if (operation == 'like') { aValue = '%' + aValue.replace(/(^\s*)|(\s*$)/g, '') + '%' }
+
+               if (aValue.indexOf('%') >= 0) { operation = 'like' }
+
+               filter = conditions[key].findField + ' ' + operation + " \'" + aValue + "\'"
+               break
+             case 'date':
+               if (SmartViewEnv.DB_DIALECT === DbConstant.ORACLE) {
+                 filter = 'to_char(' + conditions[key].findField + ",\'YYYY-MM-dd\') " + operation + " \'" + this.dateFormat(aValue, 'Y-m-d') + "\'"
+               } else if (SmartViewEnv.DB_DIALECT === DbConstant.MYSQL) {
+                 filter = 'date(' + conditions[key].findField + ') ' + operation + " \'" + this.dateFormat(aValue, 'Y-m-d') + "\'"
+               } else {
+                 filter = 'date(' + conditions[key].findField + ') ' + operation + " \'" + this.dateFormat(aValue, 'Y-m-d') + "\'"
+               }
+               break
+             case 'datetime':
+               if (SmartViewEnv.DB_DIALECT === DbConstant.ORACLE) {
+                 filter = conditions[key].findField + operation + ' ' + "to_date(\'" + this.dateFormat(aValue, 'Y-m-d H:i:s') + "\'" + ",\'YYYY-MM-dd hh24:mi:ss\') " + ''
+               } else {
+                 filter = conditions[key].findField + operation + " \'" + this.dateFormat(aValue, 'Y-m-d H:i:s') + "\'"
+               }
+
+               break
+
+             default:
+               filter = conditions[key].findField + operation + "\'" + aValue + "\'"
+               break
+           }
+           if (filters === '') {
+             filters += filter
+           } else {
+             filters = filters + ' and ' + filter
+           }
+         }
+       }
+     }
+
+     if (me.getCVar('fromField') != null) {
+       var extraFilter = me.getCVar('fromField').getFilter() || ''
+       if (filters === '') {
+         filters += extraFilter
+       } else {
+         if (extraFilter !== '') {
+           filters += ' and ' + extraFilter
+         }
+       }
+     }
+
+     if (me.getCVar('filters') != null) {
+       var extraFilter = me.getCVar('filters') || ''
+       if (filters === '') {
+         filters += extraFilter
+       } else {
+         if (extraFilter !== '') {
+           filters += ' and ' + extraFilter
+         }
+       }
+     }
+
+     return encodeURIComponent(encodeURIComponent(filters))
+   }
+
+   /**
+    * 懒装载根节点数据节点
+    * {id(String),text(String),iconCls(String),leaf(boolean),loaded(boolean),rawData(Map)}
+    */
+   getTreeRootNode(resolve) {
+     // return [{ text: 'region', isLeaf: true }]
+     // resolve([{ id: 'region', isLeaf: true }])
+     var me = this
+     var tree = this.getComponent(this.formMeta.tree.name)
+
+     var params = {
+       language: '', // TODO设置语言
+       sVars: JSON.stringify(me.svars)
+     }
+     request({
+       url: tree.initUrl + '!' + tree.initMethod + '.action',
+       method: 'get',
+       params: params
+     }).then(resData => {
+       resolve([resData.data.treeRoot])
+     }).catch(err => {
+       console.log(err.message)
+       resolve([])
+     })
+   }
+
+   getTreeLeafNode(node, resolve) {
+     var me = this
+     var tree = this.getComponent(this.formMeta.tree.name)
+     var params = {
+       language: '', // TODO设置语言
+       root: (node.level === 1) ? 'true' : 'false',
+       id: node.data.id,
+       leaf: node.data.leaf,
+       nodeData: node.data
+     }
+     request({
+       url: tree.actionUrl + '!' + tree.actionMethod + '.action',
+       method: 'get',
+       params: params
+     }).then(resData => {
+       // var data = resData.data
+       resolve(resData.data)
+     }).catch(err => {
+       console.log(err.message)
+       resolve([])
+     })
    }
 }

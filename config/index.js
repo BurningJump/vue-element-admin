@@ -11,7 +11,8 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/server': {
-        target: 'https://pg.yiuser.com',
+        // target: 'https://pg.yiuser.com',
+        target: 'http://127.0.0.1:8080',
         changeOrigin: true,
         pathRewrite: {
           '^/server': ''

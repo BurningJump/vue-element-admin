@@ -258,17 +258,11 @@ export default class VDataSource {
   updateFieldValue(fieldName, newValue) {
     this.record[fieldName] = newValue // 修改展示数据
     return true
-    // var result = false
-    // // 修改dataset的数据
-    // const key = this.record['id']
-    // const dataset = this.getDataSet()
-    // if (key !== null && dataset !== null) {
-    //   if (dataset.updateByFieldName(key, fieldName, newValue)) { // 修改存储数据
-    //     this.record[fieldName] = newValue // 修改展示数据
-    //     result = true
-    //   }
-    // }
-    // return result
+  }
+
+  getFieldValue(fieldName) {
+    // 修改展示数据
+    return this.record[fieldName]
   }
 
   addComponent(component) {

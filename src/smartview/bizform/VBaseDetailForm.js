@@ -115,9 +115,14 @@ export default class VBaseDetailForm extends VBaseForm {
          dataset.name = datasetMeta.name
        }
 
-       if (datasetMeta.actionMethod !== undefined) {
-         dataset.actionMethod = datasetMeta.actionMethod
-       }
+       if (datasetMeta.actionUrl !== undefined) {
+        dataset.actionUrl = datasetMeta.actionUrl
+      }
+
+      if (datasetMeta.queryMethod !== undefined) {
+        dataset.actionMethod = datasetMeta.actionMethod
+      }
+
 
        if (datasetMeta.datasource !== undefined) {
          dataset.dataFrom = datasetMeta.datasource

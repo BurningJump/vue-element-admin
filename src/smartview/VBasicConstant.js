@@ -30,3 +30,20 @@ export var basicConstant = {
   // DEPENDENCE_UNIQUE: 'UNIQUE',
   // DEPENDENCE_HIDDEN: 'HIDDEN'
 }
+
+export var DbConstant = {
+  MYSQL: 'mysql',
+  ORACLE: 'oracle'
+}
+
+export var SmartViewEnv = {
+  DB_DIALECT: DbConstant.MYSQL, // 标记当前数据库，供拼SQL时不同处理
+  CACHE_FORM_META: false // 是否缓存formMeta , 开发环境要设置为 false
+}
+
+export var DefaultActionMethod = {
+  ListQueryRootNodeMethod: 'loadRootNode', // 标记当前数据库，供拼SQL时不同处理
+  ListQueryLeafNodeMethod: 'loadLeafNodes', // 是否缓存formMeta , 开发环境要设置为 false
+  listQueryByTreeNode: 'listQueryByTreeNode',
+  listQuery: 'listQuery'
+}

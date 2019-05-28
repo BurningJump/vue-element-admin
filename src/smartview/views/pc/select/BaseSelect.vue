@@ -105,17 +105,16 @@
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-tooltip>
-
             </el-button-group>
           </div>
           <div class="tree-container">
             <el-tree
                       :props="treeProps" highlight-current
-                      :load="form.loadTreeNode"
+                      :load="loadTreeNode"
                        lazy
                       @node-expand="handleNodeExpand"
                       @node-click="handleNodeClick">
-              <!-- <span class="custom-tree-node" slot-scope="{ node, data }">
+              <span class="custom-tree-node" slot-scope="{ node, data }">
                 <span v-if="node.isLeaf">
                   <svg-icon :icon-class="`${data.iconcls}`"/>
                   {{ node.label }}
@@ -123,7 +122,7 @@
                 <span v-if="!node.isLeaf">
                   {{ node.label }}
                 </span>
-              </span> -->
+              </span>
             </el-tree>
           </div>
         </el-aside>
@@ -335,7 +334,9 @@ export default {
       //},
       treeProps: {
         children: 'children',
-        label: 'label'
+        label: 'text',
+      //  label: 'id',
+        isLeaf: 'leaf'
       },
       tableHeight1: 0,
       tableHeight2: 0,
@@ -422,12 +423,12 @@ export default {
       this.selectedList = data
     })
 
-     this.getTree().then(() => {
-        this.renderTree()
-        this.setDialogHeight()
-        this.setBodyHeight()
-        // this.calcHeight()
-      })
+    //  this.getTree().then(() => {
+    //     this.renderTree()
+    //     this.setDialogHeight()
+    //     this.setBodyHeight()
+    //     // this.calcHeight()
+    //   })
       // this.getListData().then(() => {
       //   this.dataLoaded = true
       // })
@@ -451,8 +452,7 @@ export default {
     //   return this.$route.query;
     // },
     closeDialog(){
-      this.$bus.emit('closeAppDialog', {
-            })
+      this.$bus.emit('closeAppDialog', {})
     },
     submitFun(){
       console.log('here call submitFun');
@@ -596,106 +596,16 @@ export default {
     handleSelectedSelectionChange(val) {
       this.selectedSelecttion = val
     },
-    // getUIMeta() {
-    //   return new Promise((resolve,reject) => {
-    //     this.$http.get('/api/getSelectUIMeta/com.epower.abd.material.MaterialList').then((res) => {
-    //       this.UIMeta = res.data
-    //       this.grid = []
-    //       this.UIMeta.selectViewModel.view.components.forEach((item, index) => {
-    //         // item.forEach((thead) => {
-    //           this.grid.push({
-    //             prop: item.field,
-    //             label: item.label
-    //           })
-    //         // })
-    //       })
-    //       resolve(true)
-    //     })
-    //   })
-    // },
-    // getListData() {
-    //   return new Promise((resolve,reject) => {
-    //     this.$http.get('/api/openapi/materialListData').then((res) => {
-    //       this.list = [...res.data.resultList]
-    //       // this.$set(this.list, res.data.resultList)
-    //       // res.data.resultList.forEach((item, index) => {
-    //         // this.list[index] = {}
-    //         // this.$set(this.list, index, {})
-    //         // this.grid.forEach((thead, tIndex) => {
-    //         //   this.list[index][thead.prop] = item[thead.prop]
-    //         //   this.$set(this.list[index], thead.prop, item[thead.prop])
-    //         // })
-    //       // })
-    //     })
-    //   })
-    // },
-    getTree() {
-      return new Promise((resolve,reject) => {
-        this.$http.get(`/api/${this.UIMeta.tree.initUrl}/${this.UIMeta.tree.initMethod}`).then((res) => {
-          this.treeRoot = JSON.parse(JSON.stringify(res.data))
-          this.$http.get(`/api/${this.UIMeta.tree.actionUrl}/${this.UIMeta.tree.method}`).then((res) => {
-            this.treeChild = JSON.parse(JSON.stringify(res.data))
-            this.$http.get(`/api/${this.UIMeta.tree.actionUrl}/${this.UIMeta.tree.method}`).then((res) => {
-              this.treeGrandchild = JSON.parse(JSON.stringify(res.data))
-              resolve(true)
-            }).catch((err) => {
-              reject(err)
-            })
-          })
-        })
-      })
-    },
+
     // 生成目录树
-    renderTree() {
-      console.log(this.tree, 'tree')
-      if (!this.treeRoot.treeRoot.leaf) {
-        this.tree.push({
-          iconcls: this.treeRoot.treeRoot.iconcls,
-          label: this.treeRoot.treeRoot.text,
-          children: []
-        })
-      } else {
-        this.tree.push({
-          iconcls: this.treeRoot.treeRoot.iconcls,
-          label: this.treeRoot.treeRoot.text
-        })
-      }
-      this.treeChild.forEach((child) => {
-        if (!child.leaf && this.tree[0].children) {
-          this.tree[0].children.push({
-            iconcls: child.iconcls,
-            label: child.text,
-            children: []
-          })
-        } else {
-          this.tree[0].children.push({
-            iconcls: child.iconcls,
-            label: child.text
-          })
+    loadTreeNode(node, resolve) {
+      var data =[]
+        if (node.level === 0) {
+          this.form.getTreeRootNode(resolve);
         }
-      })
-      this.treeGrandchild.forEach((grandchild) => {
-        if (!grandchild.leaf) {
-          this.tree[0].children.forEach((treeChild) => {
-            if (treeChild.children) {
-              treeChild.children.push({
-                iconcls: grandchild.iconcls,
-                label: grandchild.text,
-                children: []
-              })
-            }
-          })
-        } else {
-          this.tree[0].children.forEach((treeChild) => {
-            if (treeChild.children) {
-              treeChild.children.push({
-                iconcls: grandchild.iconcls,
-                label: grandchild.text
-              })
-            }
-          })
+        if (node.level > 0 ) {
+          this.form.getTreeLeafNode(node,resolve)
         }
-      })
     },
     handleNodeExpand(data, node, ref) {
       // 展开节点
@@ -703,13 +613,20 @@ export default {
     },
     handleNodeClick(data, node, ref) {
       // 点击节点时获取子节点及表数据
-      console.log(data, node, ref)
+       var cnode = {}
+       cnode['NODE_GROUP_ID'] = data.rawData.NODE_GROUP_ID
+       cnode['NODE_ROOT_ID'] = data.rawData.NODE_ROOT_ID
+       cnode['root'] = (node.level === 1?"true":"false")
+       cnode['id'] =data.id
+       this.queryData(cnode)
+       console.log(data, node, ref)
+
     },
     resetForm() {
        this.form.resetCondition()
     },
-    queryData(){
-       this.form.queryData()
+    queryData(node = null){
+       this.form.queryData(node)
       // setTimeout(() => {
         this.calcHeight()
       // }, 1000)

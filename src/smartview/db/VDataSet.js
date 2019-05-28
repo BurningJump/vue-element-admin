@@ -6,8 +6,8 @@ export default class VDataSet {
   dataStore = null; // 数据仓库
   bizClassName = null;// 对应的类名
   dataFrom = 'ajaxRequest'; // 获取数据的方法( dataPackage / ajaxRequest)
-
-  actionMethod ;// 如果是 ajaxRequest， 获取数据的url
+  actionUrl; // 如果是 ajaxRequest， 获取数据的url
+  actionMethod ;
   currentTable = [];// 当前记录
   originalTable = [];// 原始记录
   updateLogs = []; // 更新记录
@@ -38,6 +38,9 @@ export default class VDataSet {
   }
   set isOpen(value) {
     this._isOpen = value
+  }
+  getStrutsUrl() {
+    return this.actionUrl + '!' + this.actionMethod + '.action'
   }
 
   /**

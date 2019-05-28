@@ -1,7 +1,9 @@
 import request from '@/utils/request'
 import router from '@/router'
 import { asyncRouterMap } from '@/router'
-import * as UID from './util/uuid.js'
+import {
+  SmartViewEnv
+} from './VBasicConstant.js'
 
 import Vue from 'vue'
 
@@ -157,7 +159,7 @@ export default class VSmartView {
   getDetailUIMeta(formKey) {
     return new Promise(
       (resolve, reject) => {
-        if (this.formMetas[formKey] !== undefined && this.formMetas[formKey] !== null) {
+        if (SmartViewEnv.CACHE_FORM_META &&  this.formMetas[formKey] !== undefined && this.formMetas[formKey] !== null) {
           resolve(this.formMetas[formKey])
         } else {
           request({
@@ -183,7 +185,7 @@ export default class VSmartView {
   getListUIMeta(formKey) {
     return new Promise(
       (resolve, reject) => {
-        if (this.formMetas[formKey] !== undefined && this.formMetas[formKey] !== null) {
+        if (SmartViewEnv.CACHE_FORM_META &&  this.formMetas[formKey] !== undefined && this.formMetas[formKey] !== null) {
           resolve(this.formMetas[formKey])
         } else {
           request({
@@ -209,7 +211,7 @@ export default class VSmartView {
   getSelectUIMeta(formKey) {
     return new Promise(
       (resolve, reject) => {
-        if (this.formMetas[formKey] !== undefined && this.formMetas[formKey] !== null) {
+        if (SmartViewEnv.CACHE_FORM_META && this.formMetas[formKey] !== undefined && this.formMetas[formKey] !== null) {
           resolve(this.formMetas[formKey])
         } else {
           request({
@@ -218,12 +220,12 @@ export default class VSmartView {
             params: {
               // 带参数查询
               language: 'zh_CN',
-              listViewId: formKey	// 'com.epower.abd.organization.OrganizationList'
+              selectViewId: formKey	// 'com.epower.abd.organization.OrganizationList'
             }
           }).then(resData => {
             if (resData.data.selectViewModel !== null) {
-              this.formMetas[resData.data.selectViewModel.id]
-                                  = resData.data.selectViewModel
+              this.formMetas[resData.data.selectViewModel.id] =
+                                  resData.data.selectViewModel
             }
             resolve(resData.data.selectViewModel)
           }).catch(err => {
