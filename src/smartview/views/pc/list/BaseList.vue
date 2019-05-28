@@ -26,14 +26,14 @@
                                 :readonly="component.readOnly"
                               v-model="component.inputValue" type="date"
                               :disabled="!component.enable"
-                              @change = "component.saveInputValue()"
+                              @blur = "component.saveInputValue()"
                               :placeholder="component.label"/>
 
               <el-date-picker v-else-if="component.ctype === 'dateTimeField'"
                               :readonly="component.readOnly"
                               v-model="component.inputValue" type="datetime"
                               :disabled="!component.enable"
-                               @change = "component.saveInputValue()"
+                               @blur = "component.saveInputValue()"
                                :placeholder="component.label"
                                :width = "'auto'" />
 
