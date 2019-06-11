@@ -7,9 +7,6 @@ export default class VDBComponent extends VValueComponent {
   // 对应的数据字段名称
   fieldName;
 
-
-
-
   get value() {
     return this._value
   }
@@ -26,7 +23,6 @@ export default class VDBComponent extends VValueComponent {
   loadData(record) {
     return super.loadValue( record[this.fieldName])
   }
-
 
   get datasource() {
     return this._datasource
@@ -45,7 +41,6 @@ export default class VDBComponent extends VValueComponent {
       return this._datasource.getDataSet()
     }
   }
-
 
 }
 

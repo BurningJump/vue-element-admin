@@ -19,12 +19,16 @@
                               :readonly="component.readOnly"
                               v-model="component.inputValue"
                               :disabled="!component.enable "
+                              active-value="1"
+                              inactive-value="0"
                               @change = "component.saveInputValue()" />
 
               <el-date-picker v-else-if="component.ctype === 'dateField'"
                                 :readonly="component.readOnly"
                               v-model="component.inputValue" type="date"
                               :disabled="!component.enable"
+                              format="yyyy-MM-dd"
+                              value-format="yyyy-MM-dd"
                               @blur = "component.saveInputValue()"
                               :placeholder="component.label"/>
 
@@ -32,6 +36,8 @@
                               :readonly="component.readOnly"
                               v-model="component.inputValue" type="datetime"
                               :disabled="!component.enable"
+                              format="yyyy-MM-dd"
+                              value-format="yyyy-MM-dd"
                                @blur = "component.saveInputValue()"
                                :placeholder="component.label"
                                :width = "'auto'" />
@@ -58,8 +64,8 @@
 
           <el-form-item :style="{width: 'auto'}" label-width="100px" >
             <el-button-group>
-              <el-button size="mini" @click="queryData()" icon="el-icon-search">查询</el-button>
-              <el-button size="mini" @click="resetForm()" icon="el-icon-close">重置</el-button>
+              <el-button size="mini" @click="handleQueryBtnClick()" icon="el-icon-search">查询</el-button>
+              <el-button size="mini" @click="handleResetBtnClick()" icon="el-icon-close">重置</el-button>
               <el-button size="mini" @click="showMoreCondition=!showMoreCondition;calcTableHeight()">
                 <span v-show="!showMoreCondition">更多</span>
                 <span v-show="showMoreCondition">收起</span>
@@ -111,7 +117,8 @@
           <div class="tree-container">
             <el-tree
                       :props="treeProps" highlight-current
-                      :load="form.loadTreeNode"
+                      :load="loadTreeNode"
+                       ref="tree"
                        lazy
                       @node-expand="handleNodeExpand"
                       @node-click="handleNodeClick">
@@ -198,10 +205,11 @@ export default{
       showMoreCondition: false,
       treeHeight: '600px',
       tableHeight: 600, // 表头高度
-     // dialogVisible: false,
-       treeProps: {
+      treeProps: {
         children: 'children',
-        label: 'label'
+        label: 'text',
+      //  label: 'id',
+        isLeaf: 'leaf'
       }
     }
   },
@@ -267,147 +275,35 @@ export default{
         </span>
       );
     },
-    // handleClick(index,row, action) {
-    //   switch(action) {
-    //     case 'modify':
-    //       console.log('修改')
-    //       this.dialogVisible = true;
-    //     break
-    //     case 'new':
-    //       console.log('增加')
-    //       this.dialogVisible = true;
-    //     break
-    //     case 'delete':
-    //       console.log('删除')
-    //     break
-    //   }
-    // },
-    // getUIMeta() {
-    //   return new Promise((resolve,reject) => {
-    //     this.$http.get(`/api/getListUIMeta/${this.$options.name}`).then((res) => {
-    //    //   this.UIMeta = res.data
-    //  //     this.activeTab = this.form.formMeta.dataType
-    //       ? this.form.formMeta.dataType.default
-    //       : this.form.formMeta.dataView.defaultView
-    //       this.form.formMeta.dataView.views.forEach((item, index) => {
-    //         this.$set(this.grid, item.name, [])
-    //         item.components.forEach((thead) => {
-    //           this.grid[item.name].push({
-    //             prop: thead.field,
-    //             label: thead.label
-    //           })
-    //         })
-    //       })
-    //       resolve(true)
-    //     })
-    //   })
-    // },
-    // getTree() {
-    //   return new Promise((resolve,reject) => {
-    //     if (!this.form.formMeta.tree) {
-    //       resolve('notree')
-    //     }
-    //     this.$http.get(`/api/${this.form.formMeta.tree.initUrl}/${this.form.formMeta.tree.initMethod}`).then((res) => {
-    //       this.treeRoot = JSON.parse(JSON.stringify(res.data))
-    //       this.$http.get(`/api/${this.form.formMeta.tree.actionUrl}/${this.form.formMeta.tree.method}`).then((res) => {
-    //         this.treeChild = JSON.parse(JSON.stringify(res.data))
-    //         this.$http.get(`/api/${this.form.formMeta.tree.actionUrl}/${this.form.formMeta.tree.method}`).then((res) => {
-    //           this.treeGrandchild = JSON.parse(JSON.stringify(res.data))
-    //           resolve(true)
-    //         }).catch((err) => {
-    //           reject(err)
-    //         })
-    //       })
-    //     })
-    //   })
-    // },
-    // 生成目录树
-    // renderTree() {
-    //   if (!this.form.formMeta.tree) return
-    //   if (!this.treeRoot.treeRoot.leaf) {
-    //     this.tree.push({
-    //       iconcls: this.treeRoot.treeRoot.iconcls,
-    //       label: this.treeRoot.treeRoot.text,
-    //       children: []
-    //     })
-    //   } else {
-    //     this.tree.push({
-    //       iconcls: this.treeRoot.treeRoot.iconcls,
-    //       label: this.treeRoot.treeRoot.text
-    //     })
-    //   }
-    //   this.treeChild.forEach((child) => {
-    //     if (!child.leaf && this.tree[0].children) {
-    //       this.tree[0].children.push({
-    //         iconcls: child.iconcls,
-    //         label: child.text,
-    //         children: []
-    //       })
-    //     } else {
-    //       this.tree[0].children.push({
-    //         iconcls: child.iconcls,
-    //         label: child.text
-    //       })
-    //     }
-    //   })
-    //   this.treeGrandchild.forEach((grandchild) => {
-    //     if (!grandchild.leaf) {
-    //       this.tree[0].children.forEach((treeChild) => {
-    //         if (treeChild.children) {
-    //           treeChild.children.push({
-    //             iconcls: grandchild.iconcls,
-    //             label: grandchild.text,
-    //             children: []
-    //           })
-    //         }
-    //       })
-    //     } else {
-    //       this.tree[0].children.forEach((treeChild) => {
-    //         if (treeChild.children) {
-    //           treeChild.children.push({
-    //             iconcls: grandchild.iconcls,
-    //             label: grandchild.text
-    //           })
-    //         }
-    //       })
-    //     }
-    //   })
-    // },
-    // getListData() {
-    //   return new Promise((resolve,reject) => {
-    //     this.form.formMeta.dataView.views.forEach((view, vIndex) => {
-    //       this.form.formMeta.querys.forEach((query, qIndex) => {
-    //         if (view.queryName === query.name) {
-    //           this.$http.get(`/api/${query.actionUrl}/${query.queryMethod}`).then((res) => {
-    //             this.$set(this.list, view.name, [])
-    //             res.data.resultList.forEach((item, index) => {
-    //               this.$set(this.list[view.name], index, {})
-    //               this.grid[view.name].forEach((thead, tIndex) => {
-    //                 this.$set(this.list[view.name][index], thead.prop, item[thead.prop])
-    //               })
-    //             })
-    //             if (vIndex === this.form.formMeta.dataView.views.length-1
-    //                   && qIndex === this.form.formMeta.querys.length-1) {
-    //               resolve('ok')
-    //             }
-    //           })
-    //         }
-    //       })
-    //     })
-    //   })
-    // },
+
+
     // getList() {
     //   // 获取分页数据
     // },
     handleTabClick() {
 
     },
-    handleSelectionChange(val) {
-      this.multipleSelection = val
+    handleResetBtnClick(){
+      this.form.resetCondition()
     },
 
-    // 生成目录树
+    handleQueryBtnClick() {
+       // 查询按钮点击
+      var cnode = null
+      if ( this.$refs.tree !==undefined &&  this.$refs.tree.getCurrentNode()!==null) {
+        var node =  this.$refs.tree.getCurrentNode()
+        cnode={}
+        cnode['NODE_GROUP_ID'] = node.rawData.NODE_GROUP_ID
+        cnode['NODE_ROOT_ID'] = node.rawData.NODE_ROOT_ID
+        cnode['root'] = (node.level === 1?"true":"false")
+        cnode['id'] =node.id
+      }
+      this.queryData(cnode)
+    },
+
+
     loadTreeNode(node, resolve) {
+         // 生成目录树
       var data =[]
         if (node.level === 0) {
           this.form.getTreeRootNode(resolve);
@@ -429,15 +325,11 @@ export default{
        cnode['id'] =data.id
        this.queryData(cnode)
        console.log(data, node, ref)
-
-    },
-    resetForm() {
-      this.form.resetCondition()
     },
     queryData(node = null){
        this.form.queryData(node)
       // setTimeout(() => {
-        this.calcHeight()
+    //    this.calcHeight()
       // }, 1000)
     }
   }

@@ -18,7 +18,9 @@ export default class VValueComponent extends VComponent {
    * 因为Vue修改时会立刻进行业务保存,从业务的角度,需要修改完成后,进行业务保存
    * 所以在失去焦点时，做业务保存。
    * */
-  _inputValue;
+  // _inputValue;不可以使用get set 模式 否则导致控件无法感知
+
+  inputValue;
 
   // 当前值
   _value;
@@ -32,13 +34,14 @@ export default class VValueComponent extends VComponent {
 
   loading = false;// 是否是数据装载状态
 
-  get inputValue() {
-    return this._inputValue
-  }
+  // 不可以使用get set 模式 否则导致控件无法感知 by max
+  // get inputValue() {
+  //   return this._inputValue
+  // }
 
-  set inputValue(v) {
-    this._inputValue = v
-  }
+  // set inputValue(v) {
+  //   this._inputValue = v
+  // }
 
   get value() {
     return this._value
@@ -73,7 +76,8 @@ export default class VValueComponent extends VComponent {
    */
   loadValue(aValue) {
     this.loading = true
-    this._inputValue = aValue
+    // this._inputValue = aValue
+    this.inputValue = aValue
     this._value = aValue
     this.oldValue = aValue
     this.originalValue = aValue
@@ -100,11 +104,13 @@ export default class VValueComponent extends VComponent {
 
   saveInputValue(val = null) {
     if (val != null) {
-      Vue.set(this, this._inputValue, this.value)
-      // this._inputValue = val
+      this.inputValue = val
+      // Vue.set(this, this.inputValue, val)
     }
-    // this.value = this.inputValue
-    Vue.set(this, this.value, this.inputValue)
+    // 发现控件无法更新，添加代码
+    // Vue.set(this, this._value, this.inputValue)
+
+    this.value = this.inputValue
   }
 }
 

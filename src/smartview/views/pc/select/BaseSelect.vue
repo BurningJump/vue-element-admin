@@ -56,8 +56,8 @@
 
           <el-form-item :style="{width: 'auto'}" label-width="100px" >
             <el-button-group>
-              <el-button size="mini" @click="queryData()" icon="el-icon-search">查询</el-button>
-              <el-button size="mini" @click="resetForm()" icon="el-icon-close">重置</el-button>
+              <el-button size="mini" @click="handleQueryBtnClick()" icon="el-icon-search">查询</el-button>
+              <el-button size="mini" @click="handleResetBtnClick()" icon="el-icon-close">重置</el-button>
               <el-button size="mini" @click="showMoreCondition=!showMoreCondition;calcTableHeight()">
                 <span v-show="!showMoreCondition">更多</span>
                 <span v-show="showMoreCondition">收起</span>
@@ -112,6 +112,7 @@
                       :props="treeProps" highlight-current
                       :load="loadTreeNode"
                        lazy
+                      ref="tree"
                       @node-expand="handleNodeExpand"
                       @node-click="handleNodeClick">
               <span class="custom-tree-node" slot-scope="{ node, data }">
@@ -308,30 +309,16 @@ import Pagination from '@/components/Pagination'
 export default {
   data() {
     return {
-     // selectType: 'multi',
-     // dialogVisible: true,
-     // UiLoaded: false,
       dataLoaded: false,
-     // UIMeta: '',
       selectedList: [], // 下表数据
       list: [],  // 上表数据
       height: 300,
       showMoreCondition: false,
       treeHeight: '600px',
-     // conditionForm: {},
-      //treeRoot: {},
-      //treeChild: {},
-      //treeGrandchild: {},
-      // tree: [],
-      //grid: [],
       listQuery: {
         page: 1,
         limit: 20
       },
-      //defaultProps: {
-     //   children: 'children',
-      //  label: 'label'
-      //},
       treeProps: {
         children: 'children',
         label: 'text',
@@ -403,7 +390,6 @@ export default {
   },
   mounted() {
     //this.selectType = this.getParams().selectType
-
     this.setDialogHeight()
     this.setBodyHeight()
     this.$nextTick(() => {
@@ -620,8 +606,24 @@ export default {
        cnode['id'] =data.id
        this.queryData(cnode)
        console.log(data, node, ref)
-
     },
+    handleResetBtnClick(){
+      this.form.resetCondition()
+    },
+    handleQueryBtnClick() {
+       // 查询按钮点击
+      var cnode = null
+      if ( this.$refs.tree.getCurrentNode()!==null) {
+        var node =  this.$refs.tree.getCurrentNode()
+        cnode={}
+        cnode['NODE_GROUP_ID'] = node.rawData.NODE_GROUP_ID
+        cnode['NODE_ROOT_ID'] = node.rawData.NODE_ROOT_ID
+        cnode['root'] = (node.level === 1?"true":"false")
+        cnode['id'] =node.id
+      }
+      this.queryData(cnode)
+    },
+
     resetForm() {
        this.form.resetCondition()
     },

@@ -943,11 +943,11 @@ export default class VBaseListForm extends VBaseForm {
 		    			svarString = 'me.addSVar({' + conditions[key].name + ':' + "'" + aValue.replace(/(^\s*)|(\s*$)/g, '') + "'" + '});'
 			    		break
 			    	case 'date':
-			    		aValue = this.dateFormat(aValue, 'Y-m-d')
+			    		aValue = this.dateFormat(aValue, 'yyyy-MM-dd')
 			    		svarString = 'me.addSVar({' + conditions[key].name + ':' + "'" + aValue + "'" + '});'
 			    		break
 			    	case 'datetime':
-			    		aValue = this.dateFormat(aValue, 'Y-m-d H:i:s')
+			    		aValue = this.dateFormat(aValue, 'yyyy-MM-dd h:m:s')
 			    		svarString = 'me.addSVar({' + conditions[key].name + ':' + "'" + aValue + "'" + '});'
 			    		break
 
@@ -988,18 +988,18 @@ export default class VBaseListForm extends VBaseForm {
 			    		break
 			    	case 'date':
 			    		if (SmartViewEnv.DB_DIALECT === DbConstant.ORACLE) {
-			    			filter = 'to_char(' + conditions[key].findField + ",\'YYYY-MM-dd\') " + operation + " \'" + this.dateFormat(aValue, 'Y-m-d') + "\'"
+			    			filter = 'to_char(' + conditions[key].findField + ",\'YYYY-MM-dd\') " + operation + " \'" + this.dateFormat(aValue, 'yyyy-MM-dd') + "\'"
 			    		} else if (SmartViewEnv.DB_DIALECT === DbConstant.MYSQL) {
-			    			filter = 'date(' + conditions[key].findField + ') ' + operation + " \'" + this.dateFormat(aValue, 'Y-m-d') + "\'"
+			    			filter = 'date(' + conditions[key].findField + ') ' + operation + " \'" + this.dateFormat(aValue, 'yyyy-MM-dd') + "\'"
 			    		} else {
-			    			filter = 'date(' + conditions[key].findField + ') ' + operation + " \'" + this.dateFormat(aValue, 'Y-m-d') + "\'"
+			    			filter = 'date(' + conditions[key].findField + ') ' + operation + " \'" + this.dateFormat(aValue, 'yyyy-MM-dd') + "\'"
 			    		}
 			    		break
 			    	case 'datetime':
 			    		if (SmartViewEnv.DB_DIALECT === DbConstant.ORACLE) {
-			    			filter = conditions[key].findField + operation + ' ' + "to_date(\'" + this.dateFormat(aValue, 'Y-m-d H:i:s') + "\'" + ",\'YYYY-MM-dd hh24:mi:ss\') " + ''
+			    			filter = conditions[key].findField + operation + ' ' + "to_date(\'" + this.dateFormat(aValue, 'yyyy-MM-dd H:i:s') + "\'" + ",\'YYYY-MM-dd hh24:mi:ss\') " + ''
 			    		} else {
-			    			filter = conditions[key].findField + operation + " \'" + this.dateFormat(aValue, 'Y-m-d H:i:s') + "\'"
+			    			filter = conditions[key].findField + operation + " \'" + this.dateFormat(aValue, 'yyyy-MM-dd H:i:s') + "\'"
 			    		}
 
 			    		break
